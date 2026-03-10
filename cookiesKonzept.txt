@@ -1,0 +1,43 @@
+Redaktionelles Konzept: "Kekse im Iran"
+1. Kern-Identität & Zielsetzung
+
+    Genre: Hybrid aus packendem Roman (Narrativ) und investigativer Reportage (Fakten/Kontext).
+
+    Mission: 1. Die Aufarbeitung einer traumatischen bürokratischen Geiselnahme.
+    2. Ein authentisches Bild der iranischen Bevölkerung (Gastfreundschaft vs. System) zeichnen.
+    3. Crowdfunding-Appell: Transparente Darstellung des finanziellen Schadens, um Leser zur Unterstützung zu bewegen.
+
+    Botschaft: Die unfassbare Selbstlosigkeit der Menschen im Iran (personifiziert durch Payam) im krassen Gegensatz zur Willkür der Justiz.
+
+2. Struktur & Spannungsaufbau (Der rote Faden)
+
+    Intro: Kurze Vorstellung der Reise (Start Nov. 2023). Etablierung des Lebensstils als Overlander, um den Fall von der Freiheit in die Fesselung spürbar zu machen.
+
+    Der Hook (Einstieg): In medias res. Der Moment im Gericht, in dem das Wort "Schmuggel" fällt und die Summe von 48.000 $ den Raum füllt. Die Schockwelle.
+
+    Retrospektive: Rückblende zum Mai 2025 (Indien-Pakistan-Konflikt) und der fatalen Entscheidung, das Auto im Iran zu lassen.
+
+    Der Limbus (Hauptteil): Chronologische Abfolge der Tage an der armenischen Grenze und in der Obhut von Payam. Ein tägliches Auf und Ab zwischen "Morgen bist du frei" und "Pack deine Sachen für den Knast".
+
+    Das Motiv der Grenze: Die armenische Grenze als Symbol für die Freiheit, die zum Greifen nah ist (Sichtweite), aber durch eine unsichtbare Mauer aus Paragraphen blockiert wird.
+
+3. Stilistische Leitlinien
+
+    Sprache: Modern, direkt und umgangssprachlich. Authentisch, wie ein Gespräch unter Freunden. Nur in offiziellen Szenen (Gericht/Zoll) wechselt der Ton in eine steife, bedrohliche Bürokratie-Sprache.
+
+    Charakterzeichnung (Payam): Er ist der emotionale Anker. Seine "aufopferungsvolle Hilfe" muss als Gegenentwurf zur westlichen Individualgesellschaft spürbar werden. Er ist nicht nur ein Helfer, er ist die Menschlichkeit im System.
+
+    Emotionalität: Die "Achterbahn" muss für den Leser physisch spürbar sein. Die Euphorie eines guten Telefonats vs. die lähmende Angst vor der Zelle.
+
+    Keine Klischees: Wir räumen mit dem westlichen Bild des Irans auf, indem wir die Grausamkeit des Apparats von der Wärme der Menschen trennen.
+
+4. Die Rolle der "Kekse"
+
+    Der Titel muss sich im Laufe der Geschichte auflösen. Die Kekse dienen als Leitmotiv.
+
+5. Technische Elemente für die Website
+
+    Call-to-Action (Spenden): Die Geschichte muss den Leser so tief in die Ungerechtigkeit hineinziehen, dass der finanzielle Schaden als gemeinschaftliche Aufgabe zur Wiedergutmachung verstanden wird.
+
+    Interaktivität: Aufteilung in "Tage" (Kapitel), um die Leser durch die 30-tägige Tortur zu führen.
+
