@@ -1,0 +1,57 @@
+\documentclass[12pt,openany]{book}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[a5paper,margin=22mm]{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+
+\setstretch{1.08}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.85em}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}
+  {}
+  {0pt}
+  {}
+\titlespacing*{\chapter}{0pt}{12pt}{16pt}
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{12pt}
+\setlength{\cftbeforechapskip}{2pt}
+\setlength{\cftparskip}{0pt}
+
+\begin{document}
+\frontmatter
+\thispagestyle{empty}
+\begin{titlepage}
+  \centering
+  \vspace*{0.285\textheight}
+  {\fontsize{24}{28}\selectfont\bfseries Cookies in Iran\par}
+  \vspace{1.25em}
+  {\large\textls[100]{Anton Kopylow}\par}
+  \vfill
+\end{titlepage}
+\tableofcontents
+
+\mainmatter
+\input{manuscript.tex}
+\end{document}

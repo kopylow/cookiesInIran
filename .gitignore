@@ -1,0 +1,10 @@
+/.missing.txt.kate-swp
+/tmp
+/tex-book/__pycache__/
+/tex-book/*.aux
+/tex-book/*.fdb_latexmk
+/tex-book/*.fls
+/tex-book/*.log
+/tex-book/*.out
+/tex-book/*.pdf
+/tex-book/*.toc
