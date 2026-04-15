@@ -28,6 +28,12 @@ def is_heading(block: str) -> bool:
 
 def main() -> None:
     text = SOURCE.read_text(encoding="utf-8")
+    word_count = len(text.split())
+    
+    # Save word count to a separate LaTeX file
+    stats_file = ROOT / "tex-book" / "wordcount.tex"
+    stats_file.write_text(rf"\newcommand{{\wordcount}}{{{word_count:,}}}" + "\n", encoding="utf-8")
+
     blocks = [block.strip() for block in text.split("\n\n") if block.strip()]
 
     output = []
