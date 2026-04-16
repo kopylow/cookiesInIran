@@ -4,6 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{lmodern}
+\usepackage{textcomp}
 \usepackage{microtype}
 \usepackage[a5paper,margin=22mm]{geometry}
 \usepackage{setspace}
@@ -17,6 +18,8 @@
 \setstretch{1.08}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.85em}
+\sloppy
+\raggedbottom
 \pagestyle{fancy}
 \fancyhf{}
 \fancyfoot[C]{\thepage}
@@ -28,12 +31,12 @@
   \renewcommand{\headrulewidth}{0pt}
   \renewcommand{\footrulewidth}{0pt}
 }
-\titleformat{\chapter}[display]
-  {\normalfont\huge\bfseries}
+\titleformat{\chapter}[block]
+  {\normalfont\Huge\bfseries\centering}
   {}
   {0pt}
   {}
-\titlespacing*{\chapter}{0pt}{12pt}{16pt}
+\titlespacing*{\chapter}{0pt}{0pt}{24pt}
 \setlength{\cftbeforetoctitleskip}{0pt}
 \setlength{\cftaftertoctitleskip}{12pt}
 \setlength{\cftbeforechapskip}{2pt}
