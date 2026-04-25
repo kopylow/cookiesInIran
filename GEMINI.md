@@ -44,3 +44,8 @@ pdflatex main.tex
 - **Source of Truth**: Always edit `cookiesInIran.txt` for content changes.
 - **LaTeX Formatting**: Any changes to the book's layout, fonts, or styling should be made in `tex-book/main.tex`.
 - **Automation**: If the chapter detection logic in `generate_manuscript.py` needs adjustment, ensure it continues to handle German special characters and LaTeX escapes properly.
+
+## Literary Style & Grammar
+- **Grammatical Tenses:** The manuscript employs a dynamic mix of tenses to build tension and control narrative distance.
+  - **Präteritum (Past Tense):** Used for the retrospective reporting of events, travel details, and chronological progression.
+  - **Präsens (Present Tense):** Strategically used during moments of high tension, emotional distress, or critical confrontations (e.g., facing jail time, interrogations) to pull the reader directly into the experience as it happens. For a complete chapter-by-chapter analysis, see `Zeitenanalyse.md`.
