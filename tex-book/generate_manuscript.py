@@ -43,15 +43,7 @@ def main() -> None:
             output.append(rf"\addcontentsline{{toc}}{{chapter}}{{{escaped}}}")
             output.append("")
         else:
-            paragraph_lines = []
             bullet_lines = []
-
-            def flush_paragraph() -> None:
-                if paragraph_lines:
-                    normalized = " ".join(paragraph_lines)
-                    output.append(escape_latex(normalized))
-                    output.append("")
-                    paragraph_lines.clear()
 
             def flush_bullets() -> None:
                 if bullet_lines:
@@ -65,17 +57,16 @@ def main() -> None:
             for line in block.splitlines():
                 stripped = line.strip()
                 if not stripped:
-                    flush_paragraph()
                     flush_bullets()
                     continue
                 if stripped.startswith("•"):
-                    flush_paragraph()
+                    flush_bullets()
                     bullet_lines.append(stripped.removeprefix("•").strip())
                 else:
                     flush_bullets()
-                    paragraph_lines.append(stripped)
+                    output.append(escape_latex(stripped))
+                    output.append("")
 
-            flush_paragraph()
             flush_bullets()
 
     TARGET.write_text("\n".join(output).rstrip() + "\n", encoding="utf-8")

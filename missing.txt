@@ -4,7 +4,5 @@ Governeur
 
 Rashtbaba und Bürgermeister
 
-Mr. Translation kennenlernen
-
 Verbesserungen:
 Schleifen abkürzen
