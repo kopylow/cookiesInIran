@@ -1,51 +1,38 @@
 # Cookies in Iran - Project Overview
 
-"Cookies in Iran" is a memoir by Anton Kopylow detailing his travel experiences in Iran with a 1993 Mercedes W124. The narrative focuses on a complex legal ordeal involving vehicle impoundment, customs regulations, and his interactions with the Iranian justice system.
+"Cookies in Iran" is a memoir by Anton Kopylow detailing his travel experiences in Iran. This project is localized into multiple languages and supports both print (LaTeX) and web (HTML) outputs.
 
 ## Directory Overview
 
-This directory contains the manuscript for the book in both raw text and LaTeX formats, along with automation scripts for processing the content.
-
-### Key Files
-- `cookiesInIran.txt`: The primary source manuscript (in German).
-- `Kekse.txt`: A detailed timeline and summary of the events described in the book (in German).
-- `missing.txt`: Notes and chapter ideas.
+- `locales/`: The single source of truth for all content.
+    - `de/manuscript.md`: German manuscript.
+    - `en/manuscript.md`: English manuscript (dummy).
+    - `ru/manuscript.md`: Russian manuscript (dummy).
+    - `fa/manuscript.md`: Farsi manuscript (dummy).
 - `tex-book/`: The LaTeX project directory for book production.
-    - `main.tex`: The master LaTeX file.
-    - `manuscript.tex`: The auto-generated LaTeX content (do not edit directly).
-    - `generate_manuscript.py`: Python script to convert `cookiesInIran.txt` into LaTeX format.
-    - `wordcount.tex`: Auto-generated file containing the manuscript's word count.
+    - `main.tex`: The master LaTeX template.
+- `web-landing-page/`: The website project directory.
+    - `manuscript_*.html`: Auto-generated HTML fragments for the site.
+- `build.py`: The master build script.
+- `cookiesInIran.txt`: Original German source manuscript (legacy).
 
 ## Usage
 
-### Generating the Manuscript
-To update the LaTeX manuscript from the source text, run the generation script from the root directory:
+### Generating All Outputs
+To update both the LaTeX books and the website fragments for all languages, run:
 
 ```bash
-python3 tex-book/generate_manuscript.py
+python3 build.py
 ```
 
 This script will:
-1. Read `cookiesInIran.txt`.
-2. Escape LaTeX special characters.
-3. Identify chapters based on line length and formatting.
-4. Update `tex-book/manuscript.tex` and `tex-book/wordcount.tex`.
-
-### Compiling the Book
-After generating the manuscript, navigate to the `tex-book/` directory and compile the PDF:
-
-```bash
-cd tex-book
-pdflatex main.tex
-```
-*(Note: You may need to run it twice for the table of contents to update correctly.)*
+1. Parse the Markdown files in `locales/`.
+2. Generate localized LaTeX manuscripts with professional typography (no widows/orphans).
+3. Compile PDFs for all languages using the appropriate engine (`pdflatex` for DE/EN, `xelatex` for RU/FA).
+4. Generate HTML snippets for the landing page with RTL support for Farsi.
+5. Clean up all temporary LaTeX junk files automatically.
 
 ## Development Conventions
-- **Source of Truth**: Always edit `cookiesInIran.txt` for content changes.
-- **LaTeX Formatting**: Any changes to the book's layout, fonts, or styling should be made in `tex-book/main.tex`.
-- **Automation**: If the chapter detection logic in `generate_manuscript.py` needs adjustment, ensure it continues to handle German special characters and LaTeX escapes properly.
-
-## Literary Style & Grammar
-- **Grammatical Tenses:** The manuscript employs a dynamic mix of tenses to build tension and control narrative distance.
-  - **Präteritum (Past Tense):** Used for the retrospective reporting of events, travel details, and chronological progression.
-  - **Präsens (Present Tense):** Strategically used during moments of high tension, emotional distress, or critical confrontations (e.g., facing jail time, interrogations) to pull the reader directly into the experience as it happens. For a complete chapter-by-chapter analysis, see `Zeitenanalyse.md`.
+- **Source of Truth**: Always edit the Markdown files in `locales/`.
+- **Styling**: Changes to the book's layout should be made in `tex-book/main.tex`.
+- **Typography**: The build script enforces strict rules against "Hurenkinder" (widows) and "Schusterjungen" (orphans).
