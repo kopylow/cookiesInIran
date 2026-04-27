@@ -19,6 +19,13 @@ LANG_MAP = {
     "de": "german", "en": "english", "ru": "russian", "fa": "persian"
 }
 
+TITLE_MAP = {
+    "de": "Kekse im Iran",
+    "en": "Cookies in Iran",
+    "ru": "Печенье в Иране",
+    "fa": "کلوچه‌ها در ایران"
+}
+
 def escape_latex(text: str) -> str:
     for char, replacement in LATEX_REPLACEMENTS.items():
         text = text.replace(char, replacement)
@@ -28,21 +35,46 @@ def md_to_latex(content: str) -> str:
     lines = content.splitlines()
     output = []
     in_list = False
+    
     for line in lines:
-        line = line.strip()
-        if not line:
-            if in_list: output.append("\\end{itemize}"); in_list = False
-            output.append(""); continue
-        if line.startswith("# "):
-            if in_list: output.append("\\end{itemize}"); in_list = False
-            output.append(f"\\chapter{{{escape_latex(line[2:].strip())}}}")
-        elif line.startswith("- "):
-            if not in_list: output.append("\\begin{itemize}"); in_list = True
-            output.append(f"  \\item {escape_latex(line[2:].strip())}")
-        else:
-            if in_list: output.append("\\end{itemize}"); in_list = False
-            output.append(escape_latex(line))
-    if in_list: output.append("\\end{itemize}")
+        # Robust stripping including NBSP
+        clean_line = line.strip().replace('\u00a0', '').strip()
+        
+        # Handle empty lines
+        if not clean_line:
+            if in_list:
+                output.append("\\end{itemize}")
+                in_list = False
+            output.append("")
+            continue
+            
+        # Handle Headers (Chapters)
+        if clean_line.startswith("# "):
+            if in_list:
+                output.append("\\end{itemize}")
+                in_list = False
+            title = clean_line[2:].strip()
+            output.append(f"\\chapter{{{escape_latex(title)}}}")
+            continue
+            
+        # Handle Lists
+        if clean_line.startswith("- "):
+            if not in_list:
+                output.append("\\begin{itemize}")
+                in_list = True
+            output.append(f"  \\item {escape_latex(clean_line[2:].strip())}")
+            continue
+            
+        # Handle normal text
+        if in_list:
+            output.append("\\end{itemize}")
+            in_list = False
+        
+        output.append(escape_latex(clean_line) + "\n")
+        
+    if in_list:
+        output.append("\\end{itemize}")
+        
     return "\n".join(output)
 
 def md_to_html(content: str, lang: str) -> str:
@@ -51,7 +83,7 @@ def md_to_html(content: str, lang: str) -> str:
     dir_attr = ' dir="rtl"' if lang == "fa" else ""
     in_list = False
     for line in lines:
-        line = line.strip()
+        line = line.strip().replace('\u00a0', '').strip()
         if not line:
             if in_list: output.append("</ul>"); in_list = False
             continue
@@ -78,7 +110,7 @@ def build_pdf(lang: str):
     template = (TEX_DIR / "main.tex").read_text(encoding="utf-8")
     
     # Typography settings
-    typo_fix = ["\\widowpenalty=10000", "\\clubpenalty=10000", "\\brokenpenalty=10000", "\\displaywidowpenalty=10000"]
+    typo_fix = ["\\widowpenalty=1000", "\\clubpenalty=1000", "\\brokenpenalty=500", "\\displaywidowpenalty=500"]
     
     # Language & Font Setup
     poly_lang = LANG_MAP.get(lang, "english")
@@ -99,6 +131,8 @@ def build_pdf(lang: str):
     # Remove word count lines from template
     template = re.sub(r'.*?wordcount.*?\n', '', template)
     
+    template = template.replace("Cookies in Iran", TITLE_MAP.get(lang, "Cookies in Iran"))
+    
     template = template.replace("\\documentclass[12pt,openany]{book}", "\\documentclass[12pt,openany]{book}\n" + "\n".join(lang_setup))
     
     if lang == "fa":
@@ -112,9 +146,14 @@ def build_pdf(lang: str):
     success = True
     try:
         for _ in range(2):
-            subprocess.run(["xelatex", "-interaction=nonstopmode", temp_main_file], 
-                           cwd=TEX_DIR, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    except:
+            result = subprocess.run(["xelatex", "-interaction=nonstopmode", temp_main_file], 
+                           cwd=TEX_DIR, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            if result.returncode != 0:
+                print(f"XeLaTeX Error:\n{result.stdout}\n{result.stderr}")
+                success = False
+                break
+    except Exception as e:
+        print(f"Exception: {e}")
         success = False
 
     # CLEANUP
@@ -125,6 +164,10 @@ def build_pdf(lang: str):
     (TEX_DIR / manuscript_file).unlink(missing_ok=True)
 
     if success:
+        pdf_path = TEX_DIR / f"main_{lang}.pdf"
+        if pdf_path.exists():
+            new_name = TITLE_MAP.get(lang, "Cookies in Iran").replace(" ", "_") + ".pdf"
+            pdf_path.rename(TEX_DIR / new_name)
         print(f"  [OK] {lang.upper()}: PDF bereit.       ")
     else:
         print(f"  [FAIL] {lang.upper()}: Fehler beim PDF-Build.")
