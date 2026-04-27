@@ -1,7 +1,7 @@
 # Who you gonna call?
 Meine Reise begann vor einiger Zeit in einem Auto, das man so auf den Straßen nicht alle Tage sieht: ein Mercedes W124, Baujahr 1993, ehemaliges Notarztfahrzeug. Mit seinem markanten Aufbau sieht er ein bisschen aus wie der Wagen der Ghostbusters. Und genau so fühlte es sich auch an: wie ein Abenteuer, bei dem man nie genau weiß, welches „Gespenst“ hinter der nächsten Kurve wartet. Der W124 war mein mobiles Zuhause, ein treuer Panzer aus Stahl, der mich durch verschiedenste Kulturen und Landschaften trug.
 Doch kein Land auf dieser Reise hat mich emotional so begeistert und gleichzeitig herausgefordert wie der Iran.
-Was ich hier erzähle, ist nur ein Bruchteil meiner Erlebnisse dort.Es ist die Geschichte des wohl abenteuerlichsten und zugleich nervenaufreibendsten Monats meines Lebens. Es war eine Zeit, in der die unendliche Hilfsbereitschaft der Menschen direkt auf die unnachgiebige Härte eines gnadenlosen Systems prallte.
+Was ich hier erzähle, ist nur ein Bruchteil meiner Erlebnisse dort. Es ist die Geschichte des wohl abenteuerlichsten und zugleich nervenaufreibendsten Monats meines Lebens. Es war eine Zeit, in der die unendliche Hilfsbereitschaft der Menschen direkt auf die unnachgiebige Härte eines gnadenlosen Systems prallte.
 Ich weiß, die unten stehenden Zeilen sehen nach viel aus, aber bitte lest sie bis zum Schluss. Ich kann euch versprechen: Es wird sich lohnen. Ihr werdet verstehen, wie eine einfache Schachtel Kekse in einem unbarmherzigen System plötzlich über Freiheit und Schicksal entscheiden kann.
 
 # Gehe nicht über Los
