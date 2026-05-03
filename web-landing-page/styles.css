@@ -77,7 +77,8 @@ body[data-theme="dark"] {
 
 .chapter > * {
     width: 100%;
-    max-width: var(--container-max-width);
+    max-width: var(--current-max-width);
+    line-height: var(--current-line-height);
 }
 
 .chapter[data-tense="present"] {
@@ -95,6 +96,9 @@ body[data-theme="dark"] .chapter[data-tense="present"] {
     --current-text: var(--color-text-dark-cold);
     --current-accent: #5e6b73; /* Dead flat gray */
     --current-margin: var(--margin-restricted);
+    --current-max-width: var(--container-max-width-restricted);
+    --current-line-height: var(--line-height-restricted);
+    --current-text-align: left;
 }
 
 /* RTL Override */
