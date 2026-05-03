@@ -97,7 +97,7 @@ def md_to_html(content: str, lang: str) -> str:
     dir_attr = ' dir="rtl"' if lang == "fa" else ""
     in_list = False
     
-    present_indices = [1, 4, 5, 6]
+    present_indices = [1, 11, 16, 17, 19, 21]
     images = [
         "Pics/IMG20250326155129.jpg",
         "Pics/IMG20250404174150.jpg",
