@@ -55,12 +55,19 @@ body {
     --current-text: var(--color-text-light);
     --current-accent: var(--color-accent-light);
     --current-margin: var(--margin-fluid);
+    --current-max-width: var(--container-max-width-fluid);
+    --current-line-height: var(--line-height-fluid);
+    --current-text-align: justify;
 }
 
 body[data-theme="dark"] {
     --current-bg: var(--color-bg-dark);
     --current-text: var(--color-text-dark);
     --current-accent: var(--color-accent-dark);
+    --current-margin: var(--margin-fluid);
+    --current-max-width: var(--container-max-width-fluid);
+    --current-line-height: var(--line-height-fluid);
+    --current-text-align: justify;
 }
 
 .chapter {
