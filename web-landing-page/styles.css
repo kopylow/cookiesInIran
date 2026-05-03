@@ -297,8 +297,6 @@ html[dir="rtl"] #main-content.drawer-open-comments {
     width: 100vw;
     height: 100vh;
     margin-inline-start: calc(-50vw + 50%);
-    margin-top: 4rem;
-    margin-bottom: 4rem;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
