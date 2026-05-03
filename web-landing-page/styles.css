@@ -110,7 +110,7 @@ body {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background-image: url('../Pics/WhatsApp_Image_2026-05-03_at_16.43.50.jpeg');
+    background-image: url('Pics/WhatsApp_Image_2026-05-03_at_16.43.50.jpeg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed; /* Parallax effect */

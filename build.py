@@ -99,15 +99,15 @@ def md_to_html(content: str, lang: str) -> str:
     
     praesens_indices = [1, 4, 5, 6]
     images = [
-        "../Pics/IMG20250326155129.jpg",
-        "../Pics/IMG20250404174150.jpg",
-        "../Pics/IMG20250406120444.jpg",
-        "../Pics/IMG20250409181112.jpg",
-        "../Pics/IMG20250418180248.jpg",
-        "../Pics/IMG20250422144952.jpg",
-        "../Pics/IMG20260115120128.jpg",
-        "../Pics/IMG20260222151627.jpg",
-        "../Pics/WhatsApp_Image_2026-05-03_at_16.44.59.jpeg"
+        "Pics/IMG20250326155129.jpg",
+        "Pics/IMG20250404174150.jpg",
+        "Pics/IMG20250406120444.jpg",
+        "Pics/IMG20250409181112.jpg",
+        "Pics/IMG20250418180248.jpg",
+        "Pics/IMG20250422144952.jpg",
+        "Pics/IMG20260115120128.jpg",
+        "Pics/IMG20260222151627.jpg",
+        "Pics/WhatsApp_Image_2026-05-03_at_16.44.59.jpeg"
     ]
     
     ch_index = -1
@@ -234,6 +234,11 @@ def main():
         content = md_file.read_text(encoding="utf-8")
         (WEB_DIR / f"manuscript_{lang}.html").write_text(md_to_html(content, lang), encoding="utf-8")
         build_pdf(lang)
+
+    print("\nKopiere Bilder in das Web-Verzeichnis...")
+    if (WEB_DIR / "Pics").exists():
+        shutil.rmtree(WEB_DIR / "Pics")
+    shutil.copytree(ROOT / "Pics", WEB_DIR / "Pics")
 
     print("\nFertig!")
 
