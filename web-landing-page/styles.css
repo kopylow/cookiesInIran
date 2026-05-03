@@ -125,7 +125,7 @@ html[dir="rtl"] {
 body {
     font-family: var(--font-latin);
     font-size: var(--text-base);
-    line-height: var(--line-height-base);
+    line-height: var(--line-height-fluid);
     background-color: var(--current-bg);
     color: var(--current-text);
     overflow-x: hidden;
@@ -148,7 +148,6 @@ body {
     align-items: center;
     text-align: center;
     color: #fff;
-    filter: grayscale(var(--filter-grayscale));
 }
 
 #hero::before {
@@ -220,7 +219,7 @@ body {
     align-items: center;
     padding: 0 1.5rem;
     z-index: var(--z-index-topbar);
-    transition: transform 0.3s ease, background-color 0.8s ease, border-color 0.8s ease;
+    transition: transform 0.3s ease;
 }
 
 #top-bar.hidden {
@@ -273,7 +272,7 @@ select {
 #main-content {
     display: flex;
     justify-content: center;
-    padding: 4rem var(--current-margin);
+    padding: 0;
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -368,7 +367,7 @@ html[dir="rtl"] #main-content.drawer-open-comments {
     inset-inline-start: calc(-1 * var(--drawer-width));
     border-inline-start: none;
     border-inline-end: 1px solid rgba(128, 128, 128, 0.2);
-    transition: inset-inline-start 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.8s ease;
+    transition: inset-inline-start 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #drawer-book.open {
@@ -414,11 +413,4 @@ html[dir="rtl"] #main-content.drawer-open-comments {
 }
 .chapter-link:hover {
     color: var(--current-accent);
-}
-}
-color: var(--current-accent);
-}
-}
-rent-accent);
-}
 }
