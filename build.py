@@ -120,7 +120,7 @@ def md_to_html(content: str, lang: str) -> str:
         if line.startswith("# "):
             if in_list: output.append("</ul>"); in_list = False
             if ch_index >= 0:
-                btn_text = "Discuss this chapter" if lang != "de" else "Dieses Kapitel diskutieren"
+                btn_text = "Discuss this chapter" if lang != "de" else "Kapitel diskutieren"
                 output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
                 output.append('</section>')
                 
@@ -142,7 +142,7 @@ def md_to_html(content: str, lang: str) -> str:
     if in_list: output.append("</ul>")
     
     if ch_index >= 0:
-        btn_text = "Discuss this chapter" if lang != "de" else "Dieses Kapitel diskutieren"
+        btn_text = "Discuss this chapter" if lang != "de" else "Kapitel diskutieren"
         output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
         output.append('</section>')
         
