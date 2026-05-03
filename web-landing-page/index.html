@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de" dir="ltr" data-theme="light" data-state="praeteritum">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kekse im Iran</title>
+    <!-- Google Fonts: IBM Plex Sans & IBM Plex Arabic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Arabic:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Smart Top Bar -->
+    <header id="top-bar">
+        <div class="top-bar-left">
+            <button id="btn-book" class="nav-btn" aria-label="Open Chapter Index">Book</button>
+        </div>
+        <div class="top-bar-center">
+            <button id="btn-comments" class="nav-btn">Comments</button>
+            <a href="#" class="nav-link">Support</a>
+            <a href="#" class="nav-link">Contact</a>
+        </div>
+        <div class="top-bar-right">
+            <select id="lang-toggle" aria-label="Change language">
+                <option value="de" selected>DE</option>
+                <option value="en">EN</option>
+                <option value="ru">RU</option>
+                <option value="fa">FA</option>
+            </select>
+            <button id="theme-toggle" aria-label="Toggle Dark/Light Mode">◑</button>
+        </div>
+    </header>
+
+    <!-- Mechanical Drawers -->
+    <div id="drawer-book" class="drawer">
+        <div class="drawer-header">
+            <h2>Index</h2>
+            <button class="close-drawer" aria-label="Close drawer">×</button>
+        </div>
+        <div class="drawer-content" id="chapter-index">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <div id="drawer-comments" class="drawer">
+        <div class="drawer-header">
+            <h2>Comments</h2>
+            <button class="close-drawer" aria-label="Close drawer">×</button>
+        </div>
+        <div class="drawer-content">
+            <p>Discussion thread for the current chapter...</p>
+        </div>
+    </div>
+
+    <div id="drawer-overlay"></div>
+
+    <!-- Cinematic Digital Cover -->
+    <div id="hero">
+        <div class="hero-content">
+            <h1>Kekse im Iran</h1>
+            <p class="subtitle">Steel & Dust. The Warmth of People.</p>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="arrow-down"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <article id="manuscript-container">
+            <!-- Dynamically loaded HTML fragments go here -->
+            <div class="loading">Loading manuscript...</div>
+        </article>
+    </main>
+
+    <script src="main.js"></script>
+</body>
+</html>

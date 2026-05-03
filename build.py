@@ -26,6 +26,20 @@ TITLE_MAP = {
     "fa": "کلوچه‌ها در ایران"
 }
 
+AUTHOR_MAP = {
+    "de": "Anton Kopylow",
+    "en": "Anton Kopylow",
+    "ru": "Антон Копылов",
+    "fa": "آنتون کپیلوف"
+}
+
+COPYRIGHT_MAP = {
+    "de": "© 2026 Anton Kopylow. Alle Rechte vorbehalten.",
+    "en": "© 2026 Anton Kopylow. All rights reserved.",
+    "ru": "© 2026 Антон Копылов. Все права защищены.",
+    "fa": "© ۲۰۲۶ آنتون کپیلوف. تمامی حقوق محفوظ است."
+}
+
 def escape_latex(text: str) -> str:
     for char, replacement in LATEX_REPLACEMENTS.items():
         text = text.replace(char, replacement)
@@ -132,6 +146,8 @@ def build_pdf(lang: str):
     template = re.sub(r'.*?wordcount.*?\n', '', template)
     
     template = template.replace("Cookies in Iran", TITLE_MAP.get(lang, "Cookies in Iran"))
+    template = template.replace("[AUTHOR_NAME]", AUTHOR_MAP.get(lang, "Anton Kopylow"))
+    template = template.replace("[COPYRIGHT_TEXT]", COPYRIGHT_MAP.get(lang, "© 2026 Anton Kopylow. All rights reserved."))
     
     template = template.replace("\\documentclass[12pt,openany]{book}", "\\documentclass[12pt,openany]{book}\n" + "\n".join(lang_setup))
     
