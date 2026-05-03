@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Post-load setup
             updateLangDirection(lang);
             buildChapterIndex();
-            setupIntersectionObserver();
             setupDiscussButtons();
         } catch (error) {
             manuscriptContainer.innerHTML = `<div class="error">Error loading manuscript: ${error.message}</div>`;
@@ -115,30 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
         drawerOverlay.classList.remove('visible');
         mainContent.classList.remove('drawer-open-book');
         mainContent.classList.remove('drawer-open-comments');
-    }
-
-    function openCommentsDrawer() {
-        closeAllDrawers();
-        drawerComments.classList.add('open');
-        drawerOverlay.classList.add('visible');
-        mainContent.classList.add('drawer-open-comments');
-    }
-
-    btnBook.addEventListener('click', () => {
-        closeAllDrawers();
-        drawerBook.classList.add('open');
-        drawerOverlay.classList.add('visible');
-        mainContent.classList.add('drawer-open-book');
-    });
-
-    btnComments.addEventListener('click', openCommentsDrawer);
-
-    closeBtns.forEach(btn => btn.addEventListener('click', closeAllDrawers));
-    drawerOverlay.addEventListener('click', closeAllDrawers);
-
-    // --- Initialize ---
-    loadManuscript(currentLang);
-});ove('drawer-open-comments');
     }
 
     function openCommentsDrawer() {
