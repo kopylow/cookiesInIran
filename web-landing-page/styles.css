@@ -323,7 +323,7 @@ html[dir="rtl"] #main-content.drawer-open-comments {
 .discuss-wrapper {
     margin-top: 3rem;
     margin-bottom: 1rem;
-    text-align: center;
+    text-align: end;
 }
 
 .discuss-btn {
