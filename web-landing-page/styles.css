@@ -13,24 +13,28 @@
     /* Base Font Sizing */
     --text-base: 1.125rem;
     --text-h1: 2.5rem;
-    --line-height-base: 1.6;
+    
+    /* Fluid (Past) vs Restricted (Present) Properties */
+    --line-height-fluid: 1.6;
+    --line-height-restricted: 1.3;
+    --container-max-width-fluid: 800px;
+    --container-max-width-restricted: 550px;
 
     /* Theme: Light (Default) */
     --color-bg-light: #f7f5f0; /* Dusty, warm off-white */
     --color-text-light: #1a1a1a; /* Warm espresso-black */
     --color-accent-light: #b5651d; /* Dusty terracotta/gold */
-    --color-bg-light-cold: #f0f2f5; /* Clinical light gray */
-    --color-text-light-cold: #2c3e50; /* Sharp slate-gray */
+    --color-bg-light-cold: #ffffff; /* Harsh paper-white */
+    --color-text-light-cold: #000000; /* Pure digital black */
 
     /* Theme: Dark */
     --color-bg-dark: #1e1e1e; /* Rich charcoal */
     --color-text-dark: #f0ecd8; /* Soft cream */
     --color-accent-dark: #d4a373; /* Warm dust */
-    --color-bg-dark-cold: #0a0e17; /* Midnight blue-black */
-    --color-text-dark-cold: #e0e6ed; /* Icy white */
+    --color-bg-dark-cold: #000000; /* Pitch black */
+    --color-text-dark-cold: #ffffff; /* Glaring white */
 
     /* Structural / Layout */
-    --container-max-width: 800px;
     --margin-fluid: 2rem;
     --margin-restricted: 1rem;
     
@@ -81,6 +85,9 @@ body[data-theme="dark"] {
     --current-text: var(--color-text-light-cold);
     --current-accent: #7f8c8d; /* Dead flat gray */
     --current-margin: var(--margin-restricted);
+    --current-max-width: var(--container-max-width-restricted);
+    --current-line-height: var(--line-height-restricted);
+    --current-text-align: left;
 }
 
 body[data-theme="dark"] .chapter[data-tense="present"] {
@@ -290,7 +297,7 @@ html[dir="rtl"] #main-content.drawer-open-comments {
 
 #manuscript-container p {
     margin-bottom: 1.5rem;
-    text-align: justify;
+    text-align: var(--current-text-align);
 }
 
 .airlock {
