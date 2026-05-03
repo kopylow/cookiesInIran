@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const tense = entry.target.dataset.tense || 'praeteritum';
+                    const tense = entry.target.dataset.tense || 'past';
                     document.body.dataset.state = tense;
                 }
             });

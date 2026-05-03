@@ -97,7 +97,7 @@ def md_to_html(content: str, lang: str) -> str:
     dir_attr = ' dir="rtl"' if lang == "fa" else ""
     in_list = False
     
-    praesens_indices = [1, 4, 5, 6]
+    present_indices = [1, 4, 5, 6]
     images = [
         "Pics/IMG20250326155129.jpg",
         "Pics/IMG20250404174150.jpg",
@@ -124,7 +124,7 @@ def md_to_html(content: str, lang: str) -> str:
                 output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
                 
             ch_index += 1
-            tense = "praesens" if ch_index in praesens_indices else "praeteritum"
+            tense = "present" if ch_index in present_indices else "past"
             
             if ch_index > 0:
                 img = images[(ch_index - 1) % len(images)]

@@ -45,7 +45,7 @@
    2. State Machine Implementation
    -------------------------------------------------------------------------- */
 
-/* Default: Light Theme + Präteritum */
+/* Default: Light Theme + Past */
 body {
     --current-bg: var(--color-bg-light);
     --current-text: var(--color-text-light);
@@ -54,15 +54,15 @@ body {
     --filter-grayscale: 0%;
 }
 
-/* Dark Theme + Präteritum */
+/* Dark Theme + Past */
 body[data-theme="dark"] {
     --current-bg: var(--color-bg-dark);
     --current-text: var(--color-text-dark);
     --current-accent: var(--color-accent-dark);
 }
 
-/* Light Theme + Präsens */
-body[data-theme="light"][data-state="praesens"] {
+/* Light Theme + Present */
+body[data-theme="light"][data-state="present"] {
     --current-bg: var(--color-bg-light-cold);
     --current-text: var(--color-text-light-cold);
     --current-accent: #7f8c8d; /* Dead flat gray */
@@ -70,8 +70,8 @@ body[data-theme="light"][data-state="praesens"] {
     --filter-grayscale: 100%;
 }
 
-/* Dark Theme + Präsens */
-body[data-theme="dark"][data-state="praesens"] {
+/* Dark Theme + Present */
+body[data-theme="dark"][data-state="present"] {
     --current-bg: var(--color-bg-dark-cold);
     --current-text: var(--color-text-dark-cold);
     --current-accent: #5e6b73; /* Dead flat gray */
