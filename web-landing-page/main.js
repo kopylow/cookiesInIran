@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const observerOptions = {
             root: null,
-            rootMargin: '-20% 0px -80% 0px', // Trigger when header hits top 20% of viewport
+            rootMargin: '-20% 0px -50% 0px', // Trigger when header is in the upper half of the viewport
             threshold: 0
         };
 
