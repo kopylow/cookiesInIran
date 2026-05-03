@@ -83,29 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 2. Tense-Driven UI State Machine (Intersection Observer) ---
-
-    function setupIntersectionObserver() {
-        const headers = manuscriptContainer.querySelectorAll('h1');
-        
-        const observerOptions = {
-            root: null,
-            rootMargin: '-20% 0px -50% 0px', // Trigger when header is in the upper half of the viewport
-            threshold: 0
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const tense = entry.target.dataset.tense || 'past';
-                    document.body.dataset.state = tense;
-                }
-            });
-        }, observerOptions);
-
-        headers.forEach(h1 => observer.observe(h1));
-    }
-
     // --- 3. UI Interactions ---
 
     // Theme Toggle
@@ -138,6 +115,30 @@ document.addEventListener('DOMContentLoaded', () => {
         drawerOverlay.classList.remove('visible');
         mainContent.classList.remove('drawer-open-book');
         mainContent.classList.remove('drawer-open-comments');
+    }
+
+    function openCommentsDrawer() {
+        closeAllDrawers();
+        drawerComments.classList.add('open');
+        drawerOverlay.classList.add('visible');
+        mainContent.classList.add('drawer-open-comments');
+    }
+
+    btnBook.addEventListener('click', () => {
+        closeAllDrawers();
+        drawerBook.classList.add('open');
+        drawerOverlay.classList.add('visible');
+        mainContent.classList.add('drawer-open-book');
+    });
+
+    btnComments.addEventListener('click', openCommentsDrawer);
+
+    closeBtns.forEach(btn => btn.addEventListener('click', closeAllDrawers));
+    drawerOverlay.addEventListener('click', closeAllDrawers);
+
+    // --- Initialize ---
+    loadManuscript(currentLang);
+});ove('drawer-open-comments');
     }
 
     function openCommentsDrawer() {

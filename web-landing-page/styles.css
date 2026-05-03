@@ -45,33 +45,45 @@
    2. State Machine Implementation
    -------------------------------------------------------------------------- */
 
-/* Default: Light Theme + Past */
+/* Default: Light Theme */
 body {
     --current-bg: var(--color-bg-light);
     --current-text: var(--color-text-light);
     --current-accent: var(--color-accent-light);
     --current-margin: var(--margin-fluid);
-    --filter-grayscale: 0%;
 }
 
-/* Dark Theme + Past */
 body[data-theme="dark"] {
     --current-bg: var(--color-bg-dark);
     --current-text: var(--color-text-dark);
     --current-accent: var(--color-accent-dark);
 }
 
-/* Light Theme + Present */
-body[data-theme="light"][data-state="present"] {
+.chapter {
+    width: 100vw;
+    margin-inline-start: calc(-50vw + 50%);
+    padding: 6rem var(--current-margin);
+    background-color: var(--current-bg);
+    color: var(--current-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.chapter > * {
+    width: 100%;
+    max-width: var(--container-max-width);
+}
+
+.chapter[data-tense="present"] {
     --current-bg: var(--color-bg-light-cold);
     --current-text: var(--color-text-light-cold);
     --current-accent: #7f8c8d; /* Dead flat gray */
     --current-margin: var(--margin-restricted);
-    --filter-grayscale: 100%;
 }
 
-/* Dark Theme + Present */
-body[data-theme="dark"][data-state="present"] {
+body[data-theme="dark"] .chapter[data-tense="present"] {
     --current-bg: var(--color-bg-dark-cold);
     --current-text: var(--color-text-dark-cold);
     --current-accent: #5e6b73; /* Dead flat gray */
@@ -262,7 +274,6 @@ html[dir="rtl"] #main-content.drawer-open-comments {
 
 #manuscript-container {
     width: 100%;
-    max-width: var(--container-max-width);
 }
 
 #manuscript-container h1 {
@@ -381,5 +392,8 @@ html[dir="rtl"] #main-content.drawer-open-comments {
 }
 }
 color: var(--current-accent);
+}
+}
+rent-accent);
 }
 }

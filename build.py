@@ -122,6 +122,7 @@ def md_to_html(content: str, lang: str) -> str:
             if ch_index >= 0:
                 btn_text = "Discuss this chapter" if lang != "de" else "Dieses Kapitel diskutieren"
                 output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
+                output.append('</section>')
                 
             ch_index += 1
             tense = "present" if ch_index in present_indices else "past"
@@ -130,7 +131,8 @@ def md_to_html(content: str, lang: str) -> str:
                 img = images[(ch_index - 1) % len(images)]
                 output.append(f'<div class="airlock" style="background-image: url(\'{img}\');"></div>')
                 
-            output.append(f'<h1{dir_attr} data-tense="{tense}">{line[2:].strip()}</h1>')
+            output.append(f'<section class="chapter" data-tense="{tense}">')
+            output.append(f'<h1{dir_attr}>{line[2:].strip()}</h1>')
         elif line.startswith("- "):
             if not in_list: output.append(f"<ul{dir_attr}>"); in_list = True
             output.append(f"  <li>{line[2:].strip()}</li>")
@@ -142,6 +144,7 @@ def md_to_html(content: str, lang: str) -> str:
     if ch_index >= 0:
         btn_text = "Discuss this chapter" if lang != "de" else "Dieses Kapitel diskutieren"
         output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
+        output.append('</section>')
         
     return "\n".join(output)
 
