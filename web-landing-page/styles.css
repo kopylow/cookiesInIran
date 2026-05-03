@@ -76,7 +76,6 @@ body[data-theme="dark"][data-state="present"] {
     --current-text: var(--color-text-dark-cold);
     --current-accent: #5e6b73; /* Dead flat gray */
     --current-margin: var(--margin-restricted);
-    --filter-grayscale: 100%;
 }
 
 /* RTL Override */
@@ -292,8 +291,6 @@ html[dir="rtl"] #main-content.drawer-open-comments {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    filter: grayscale(var(--filter-grayscale));
-    transition: filter 0.8s ease;
 }
 
 .discuss-wrapper {
@@ -381,4 +378,8 @@ html[dir="rtl"] #main-content.drawer-open-comments {
 }
 .chapter-link:hover {
     color: var(--current-accent);
+}
+}
+color: var(--current-accent);
+}
 }
