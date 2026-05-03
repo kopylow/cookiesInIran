@@ -247,7 +247,20 @@ select {
     display: flex;
     justify-content: center;
     padding: 4rem var(--current-margin);
-    transition: padding 0.8s ease;
+    transition: padding 0.8s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#main-content.drawer-open-book {
+    transform: translateX(var(--drawer-width));
+}
+#main-content.drawer-open-comments {
+    transform: translateX(calc(-1 * var(--drawer-width)));
+}
+html[dir="rtl"] #main-content.drawer-open-book {
+    transform: translateX(calc(-1 * var(--drawer-width)));
+}
+html[dir="rtl"] #main-content.drawer-open-comments {
+    transform: translateX(var(--drawer-width));
 }
 
 #manuscript-container {
@@ -270,6 +283,31 @@ select {
 #manuscript-container p {
     margin-bottom: 1.5rem;
     text-align: justify;
+}
+
+.airlock {
+    width: 100vw;
+    height: 100vh;
+    margin-inline-start: calc(-50vw + 50%);
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    filter: grayscale(var(--filter-grayscale));
+    transition: filter 0.8s ease;
+}
+
+.discuss-wrapper {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.discuss-btn {
+    border: 1px solid var(--current-text);
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
 }
 
 /* --------------------------------------------------------------------------
@@ -323,11 +361,10 @@ select {
 #drawer-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: transparent;
     z-index: var(--z-index-overlay);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s ease;
 }
 
 #drawer-overlay.visible {

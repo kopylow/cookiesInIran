@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const manuscriptContainer = document.getElementById('manuscript-container');
+    const mainContent = document.getElementById('main-content');
     const chapterIndex = document.getElementById('chapter-index');
     const langToggle = document.getElementById('lang-toggle');
     const themeToggle = document.getElementById('theme-toggle');
@@ -18,10 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLang = 'de';
     let currentTheme = 'light';
 
-    // Chapters that represent high-tension "Präsens" (Bureaucratic/Crisis)
-    // We match by index or text snippet since chapter titles might change per language
-    const praesensChaptersIndices = [1, 4, 5, 6]; 
-
     // --- 1. Dynamic Content Loading ---
     
     async function loadManuscript(lang) {
@@ -36,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateLangDirection(lang);
             buildChapterIndex();
             setupIntersectionObserver();
+            setupDiscussButtons();
         } catch (error) {
             manuscriptContainer.innerHTML = `<div class="error">Error loading manuscript: ${error.message}</div>`;
         }
@@ -66,10 +64,22 @@ document.addEventListener('DOMContentLoaded', () => {
             
             link.addEventListener('click', (e) => {
                 closeAllDrawers();
-                // Smooth scroll via CSS or JS is optional, native anchor link works fine
             });
 
             chapterIndex.appendChild(link);
+        });
+    }
+    
+    function setupDiscussButtons() {
+        const buttons = manuscriptContainer.querySelectorAll('.discuss-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const chapterId = e.target.dataset.chapter;
+                // Here you would normally update the comments drawer content 
+                // to load the specific thread for `chapterId`.
+                // For now, we just open the drawer.
+                openCommentsDrawer();
+            });
         });
     }
 
@@ -87,14 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const index = parseInt(entry.target.dataset.index, 10);
-                    const isPraesens = praesensChaptersIndices.includes(index);
-                    
-                    if (isPraesens) {
-                        document.body.dataset.state = 'praesens';
-                    } else {
-                        document.body.dataset.state = 'praeteritum';
-                    }
+                    const tense = entry.target.dataset.tense || 'praeteritum';
+                    document.body.dataset.state = tense;
                 }
             });
         }, observerOptions);
@@ -132,17 +136,25 @@ document.addEventListener('DOMContentLoaded', () => {
         drawerBook.classList.remove('open');
         drawerComments.classList.remove('open');
         drawerOverlay.classList.remove('visible');
+        mainContent.classList.remove('drawer-open-book');
+        mainContent.classList.remove('drawer-open-comments');
+    }
+
+    function openCommentsDrawer() {
+        closeAllDrawers();
+        drawerComments.classList.add('open');
+        drawerOverlay.classList.add('visible');
+        mainContent.classList.add('drawer-open-comments');
     }
 
     btnBook.addEventListener('click', () => {
+        closeAllDrawers();
         drawerBook.classList.add('open');
         drawerOverlay.classList.add('visible');
+        mainContent.classList.add('drawer-open-book');
     });
 
-    btnComments.addEventListener('click', () => {
-        drawerComments.classList.add('open');
-        drawerOverlay.classList.add('visible');
-    });
+    btnComments.addEventListener('click', openCommentsDrawer);
 
     closeBtns.forEach(btn => btn.addEventListener('click', closeAllDrawers));
     drawerOverlay.addEventListener('click', closeAllDrawers);

@@ -96,6 +96,22 @@ def md_to_html(content: str, lang: str) -> str:
     output = []
     dir_attr = ' dir="rtl"' if lang == "fa" else ""
     in_list = False
+    
+    praesens_indices = [1, 4, 5, 6]
+    images = [
+        "../Pics/IMG20250326155129.jpg",
+        "../Pics/IMG20250404174150.jpg",
+        "../Pics/IMG20250406120444.jpg",
+        "../Pics/IMG20250409181112.jpg",
+        "../Pics/IMG20250418180248.jpg",
+        "../Pics/IMG20250422144952.jpg",
+        "../Pics/IMG20260115120128.jpg",
+        "../Pics/IMG20260222151627.jpg",
+        "../Pics/WhatsApp_Image_2026-05-03_at_16.44.59.jpeg"
+    ]
+    
+    ch_index = -1
+    
     for line in lines:
         line = line.strip().replace('\u00a0', '').strip()
         if not line:
@@ -103,7 +119,18 @@ def md_to_html(content: str, lang: str) -> str:
             continue
         if line.startswith("# "):
             if in_list: output.append("</ul>"); in_list = False
-            output.append(f"<h1{dir_attr}>{line[2:].strip()}</h1>")
+            if ch_index >= 0:
+                btn_text = "Discuss this chapter" if lang != "de" else "Dieses Kapitel diskutieren"
+                output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
+                
+            ch_index += 1
+            tense = "praesens" if ch_index in praesens_indices else "praeteritum"
+            
+            if ch_index > 0:
+                img = images[(ch_index - 1) % len(images)]
+                output.append(f'<div class="airlock" style="background-image: url(\'{img}\');"></div>')
+                
+            output.append(f'<h1{dir_attr} data-tense="{tense}">{line[2:].strip()}</h1>')
         elif line.startswith("- "):
             if not in_list: output.append(f"<ul{dir_attr}>"); in_list = True
             output.append(f"  <li>{line[2:].strip()}</li>")
@@ -111,6 +138,11 @@ def md_to_html(content: str, lang: str) -> str:
             if in_list: output.append("</ul>"); in_list = False
             output.append(f"<p{dir_attr}>{line}</p>")
     if in_list: output.append("</ul>")
+    
+    if ch_index >= 0:
+        btn_text = "Discuss this chapter" if lang != "de" else "Dieses Kapitel diskutieren"
+        output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
+        
     return "\n".join(output)
 
 def build_pdf(lang: str):
