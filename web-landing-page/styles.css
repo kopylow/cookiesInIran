@@ -40,7 +40,7 @@
     
     /* Drawer */
     --drawer-width: 350px;
-    --z-index-topbar: 1000;
+    --z-index-topbar: 2500;
     --z-index-drawer: 2000;
     --z-index-overlay: 1500;
 }
@@ -299,24 +299,21 @@ select {
 /* --------------------------------------------------------------------------
    6. Manuscript Container & Typography
    -------------------------------------------------------------------------- */
+#page-wrapper {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 #main-content {
     display: flex;
     justify-content: center;
     padding: 0;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#main-content.drawer-open-book {
-    transform: translateX(var(--drawer-width));
+#page-wrapper.drawer-open-fullscreen {
+    transform: translateX(-100vw);
 }
-#main-content.drawer-open-comments {
-    transform: translateX(calc(-1 * var(--drawer-width)));
-}
-html[dir="rtl"] #main-content.drawer-open-book {
-    transform: translateX(calc(-1 * var(--drawer-width)));
-}
-html[dir="rtl"] #main-content.drawer-open-comments {
-    transform: translateX(var(--drawer-width));
+html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
+    transform: translateX(100vw);
 }
 
 #manuscript-container {
@@ -337,6 +334,7 @@ html[dir="rtl"] #main-content.drawer-open-comments {
     margin-top: 4rem;
     margin-bottom: 2rem;
     font-weight: 600;
+    scroll-margin-top: 80px; /* Offset for the smart top-bar */
 }
 
 #manuscript-container h1:first-child {
@@ -450,6 +448,7 @@ html[dir="rtl"] #main-content.drawer-open-comments {
 .drawer {
     position: fixed;
     top: 0;
+    padding-top: 60px; /* Offset for top-bar */
     /* Logical property: right for LTR, left for RTL */
     inset-inline-end: calc(-1 * var(--drawer-width)); 
     width: var(--drawer-width);
@@ -460,6 +459,11 @@ html[dir="rtl"] #main-content.drawer-open-comments {
     transition: inset-inline-end 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
+}
+
+.drawer.fullscreen {
+    width: 100vw;
+    inset-inline-end: -100vw;
 }
 
 .drawer.open {
@@ -517,4 +521,172 @@ html[dir="rtl"] #main-content.drawer-open-comments {
 }
 .chapter-link:hover {
     color: var(--current-accent);
+}
+
+/* --------------------------------------------------------------------------
+   9. Progress Indicator
+   -------------------------------------------------------------------------- */
+#progress-indicator {
+    position: fixed;
+    z-index: 2800; /* Above topbar but below drawers */
+    display: flex;
+    gap: 2px;
+}
+
+/* Mobile: Vertical line of segments on the start side */
+@media (max-width: 768px) {
+    #progress-indicator {
+        top: 100px; /* Fixed distance to avoid sliding on scroll */
+        inset-inline-start: 10px;
+        transform: none;
+        flex-direction: column;
+        gap: 3px;
+    }
+    
+    .progress-segment {
+        width: 4px;
+        height: 15px;
+        background-color: rgba(128, 128, 128, 0.2);
+        cursor: pointer;
+        transition: background-color 0.3s, height 0.3s;
+        border-radius: 2px;
+        position: relative;
+    }
+    
+    /* Increase tap target area for mobile */
+    .progress-segment::after {
+        content: '';
+        position: absolute;
+        top: -4px;
+        bottom: -4px;
+        left: -15px;
+        right: -15px;
+    }
+    
+    .progress-segment.active {
+        background-color: var(--current-accent);
+        height: 22px;
+    }
+    
+    .progress-segment.passed {
+        background-color: var(--current-accent);
+        opacity: 0.6;
+    }
+    
+    body[data-state="present"] .progress-segment.active, 
+    body[data-state="present"] .progress-segment.passed {
+        background-color: #7f8c8d; /* Match present light accent */
+    }
+    
+    body[data-theme="dark"][data-state="present"] .progress-segment.active, 
+    body[data-theme="dark"][data-state="present"] .progress-segment.passed {
+        background-color: #5e6b73; /* Match present dark accent */
+    }
+    
+    /* Tooltip for mobile on press */
+    .progress-segment::before {
+        content: attr(data-title);
+        position: absolute;
+        inset-inline-start: 35px; /* Moved further right to clear the finger */
+        top: 50%;
+        transform: translateY(-50%) scale(0.9);
+        background-color: var(--current-bg);
+        color: var(--current-text);
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.05s ease-out, transform 0.05s ease-out; /* Much faster appearance */
+        border: 1px solid rgba(128, 128, 128, 0.2);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 2900;
+    }
+    
+    .progress-segment:active::before,
+    .progress-segment.touch-active::before {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+/* Desktop: Vertical line of segments on the end side */
+@media (min-width: 769px) {
+    #progress-indicator {
+        top: 50%;
+        inset-inline-end: 20px;
+        transform: translateY(-50%);
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .progress-segment {
+        width: 6px;
+        height: 22px;
+        background-color: rgba(128, 128, 128, 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: 3px;
+        position: relative;
+    }
+
+    .progress-segment:hover {
+        background-color: var(--current-accent);
+        width: 10px;
+    }
+
+    .progress-segment.active {
+        background-color: var(--current-accent);
+        height: 34px;
+    }
+    
+    .progress-segment.passed {
+        background-color: var(--current-accent);
+        opacity: 0.6;
+    }
+    
+    body[data-state="present"] .progress-segment.active,
+    body[data-state="present"] .progress-segment.passed {
+        background-color: #7f8c8d; /* Match present light accent */
+    }
+    
+    body[data-theme="dark"][data-state="present"] .progress-segment.active,
+    body[data-theme="dark"][data-state="present"] .progress-segment.passed {
+        background-color: #5e6b73; /* Match present dark accent */
+    }
+    
+    body[data-state="present"] .progress-segment:hover {
+        background-color: #7f8c8d;
+    }
+    
+    body[data-theme="dark"][data-state="present"] .progress-segment:hover {
+        background-color: #5e6b73;
+    }
+    
+    /* Tooltip for desktop */
+    .progress-segment::before {
+        content: attr(data-title);
+        position: absolute;
+        inset-inline-end: 15px; /* Distance from the segment */
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: var(--current-bg);
+        color: var(--current-text);
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s, transform 0.3s;
+        border: 1px solid rgba(128, 128, 128, 0.2);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .progress-segment:hover::before {
+        opacity: 1;
+    }
 }

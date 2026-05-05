@@ -40,6 +40,13 @@ COPYRIGHT_MAP = {
     "fa": "© ۲۰۲۶ آنتون کپیلوف. تمامی حقوق محفوظ است."
 }
 
+DISCUSS_MAP = {
+    "de": "Kapitel diskutieren",
+    "en": "Discuss this chapter",
+    "ru": "Обсудить главу",
+    "fa": "بحث درباره این فصل"
+}
+
 def escape_latex(text: str) -> str:
     for char, replacement in LATEX_REPLACEMENTS.items():
         text = text.replace(char, replacement)
@@ -110,7 +117,7 @@ def md_to_html(content: str, lang: str) -> str:
         if line.startswith("# "):
             if in_list: output.append("</ul>"); in_list = False
             if ch_index >= 0:
-                btn_text = "Discuss this chapter" if lang != "de" else "Kapitel diskutieren"
+                btn_text = DISCUSS_MAP.get(lang, "Discuss this chapter")
                 output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
                 output.append('</section>')
                 
@@ -132,7 +139,7 @@ def md_to_html(content: str, lang: str) -> str:
     if in_list: output.append("</ul>")
     
     if ch_index >= 0:
-        btn_text = "Discuss this chapter" if lang != "de" else "Kapitel diskutieren"
+        btn_text = DISCUSS_MAP.get(lang, "Discuss this chapter")
         output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
         output.append('</section>')
         # Add final image after epilogue

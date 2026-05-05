@@ -16,12 +16,12 @@
     <!-- Smart Top Bar -->
     <header id="top-bar">
         <div class="top-bar-left">
-            <button id="btn-book" class="nav-btn" aria-label="Open Chapter Index">Book</button>
+            <div id="book-title" class="nav-btn" style="cursor: default;">Kekse im Iran</div>
         </div>
         <div class="top-bar-center">
             <button id="btn-comments" class="nav-btn">Comments</button>
-            <a href="#" class="nav-link">Support</a>
-            <a href="#" class="nav-link">Contact</a>
+            <button id="btn-support" class="nav-btn">Support</button>
+            <button id="btn-contact" class="nav-btn">Contact</button>
         </div>
         <div class="top-bar-right">
             <select id="lang-toggle" aria-label="Change language">
@@ -37,28 +37,41 @@
     <!-- Mobile Bottom Bar -->
     <nav id="bottom-bar" class="mobile-only">
         <button id="btn-comments-mobile" class="nav-btn">Comments</button>
-        <a href="#" class="nav-link">Support</a>
-        <a href="#" class="nav-link">Contact</a>
+        <button id="btn-support-mobile" class="nav-btn">Support</button>
+        <button id="btn-contact-mobile" class="nav-btn">Contact</button>
     </nav>
 
-    <!-- Mechanical Drawers -->
-    <div id="drawer-book" class="drawer">
-        <div class="drawer-header">
-            <h2>Index</h2>
-            <button class="close-drawer" aria-label="Close drawer">×</button>
-        </div>
-        <div class="drawer-content" id="chapter-index">
-            <!-- Dynamically populated -->
-        </div>
-    </div>
+    <!-- Progress Indicator -->
+    <div id="progress-indicator"></div>
 
-    <div id="drawer-comments" class="drawer">
+    <!-- Mechanical Drawers -->
+    <div id="drawer-comments" class="drawer fullscreen">
         <div class="drawer-header">
             <h2>Comments</h2>
             <button class="close-drawer" aria-label="Close drawer">×</button>
         </div>
         <div class="drawer-content">
             <p>Discussion thread for the current chapter...</p>
+        </div>
+    </div>
+
+    <div id="drawer-support" class="drawer fullscreen">
+        <div class="drawer-header">
+            <h2>Support</h2>
+            <button class="close-drawer" aria-label="Close drawer">×</button>
+        </div>
+        <div class="drawer-content">
+            <p>Support / Donations content goes here...</p>
+        </div>
+    </div>
+
+    <div id="drawer-contact" class="drawer fullscreen">
+        <div class="drawer-header">
+            <h2>Contact</h2>
+            <button class="close-drawer" aria-label="Close drawer">×</button>
+        </div>
+        <div class="drawer-content">
+            <p>Contact information goes here...</p>
         </div>
     </div>
 
@@ -70,21 +83,23 @@
         <img src="" alt="Full size photo">
     </div>
 
-    <!-- Cinematic Digital Cover -->
-    <div id="hero">
-        <div class="hero-content">
-            <h1>Kekse im Iran</h1>
-            <p class="subtitle">Anton Kopylow</p>
+    <div id="page-wrapper">
+        <!-- Cinematic Digital Cover -->
+        <div id="hero">
+            <div class="hero-content">
+                <h1>Kekse im Iran</h1>
+                <p class="subtitle">Anton Kopylow</p>
+            </div>
         </div>
-    </div>
 
-    <!-- Main Content -->
-    <main id="main-content">
-        <article id="manuscript-container">
-            <!-- Dynamically loaded HTML fragments go here -->
-            <div class="loading">Loading manuscript...</div>
-        </article>
-    </main>
+        <!-- Main Content -->
+        <main id="main-content">
+            <article id="manuscript-container">
+                <!-- Dynamically loaded HTML fragments go here -->
+                <div class="loading">Loading manuscript...</div>
+            </article>
+        </main>
+    </div>
 
     <script src="main.js"></script>
 </body>

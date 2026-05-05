@@ -1,25 +1,71 @@
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const manuscriptContainer = document.getElementById('manuscript-container');
-    const mainContent = document.getElementById('main-content');
-    const chapterIndex = document.getElementById('chapter-index');
+    const pageWrapper = document.getElementById('page-wrapper');
     const langToggle = document.getElementById('lang-toggle');
     const themeToggle = document.getElementById('theme-toggle');
     const topBar = document.getElementById('top-bar');
     const bottomBar = document.getElementById('bottom-bar');
     
     // Drawers
-    const btnBook = document.getElementById('btn-book');
+    const bookTitle = document.getElementById('book-title');
     const btnComments = document.getElementById('btn-comments');
     const btnCommentsMobile = document.getElementById('btn-comments-mobile');
+    const btnSupport = document.getElementById('btn-support');
+    const btnSupportMobile = document.getElementById('btn-support-mobile');
+    const btnContact = document.getElementById('btn-contact');
+    const btnContactMobile = document.getElementById('btn-contact-mobile');
     const drawerBook = document.getElementById('drawer-book');
     const drawerComments = document.getElementById('drawer-comments');
+    const drawerSupport = document.getElementById('drawer-support');
+    const drawerContact = document.getElementById('drawer-contact');
     const drawerOverlay = document.getElementById('drawer-overlay');
     const closeBtns = document.querySelectorAll('.close-drawer');
 
     // State
-    let currentLang = 'de';
-    let currentTheme = 'light';
+    const supportedLangs = ['de', 'en', 'ru', 'fa'];
+    const browserLang = (navigator.language || navigator.userLanguage || 'de').slice(0, 2).toLowerCase();
+    let currentLang = supportedLangs.includes(browserLang) ? browserLang : 'de';
+    
+    // Set initial toggle value
+    langToggle.value = currentLang;
+
+    let currentTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.body.dataset.theme = currentTheme;
+
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        currentTheme = event.matches ? 'dark' : 'light';
+        document.body.dataset.theme = currentTheme;
+    });
+
+    const i18n = {
+        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Support", contact: "Kontakt", index: "Inhaltsverzeichnis" },
+        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Support", contact: "Contact", index: "Index" },
+        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Поддержка", contact: "Контакты", index: "Оглавление" },
+        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "پشتیبانی", contact: "تماس", index: "فهرست" }
+    };
+
+    function updateUI(lang) {
+        const t = i18n[lang];
+        if (!t) return;
+        document.title = t.title;
+        document.querySelector('.hero-content h1').textContent = t.title;
+        document.querySelector('.hero-content .subtitle').textContent = t.author;
+        
+        bookTitle.textContent = t.title;
+        btnComments.textContent = t.comments;
+        btnSupport.textContent = t.support;
+        btnContact.textContent = t.contact;
+        
+        if (btnCommentsMobile) btnCommentsMobile.textContent = t.comments;
+        if (btnSupportMobile) btnSupportMobile.textContent = t.support;
+        if (btnContactMobile) btnContactMobile.textContent = t.contact;
+        
+        drawerComments.querySelector('.drawer-header h2').textContent = t.comments;
+        drawerSupport.querySelector('.drawer-header h2').textContent = t.support;
+        drawerContact.querySelector('.drawer-header h2').textContent = t.contact;
+    }
 
     // --- 1. Dynamic Content Loading ---
     
@@ -38,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Post-load setup
             updateLangDirection(lang);
+            updateUI(lang);
             buildChapterIndex();
             setupDiscussButtons();
             setupPredictivePreload();
@@ -101,24 +148,113 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    let scrollHandler = null;
+    function setupScrollTracking() {
+        const chapters = manuscriptContainer.querySelectorAll('.chapter');
+        const segments = document.querySelectorAll('.progress-segment');
+        
+        if (!chapters.length || !segments.length) return;
+
+        if (scrollHandler) {
+            window.removeEventListener('scroll', scrollHandler);
+        }
+
+        scrollHandler = () => {
+            let currentChapterIndex = 0;
+            let currentTense = 'past';
+            const triggerPoint = window.innerHeight * 0.5;
+
+            chapters.forEach((chapter, index) => {
+                const rect = chapter.getBoundingClientRect();
+                if (rect.top < triggerPoint) {
+                    currentChapterIndex = index;
+                    currentTense = chapter.dataset.tense || 'past';
+                }
+            });
+
+            document.body.dataset.state = currentTense;
+
+            segments.forEach((seg, idx) => {
+                if (idx < currentChapterIndex) {
+                    seg.classList.add('passed');
+                    seg.classList.remove('active');
+                } else if (idx === currentChapterIndex) {
+                    seg.classList.add('active');
+                    seg.classList.remove('passed');
+                } else {
+                    seg.classList.remove('passed', 'active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', scrollHandler, { passive: true });
+        scrollHandler();
+    }
+
     function buildChapterIndex() {
-        chapterIndex.innerHTML = '';
+        const progressIndicator = document.getElementById('progress-indicator');
+        if (progressIndicator) progressIndicator.innerHTML = '';
+
         const headers = manuscriptContainer.querySelectorAll('h1');
         headers.forEach((h1, index) => {
             h1.id = `chapter-${index}`;
             h1.dataset.index = index;
 
-            const link = document.createElement('a');
-            link.href = `#chapter-${index}`;
-            link.className = 'chapter-link';
-            link.textContent = h1.textContent;
-            
-            link.addEventListener('click', (e) => {
-                closeAllDrawers();
-            });
-
-            chapterIndex.appendChild(link);
+            if (progressIndicator) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                segment.dataset.target = `chapter-${index}`;
+                segment.dataset.title = h1.textContent;
+                
+                segment.addEventListener('click', () => {
+                    const target = document.getElementById(`chapter-${index}`);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+                
+                progressIndicator.appendChild(segment);
+            }
         });
+
+        // Add touch scrubbing support for mobile tooltips
+        if (progressIndicator) {
+            let lastTouchedSegment = null;
+
+            const handleTouch = (e) => {
+                const touch = e.touches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                const segment = target ? target.closest('.progress-segment') : null;
+                
+                // Remove active state from all
+                document.querySelectorAll('.progress-segment').forEach(s => s.classList.remove('touch-active'));
+                
+                if (segment) {
+                    segment.classList.add('touch-active');
+                    lastTouchedSegment = segment;
+                    if (e.cancelable) e.preventDefault(); // Prevent scrolling the whole page while scrubbing the bar
+                } else {
+                    lastTouchedSegment = null;
+                }
+            };
+
+            progressIndicator.addEventListener('touchstart', handleTouch, { passive: false });
+            progressIndicator.addEventListener('touchmove', handleTouch, { passive: false });
+            
+            progressIndicator.addEventListener('touchend', (e) => {
+                if (lastTouchedSegment) {
+                    const targetId = lastTouchedSegment.dataset.target;
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+                document.querySelectorAll('.progress-segment').forEach(s => s.classList.remove('touch-active'));
+                lastTouchedSegment = null;
+            });
+        }
+
+        setupScrollTracking();
     }
     
     function setupDiscussButtons() {
@@ -180,6 +316,12 @@ if (window.scrollY < 50) {
 }
 
 window.addEventListener('scroll', () => {
+    // If a drawer is open, don't hide the top bar
+    if (pageWrapper.classList.contains('drawer-open-book') || 
+        pageWrapper.classList.contains('drawer-open-fullscreen')) {
+        return;
+    }
+
     const currentScrollY = window.scrollY;
 
     if (currentScrollY < 50) {
@@ -199,31 +341,44 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
     function closeAllDrawers() {
-        drawerBook.classList.remove('open');
         drawerComments.classList.remove('open');
+        drawerSupport.classList.remove('open');
+        drawerContact.classList.remove('open');
         drawerOverlay.classList.remove('visible');
-        mainContent.classList.remove('drawer-open-book');
-        mainContent.classList.remove('drawer-open-comments');
+        pageWrapper.classList.remove('drawer-open-fullscreen');
     }
 
     function openCommentsDrawer() {
         closeAllDrawers();
+        topBar.classList.remove('hidden');
         drawerComments.classList.add('open');
         drawerOverlay.classList.add('visible');
-        mainContent.classList.add('drawer-open-comments');
+        pageWrapper.classList.add('drawer-open-fullscreen');
     }
 
-    btnBook.addEventListener('click', () => {
+    function openSupportDrawer() {
         closeAllDrawers();
-        drawerBook.classList.add('open');
+        topBar.classList.remove('hidden');
+        drawerSupport.classList.add('open');
         drawerOverlay.classList.add('visible');
-        mainContent.classList.add('drawer-open-book');
-    });
+        pageWrapper.classList.add('drawer-open-fullscreen');
+    }
+
+    function openContactDrawer() {
+        closeAllDrawers();
+        topBar.classList.remove('hidden');
+        drawerContact.classList.add('open');
+        drawerOverlay.classList.add('visible');
+        pageWrapper.classList.add('drawer-open-fullscreen');
+    }
 
     btnComments.addEventListener('click', openCommentsDrawer);
-    if (btnCommentsMobile) {
-        btnCommentsMobile.addEventListener('click', openCommentsDrawer);
-    }
+    btnSupport.addEventListener('click', openSupportDrawer);
+    btnContact.addEventListener('click', openContactDrawer);
+
+    if (btnCommentsMobile) btnCommentsMobile.addEventListener('click', openCommentsDrawer);
+    if (btnSupportMobile) btnSupportMobile.addEventListener('click', openSupportDrawer);
+    if (btnContactMobile) btnContactMobile.addEventListener('click', openContactDrawer);
 
     closeBtns.forEach(btn => btn.addEventListener('click', closeAllDrawers));
     drawerOverlay.addEventListener('click', closeAllDrawers);
