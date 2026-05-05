@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <!-- Cookie Base Gradient -->
+    <radialGradient id="cookieGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#F5DEB3" />
+      <stop offset="80%" style="stop-color:#E2C48E" />
+      <stop offset="100%" style="stop-color:#C5A16F" />
+    </radialGradient>
+    
+    <!-- Pistachio Gradient -->
+    <linearGradient id="pistachioGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#93C572" />
+      <stop offset="100%" style="stop-color:#557D3E" />
+    </linearGradient>
+
+    <!-- Shadow Filter -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.5" />
+      <feOffset dx="0.5" dy="0.5" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Main Cookie Shape (Slightly Irregular) -->
+  <path d="M16 2 C24 2 30 8 30 16 C30 24 24 30 16 30 C8 30 2 24 2 16 C2 8 8 2 16 2 Z" 
+        fill="url(#cookieGrad)" 
+        filter="url(#shadow)"
+        stroke="#8B4513" stroke-width="0.2"/>
+
+  <!-- Texture Cracks -->
+  <path d="M10 10 Q 12 11 14 9" stroke="#C5A16F" fill="none" stroke-width="0.5" stroke-linecap="round"/>
+  <path d="M18 22 Q 20 20 22 21" stroke="#C5A16F" fill="none" stroke-width="0.5" stroke-linecap="round"/>
+  <path d="M7 18 Q 9 17 8 15" stroke="#C5A16F" fill="none" stroke-width="0.5" stroke-linecap="round"/>
+
+  <!-- Pistachio Pieces (Irregular shapes) -->
+  <path d="M12 8 Q 14 7 15 10 Q 13 12 11 11 Z" fill="url(#pistachioGrad)" />
+  <path d="M22 14 Q 24 13 23 16 Q 21 17 20 15 Z" fill="#7FB35E" />
+  <path d="M9 20 Q 11 19 12 22 Q 10 24 8 23 Z" fill="url(#pistachioGrad)" />
+  <path d="M17 25 Q 19 24 20 27 Q 18 28 16 27 Z" fill="#557D3E" />
+  <path d="M25 8 Q 27 7 28 10 Q 26 11 24 10 Z" fill="#93C572" />
+  
+  <!-- Salt/Sugar Grains (White dots) -->
+  <circle cx="10" cy="12" r="0.3" fill="white" opacity="0.8"/>
+  <circle cx="20" cy="10" r="0.3" fill="white" opacity="0.8"/>
+  <circle cx="15" cy="18" r="0.3" fill="white" opacity="0.8"/>
+  <circle cx="25" cy="22" r="0.3" fill="white" opacity="0.8"/>
+</svg>

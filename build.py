@@ -98,17 +98,7 @@ def md_to_html(content: str, lang: str) -> str:
     in_list = False
     
     present_indices = [1, 11, 16, 17, 19, 21]
-    images = [
-        "Pics/IMG20250326155129.jpg",
-        "Pics/IMG20250404174150.jpg",
-        "Pics/IMG20250406120444.jpg",
-        "Pics/IMG20250409181112.jpg",
-        "Pics/IMG20250418180248.jpg",
-        "Pics/IMG20250422144952.jpg",
-        "Pics/IMG20260115120128.jpg",
-        "Pics/IMG20260222151627.jpg",
-        "Pics/WhatsApp_Image_2026-05-03_at_16.44.59.jpeg"
-    ]
+    images = [f"Pics/{i}.jpg" for i in range(2, 26)]
     
     ch_index = -1
     
@@ -145,6 +135,8 @@ def md_to_html(content: str, lang: str) -> str:
         btn_text = "Discuss this chapter" if lang != "de" else "Kapitel diskutieren"
         output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
         output.append('</section>')
+        # Add final image after epilogue
+        output.append(f'<div class="airlock airlock-portrait" style="background-image: url(\'Pics/24.jpg\');"></div>')
         
     return "\n".join(output)
 
@@ -237,11 +229,6 @@ def main():
         content = md_file.read_text(encoding="utf-8")
         (WEB_DIR / f"manuscript_{lang}.html").write_text(md_to_html(content, lang), encoding="utf-8")
         build_pdf(lang)
-
-    print("\nKopiere Bilder in das Web-Verzeichnis...")
-    if (WEB_DIR / "Pics").exists():
-        shutil.rmtree(WEB_DIR / "Pics")
-    shutil.copytree(ROOT / "Pics", WEB_DIR / "Pics")
 
     print("\nFertig!")
 

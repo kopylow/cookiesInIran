@@ -125,14 +125,11 @@ body {
     overflow-x: hidden;
 }
 
-/* --------------------------------------------------------------------------
-   4. Cinematic Digital Cover (Hero)
-   -------------------------------------------------------------------------- */
 #hero {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background-image: url('Pics/WhatsApp_Image_2026-05-03_at_16.43.50.jpeg');
+    background-image: url('Pics/1.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed; /* Parallax effect */
@@ -142,6 +139,12 @@ body {
     align-items: center;
     text-align: center;
     color: #fff;
+}
+
+@media (max-width: 768px) {
+    #hero {
+        background-attachment: scroll;
+    }
 }
 
 #hero::before {
@@ -162,6 +165,7 @@ body {
     letter-spacing: -0.02em;
     margin-bottom: 1rem;
     text-transform: uppercase;
+    color: var(--color-text-dark); /* Soft cream for both views */
 }
 
 .subtitle {
@@ -169,6 +173,7 @@ body {
     font-weight: 400;
     letter-spacing: 0.1em;
     opacity: 0.9;
+    color: var(--color-text-dark);
 }
 
 .scroll-indicator {
@@ -229,8 +234,39 @@ body {
 .top-bar-center {
     display: none; /* Hide on smaller screens */
 }
+
 @media (min-width: 768px) {
     .top-bar-center { display: flex; }
+}
+
+#bottom-bar {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    #bottom-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background-color: var(--current-bg);
+        border-top: 1px solid rgba(128, 128, 128, 0.2);
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 1rem;
+        z-index: var(--z-index-topbar);
+        transition: transform 0.3s ease;
+    }
+
+    #bottom-bar.hidden {
+        transform: translateY(100%);
+    }
+
+    #main-content {
+        padding-bottom: 80px; /* Space for bottom bar */
+    }
 }
 
 button, .nav-link {
@@ -328,6 +364,63 @@ html[dir="rtl"] #main-content.drawer-open-comments {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+    cursor: zoom-in;
+    transition: opacity 0.5s ease;
+}
+
+/* Disable fixed background on mobile for performance and compatibility */
+@media (max-width: 768px) {
+    .airlock {
+        background-attachment: scroll;
+        height: 60vh; /* Shorter on mobile to not overwhelm the scroll */
+    }
+}
+
+.airlock-portrait {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: var(--current-bg); 
+}
+
+/* --------------------------------------------------------------------------
+   8. Lightbox for Photos
+   -------------------------------------------------------------------------- */
+#lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 3000;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: zoom-out;
+}
+
+#lightbox.visible {
+    display: flex;
+    opacity: 1;
+}
+
+#lightbox img {
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+#lightbox-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    color: #fff;
+    font-size: 3rem;
+    line-height: 1;
+    cursor: pointer;
+    background: none;
+    border: none;
 }
 
 .discuss-wrapper {

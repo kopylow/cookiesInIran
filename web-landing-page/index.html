@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Arabic:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body data-theme="light" data-state="past">
 
@@ -33,6 +34,13 @@
         </div>
     </header>
 
+    <!-- Mobile Bottom Bar -->
+    <nav id="bottom-bar" class="mobile-only">
+        <button id="btn-comments-mobile" class="nav-btn">Comments</button>
+        <a href="#" class="nav-link">Support</a>
+        <a href="#" class="nav-link">Contact</a>
+    </nav>
+
     <!-- Mechanical Drawers -->
     <div id="drawer-book" class="drawer">
         <div class="drawer-header">
@@ -56,15 +64,17 @@
 
     <div id="drawer-overlay"></div>
 
+    <!-- Lightbox for Photos -->
+    <div id="lightbox" aria-hidden="true">
+        <button id="lightbox-close" aria-label="Close lightbox">&times;</button>
+        <img src="" alt="Full size photo">
+    </div>
+
     <!-- Cinematic Digital Cover -->
     <div id="hero">
         <div class="hero-content">
             <h1>Kekse im Iran</h1>
-            <p class="subtitle">Steel & Dust. The Warmth of People.</p>
-        </div>
-        <div class="scroll-indicator">
-            <span>Scroll</span>
-            <div class="arrow-down"></div>
+            <p class="subtitle">Anton Kopylow</p>
         </div>
     </div>
 
