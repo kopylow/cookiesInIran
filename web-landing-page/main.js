@@ -1,3 +1,6 @@
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const manuscriptContainer = document.getElementById('manuscript-container');
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtns = document.querySelectorAll('.close-drawer');
 
     // State
-    const supportedLangs = ['de', 'en', 'ru', 'fa'];
+    const supportedLangs = ['de', 'en', 'ru'];
     const browserLang = (navigator.language || navigator.userLanguage || 'de').slice(0, 2).toLowerCase();
     let currentLang = supportedLangs.includes(browserLang) ? browserLang : 'de';
     
@@ -81,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             preloadImages(imageUrls);
 
             manuscriptContainer.innerHTML = html;
-            
+
             // Post-load setup
             updateLangDirection(lang);
             updateUI(lang);
@@ -89,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setupDiscussButtons();
             setupPredictivePreload();
             setupAirlockInteractions();
+            window.scrollTo(0, 0);
         } catch (error) {
             manuscriptContainer.innerHTML = `<div class="error">Error loading manuscript: ${error.message}</div>`;
         }
@@ -114,13 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Preload the next airlock's image (index + 1)
                     if (index >= 0 && airlocks[index]) {
-                        // The index matches because the first chapter has no airlock before it.
-                        // So Chapter 0 (Index 0) should trigger preload for Airlock 0 (which is before Ch 1)
                         const nextAirlock = airlocks[index];
-                        const style = nextAirlock.getAttribute('style') || '';
-                        const match = style.match(/url\(['"]?(.*?)['"]?\)/);
-                        if (match && match[1]) {
-                            preloadNextImage(match[1]);
+                        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+                        const src = isMobile
+                            ? (nextAirlock.dataset.imgMobile || nextAirlock.dataset.img)
+                            : (nextAirlock.dataset.img || nextAirlock.dataset.imgMobile);
+                        if (src) {
+                            preloadNextImage(src);
                         }
                     }
                 }
@@ -274,10 +278,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         airlocks.forEach(airlock => {
             airlock.addEventListener('click', () => {
-                const style = airlock.getAttribute('style') || '';
-                const match = style.match(/url\(['"]?(.*?)['"]?\)/);
-                if (match && match[1]) {
-                    lightboxImg.src = match[1];
+                const isMobile = window.matchMedia('(max-width: 768px)').matches;
+                const src = isMobile
+                    ? (airlock.dataset.imgMobile || airlock.dataset.img)
+                    : (airlock.dataset.img || airlock.dataset.imgMobile);
+                if (src) {
+                    lightboxImg.src = src;
                     lightbox.classList.add('visible');
                     lightbox.setAttribute('aria-hidden', 'false');
                     document.body.style.overflow = 'hidden'; // Prevent scrolling

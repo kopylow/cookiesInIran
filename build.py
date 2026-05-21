@@ -105,7 +105,7 @@ def md_to_html(content: str, lang: str) -> str:
     in_list = False
     
     present_indices = [1, 11, 16, 17, 19, 21]
-    images = [f"Pics/{i}.jpg" for i in range(2, 26)]
+    images = [(f"Pics/{i}.jpg", f"Pics/mobile/{i}.jpg") for i in range(2, 26)]
     
     ch_index = -1
     
@@ -125,8 +125,8 @@ def md_to_html(content: str, lang: str) -> str:
             tense = "present" if ch_index in present_indices else "past"
             
             if ch_index > 0:
-                img = images[(ch_index - 1) % len(images)]
-                output.append(f'<div class="airlock" style="background-image: url(\'{img}\');"></div>')
+                img, img_mobile = images[(ch_index - 1) % len(images)]
+                output.append(f'<div class="airlock" data-img="{img}" data-img-mobile="{img_mobile}" style="--bg-desktop: url(\'{img}\'); --bg-mobile: url(\'{img_mobile}\');"></div>')
                 
             output.append(f'<section class="chapter" data-tense="{tense}">')
             output.append(f'<h1{dir_attr}>{line[2:].strip()}</h1>')
@@ -143,7 +143,7 @@ def md_to_html(content: str, lang: str) -> str:
         output.append(f'<div class="discuss-wrapper"><button class="discuss-btn" data-chapter="{ch_index}">{btn_text}</button></div>')
         output.append('</section>')
         # Add final image after epilogue
-        output.append(f'<div class="airlock airlock-portrait" style="background-image: url(\'Pics/24.jpg\');"></div>')
+        output.append(f'<div class="airlock airlock-portrait" data-img="Pics/24.jpg" data-img-mobile="Pics/mobile/24.jpg" style="--bg-desktop: url(\'Pics/24.jpg\'); --bg-mobile: url(\'Pics/mobile/24.jpg\');"></div>')
         
     return "\n".join(output)
 
@@ -234,7 +234,8 @@ def main():
         if not md_file.exists(): continue
         
         content = md_file.read_text(encoding="utf-8")
-        (WEB_DIR / f"manuscript_{lang}.html").write_text(md_to_html(content, lang), encoding="utf-8")
+        if lang != "fa":
+            (WEB_DIR / f"manuscript_{lang}.html").write_text(md_to_html(content, lang), encoding="utf-8")
         build_pdf(lang)
 
     print("\nFertig!")

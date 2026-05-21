@@ -107,6 +107,30 @@ html[dir="rtl"] {
     font-family: var(--font-arabic);
 }
 
+/* Mobile Typography & Spacing Optimization */
+@media (max-width: 768px) {
+    :root {
+        --text-base: 1.0625rem; /* 17px - better for narrow columns */
+        --text-h1: 1.85rem;    /* Prevents excessive wrapping of chapter titles */
+        --line-height-restricted: 1.4; /* Slightly more air for mobile restricted state */
+    }
+
+    #manuscript-container h1 {
+        margin-top: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    #manuscript-container p {
+        margin-bottom: 1.25rem;
+    }
+
+    #manuscript-container h1,
+    #manuscript-container p,
+    .discuss-wrapper {
+        padding: 0 1.25rem; /* Slightly less padding on mobile to give text more room */
+    }
+}
+
 /* --------------------------------------------------------------------------
    3. Base Styles & Reset
    -------------------------------------------------------------------------- */
@@ -144,6 +168,7 @@ body {
 @media (max-width: 768px) {
     #hero {
         background-attachment: scroll;
+        background-image: url('Pics/mobile/1.jpg');
     }
 }
 
@@ -344,6 +369,14 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
 #manuscript-container p {
     margin-bottom: 1.5rem;
     text-align: var(--current-text-align);
+    hyphens: auto;
+    -webkit-hyphens: auto;
+}
+
+@media (max-width: 768px) {
+    #manuscript-container p {
+        text-align: start;
+    }
 }
 
 #manuscript-container ul {
@@ -359,6 +392,7 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     width: 100vw;
     height: 100vh;
     margin-inline-start: calc(-50vw + 50%);
+    background-image: var(--bg-desktop);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -366,11 +400,13 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     transition: opacity 0.5s ease;
 }
 
-/* Disable fixed background on mobile for performance and compatibility */
 @media (max-width: 768px) {
     .airlock {
+        background-image: var(--bg-mobile);
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-color: var(--current-bg);
         background-attachment: scroll;
-        height: 60vh; /* Shorter on mobile to not overwhelm the scroll */
     }
 }
 
