@@ -115,6 +115,13 @@ html[dir="rtl"] {
         --line-height-restricted: 1.4; /* Slightly more air for mobile restricted state */
     }
 
+    /* Disable native pinch-zoom; main.js converts pinch into font-size scaling.
+       Smaller root font on mobile sets a tighter default; pinch can scale up. */
+    html {
+        touch-action: pan-x pan-y;
+        font-size: 12px;
+    }
+
     #manuscript-container h1 {
         margin-top: 2.5rem;
         margin-bottom: 1.5rem;

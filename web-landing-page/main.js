@@ -389,6 +389,55 @@ window.addEventListener('scroll', () => {
     closeBtns.forEach(btn => btn.addEventListener('click', closeAllDrawers));
     drawerOverlay.addEventListener('click', closeAllDrawers);
 
+    // --- Pinch-to-zoom font scaling ---
+    // Two-finger pinch scales the document root font-size instead of triggering
+    // browser pixel-zoom. All rem-based text/spacing rescales proportionally.
+    const MIN_ROOT_FONT_PX = 8;
+    const MAX_ROOT_FONT_PX = 32;
+    const FONT_SIZE_STORAGE_KEY = 'rootFontSize';
+
+    const savedRootFontPx = parseFloat(localStorage.getItem(FONT_SIZE_STORAGE_KEY));
+    if (savedRootFontPx >= MIN_ROOT_FONT_PX && savedRootFontPx <= MAX_ROOT_FONT_PX) {
+        document.documentElement.style.fontSize = savedRootFontPx + 'px';
+    }
+
+    let pinchStartDistance = null;
+    let pinchStartFontPx = null;
+
+    const pinchDistance = (touches) => {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.hypot(dx, dy);
+    };
+
+    document.addEventListener('touchstart', (e) => {
+        const lightbox = document.getElementById('lightbox');
+        if (lightbox && lightbox.classList.contains('visible')) return;
+        if (e.touches.length === 2) {
+            pinchStartDistance = pinchDistance(e.touches);
+            pinchStartFontPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (pinchStartDistance === null || e.touches.length !== 2) return;
+        const scale = pinchDistance(e.touches) / pinchStartDistance;
+        const clamped = Math.max(MIN_ROOT_FONT_PX, Math.min(MAX_ROOT_FONT_PX, pinchStartFontPx * scale));
+        document.documentElement.style.fontSize = clamped + 'px';
+        if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+
+    const endPinch = () => {
+        if (pinchStartDistance !== null) {
+            const currentPx = parseFloat(document.documentElement.style.fontSize);
+            if (currentPx) localStorage.setItem(FONT_SIZE_STORAGE_KEY, currentPx);
+        }
+        pinchStartDistance = null;
+        pinchStartFontPx = null;
+    };
+    document.addEventListener('touchend', endPinch);
+    document.addEventListener('touchcancel', endPinch);
+
     // --- Initialize ---
     window.scrollTo(0, 0);
     loadManuscript(currentLang);
