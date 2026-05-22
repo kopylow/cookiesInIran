@@ -673,11 +673,6 @@
     drawerContent.innerHTML = `
       <div class="comments-root">
         <div class="comments-main">
-          <div class="comments-switcher">
-            <label class="chapter-select-label" data-i18n="chapterSelect">Kapitel</label>
-            <select class="chapter-select" aria-label="Thread"></select>
-          </div>
-
           <div class="comments-identity" hidden>
             <span data-i18n="identityVerifiedAs">Du schreibst als</span>
             <strong class="identity-name"></strong>
@@ -686,39 +681,46 @@
           <div class="comments-list" aria-live="polite"></div>
         </div>
 
-        <form class="comment-form" novalidate>
-          <div class="form-reply-indicator" hidden>
-            <span data-i18n="replyingTo">Antwort an</span>
-            <strong class="reply-target-name"></strong>
-            <button type="button" class="form-cancel-reply" data-i18n="formCancelReply">Antwort abbrechen</button>
+        <div class="comments-compose">
+          <div class="comments-switcher">
+            <label class="chapter-select-label" data-i18n="chapterSelect">Kapitel</label>
+            <select class="chapter-select" aria-label="Thread"></select>
           </div>
-          <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="form-field">
-            <span data-i18n="formName">Name</span>
-            <input name="name" required maxlength="60" autocomplete="nickname">
-          </label>
-          <label class="form-field">
-            <span data-i18n="formEmail">E-Mail (optional)</span>
-            <input name="email" type="email" autocomplete="email" maxlength="254">
-          </label>
-          <small class="form-hint" data-i18n="formEmailHint"></small>
-          <label class="form-field form-field-checkbox">
-            <input type="checkbox" name="notifyOnReply">
-            <span data-i18n="formNotify">Benachrichtige mich bei Antworten</span>
-          </label>
-          <label class="form-field">
-            <span data-i18n="formBody">Kommentar</span>
-            <textarea name="body" required maxlength="2000" rows="4"></textarea>
-          </label>
-          <div class="form-turnstile-mount"></div>
-          <div class="form-row">
-            <button type="submit" data-i18n="formSubmit">Absenden</button>
-          </div>
-          <small class="form-status" aria-live="polite"></small>
-          <small class="form-footer">
-            <a href="privacy-de.html" data-i18n="privacyLink" data-i18n-href="privacyHref" target="_blank" rel="noopener">Datenschutz</a>
-          </small>
-        </form>
+
+          <form class="comment-form" novalidate>
+            <div class="form-reply-indicator" hidden>
+              <span data-i18n="replyingTo">Antwort an</span>
+              <strong class="reply-target-name"></strong>
+              <button type="button" class="form-cancel-reply" data-i18n="formCancelReply">Antwort abbrechen</button>
+            </div>
+            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <label class="form-field">
+              <span data-i18n="formName">Name</span>
+              <input name="name" required maxlength="60" autocomplete="nickname">
+            </label>
+            <label class="form-field">
+              <span data-i18n="formEmail">E-Mail (optional)</span>
+              <input name="email" type="email" autocomplete="email" maxlength="254">
+            </label>
+            <small class="form-hint" data-i18n="formEmailHint"></small>
+            <label class="form-field form-field-checkbox">
+              <input type="checkbox" name="notifyOnReply">
+              <span data-i18n="formNotify">Benachrichtige mich bei Antworten</span>
+            </label>
+            <label class="form-field">
+              <span data-i18n="formBody">Kommentar</span>
+              <textarea name="body" required maxlength="2000" rows="4"></textarea>
+            </label>
+            <div class="form-turnstile-mount"></div>
+            <div class="form-row">
+              <button type="submit" data-i18n="formSubmit">Absenden</button>
+            </div>
+            <small class="form-status" aria-live="polite"></small>
+            <small class="form-footer">
+              <a href="privacy-de.html" data-i18n="privacyLink" data-i18n-href="privacyHref" target="_blank" rel="noopener">Datenschutz</a>
+            </small>
+          </form>
+        </div>
 
         <div class="comments-verify-modal" hidden role="dialog" aria-modal="true">
           <div class="comments-verify-box">

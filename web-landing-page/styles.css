@@ -408,8 +408,10 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     height: 100vh;
     margin-inline-start: calc(-50vw + 50%);
     background-image: var(--bg-desktop);
-    background-size: cover;
+    background-size: contain;
+    background-repeat: no-repeat;
     background-position: center;
+    background-color: var(--current-bg);
     background-attachment: fixed;
     cursor: zoom-in;
     transition: opacity 0.5s ease;
@@ -418,9 +420,6 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
 @media (max-width: 768px) {
     .airlock {
         background-image: var(--bg-mobile);
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-color: var(--current-bg);
         background-attachment: scroll;
     }
 }
@@ -537,8 +536,34 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem;
+    padding: 0.4rem 1rem;
     border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.drawer-header h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    opacity: 0.75;
+}
+
+.close-drawer {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.5rem;
+    line-height: 1;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0 0.25rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+}
+
+.close-drawer:hover,
+.close-drawer:focus-visible {
+    opacity: 1;
 }
 
 .drawer-content {
@@ -763,7 +788,8 @@ body.drawer-open-fullscreen #progress-indicator {
     margin-inline: auto;
 }
 
-.comments-main {
+.comments-main,
+.comments-compose {
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
@@ -782,7 +808,7 @@ body.drawer-open-fullscreen #progress-indicator {
         grid-column: 1;
         grid-row: 1;
     }
-    .comments-root > .comment-form {
+    .comments-root > .comments-compose {
         grid-column: 2;
         grid-row: 1;
         align-self: start;
@@ -790,8 +816,6 @@ body.drawer-open-fullscreen #progress-indicator {
         top: 1.25rem;
         max-height: calc(100dvh - 6rem);
         overflow-y: auto;
-        border-inline-start: 1px solid rgba(128, 128, 128, 0.12);
-        padding-inline-start: 1.5rem;
     }
 }
 
@@ -800,6 +824,15 @@ body.drawer-open-fullscreen #progress-indicator {
     gap: 0.5rem;
     align-items: center;
     flex-wrap: wrap;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 8px;
+    background: rgba(128, 128, 128, 0.04);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03),
+                0 6px 18px -10px rgba(0, 0, 0, 0.06);
+}
+body[data-theme="dark"] .comments-switcher {
+    background: rgba(128, 128, 128, 0.06);
 }
 .comments-switcher .chapter-select-label {
     font-weight: 600;
