@@ -13,8 +13,17 @@ export function getAccessUser(request) {
 export async function requireAccessUser(request, env) {
   const email = getAccessUser(request);
   // Local-dev bypass: only honored when CF Access is NOT configured for prod.
-  if (!email && env.ADMIN_DEV_BYPASS === "1" && !env.CF_ACCESS_AUD) {
+  if (!email && env.ADMIN_DEV_BYPASS === "1" && !env.CF_ACCESS_AUD && !env.ADMIN_PASSWORD) {
     return { ok: true, email: "dev@local" };
+  }
+  // Password fallback: used when CF Access is not configured.
+  if (!email && env.ADMIN_PASSWORD && !env.CF_ACCESS_AUD) {
+    const auth = request.headers.get("authorization") || "";
+    const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+    if (!token || token !== env.ADMIN_PASSWORD) {
+      return { ok: false, status: 401, reason: "bad-password" };
+    }
+    return { ok: true, email: "password-auth" };
   }
   if (!email) return { ok: false, status: 401, reason: "no-access-header" };
   // Optional JWT aud check — only enforce if CF_ACCESS_AUD is configured.

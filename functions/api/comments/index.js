@@ -4,7 +4,7 @@ import {
 } from "../_lib/validation.js";
 import { hashIp, hashEmail, sha256Hex, randomNumericCode } from "../_lib/hash.js";
 import { verifyTurnstile } from "../_lib/turnstile.js";
-import { rateLimit, rateLimitAll } from "../_lib/ratelimit.js";
+import { rateLimit, rateLimitAll, isBypassed } from "../_lib/ratelimit.js";
 import { lookupSession } from "../_lib/session.js";
 import {
   sendVerificationCode, sendReplyNotification, encryptEmail, decryptEmail,
@@ -16,10 +16,11 @@ export async function onRequestGet({ request, env }) {
   if (!thread) return jsonError("invalid thread", 400, "invalid_thread");
 
   const { results = [] } = await env.DB.prepare(
-    `SELECT id, parent_id, display_name, body, created_at, identity_id
-     FROM comments
-     WHERE thread_id = ? AND status = 'visible'
-     ORDER BY created_at ASC
+    `SELECT c.id, c.parent_id, c.display_name, c.body, c.created_at, c.identity_id, i.email_hash
+     FROM comments c
+     LEFT JOIN identities i ON i.id = c.identity_id
+     WHERE c.thread_id = ? AND c.status = 'visible'
+     ORDER BY c.created_at ASC
      LIMIT 1000`
   ).bind(thread.id).all();
 
@@ -30,6 +31,7 @@ export async function onRequestGet({ request, env }) {
     body: c.body,
     created_at: c.created_at,
     verified: !!c.identity_id,
+    email_hash: c.email_hash || null,
   }));
 
   return json({ ok: true, thread: thread.id, comments });
@@ -76,9 +78,11 @@ export async function onRequestPost({ request, env }) {
   if (ban) return jsonError("banned", 403, "banned");
 
   // Per-IP post rate limit.
-  const rl = await rateLimit(env.KV_RATELIMIT, `post:ip:${ipHash}`, 5, 600);
-  if (!rl.allowed) {
-    return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(rl.retryAfterSec) });
+  if (!isBypassed(env, ip)) {
+    const rl = await rateLimit(env.KV_RATELIMIT, `post:ip:${ipHash}`, 5, 600);
+    if (!rl.allowed) {
+      return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(rl.retryAfterSec) });
+    }
   }
 
   // Turnstile (skipped if no TURNSTILE_SECRET configured).
@@ -88,12 +92,14 @@ export async function onRequestPost({ request, env }) {
   // Cookie session lookup — does it match the (name, lang) being posted?
   const sessionIdentityId = await lookupSession(env, request);
   let verifiedIdentityId = null;
+  let sessionEmailHash = null;
   if (sessionIdentityId) {
     const ident = await env.DB.prepare(
-      `SELECT id, name, lang FROM identities WHERE id = ?`
+      `SELECT id, name, lang, email_hash FROM identities WHERE id = ?`
     ).bind(sessionIdentityId).first();
     if (ident && ident.lang === thread.lang && ident.name === name) {
       verifiedIdentityId = ident.id;
+      sessionEmailHash = ident.email_hash;
     }
   }
 
@@ -101,35 +107,56 @@ export async function onRequestPost({ request, env }) {
 
   // Already verified by cookie → post immediately.
   if (verifiedIdentityId) {
-    return await postImmediate(env, { thread, name, text, parentId, ipHash, identityId: verifiedIdentityId, notifyEmail, request });
+    return await postImmediate(env, { thread, name, text, parentId, ipHash, identityId: verifiedIdentityId, notifyEmail, request, emailHash: sessionEmailHash });
   }
 
-  // No email → anonymous immediate post.
-  if (!email) {
-    return await postImmediate(env, { thread, name, text, parentId, ipHash, identityId: null, notifyEmail: null, request });
-  }
-
-  // Email provided → claim/verify flow.
-  const emailHash = await hashEmail(email, env);
+  // Check if name is already claimed by an identity
   const existing = await env.DB.prepare(
     `SELECT id, email_hash FROM identities WHERE name = ? AND lang = ? LIMIT 1`
   ).bind(name, thread.lang).first();
 
-  if (existing && existing.email_hash !== emailHash) {
-    return jsonError("name_protected", 409, "name_protected");
+  let emailHash = null;
+  if (email) {
+    emailHash = await hashEmail(email, env);
+  }
+
+  if (existing) {
+    // Name is claimed.
+    if (!email || existing.email_hash !== emailHash) {
+      return jsonError("name_protected", 409, "name_protected");
+    }
+    // Name+email matches existing identity → require 6-digit verification.
+  } else {
+    // Name is available.
+    if (!email) {
+      // No email → anonymous immediate post.
+      return await postImmediate(env, { thread, name, text, parentId, ipHash, identityId: null, notifyEmail: null, request, emailHash: null });
+    } else {
+      // First post with this name+email: register identity (unverified), post immediately.
+      const emailEnc = await encryptEmail(env, email);
+      const newId = crypto.randomUUID();
+      const now = Math.floor(Date.now() / 1000);
+      await env.DB.prepare(
+        `INSERT OR IGNORE INTO identities (id, name, lang, email_hash, email_enc, verified_at, created_at)
+         VALUES (?, ?, ?, ?, ?, 0, ?)`
+      ).bind(newId, name, thread.lang, emailHash, emailEnc, now).run();
+      return await postImmediate(env, { thread, name, text, parentId, ipHash, identityId: newId, notifyEmail, request, emailHash });
+    }
   }
 
   // Code-request rate limits.
-  const codeRl = await rateLimitAll(env.KV_RATELIMIT, `code:${emailHash}`, [
-    { label: "h", limit: 3, windowSec: 3600 },
-    { label: "d", limit: 10, windowSec: 86400 },
-  ]);
-  if (!codeRl.allowed) {
-    return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(codeRl.retryAfterSec) });
-  }
-  const codeIpRl = await rateLimit(env.KV_RATELIMIT, `code:ip:${ipHash}`, 10, 3600);
-  if (!codeIpRl.allowed) {
-    return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(codeIpRl.retryAfterSec) });
+  if (!isBypassed(env, ip)) {
+    const codeRl = await rateLimitAll(env.KV_RATELIMIT, `code:${emailHash}`, [
+      { label: "h", limit: 3, windowSec: 3600 },
+      { label: "d", limit: 10, windowSec: 86400 },
+    ]);
+    if (!codeRl.allowed) {
+      return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(codeRl.retryAfterSec) });
+    }
+    const codeIpRl = await rateLimit(env.KV_RATELIMIT, `code:ip:${ipHash}`, 10, 3600);
+    if (!codeIpRl.allowed) {
+      return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(codeIpRl.retryAfterSec) });
+    }
   }
 
   // Generate + store + send code.
@@ -166,7 +193,7 @@ export async function onRequestPost({ request, env }) {
   return json({ ok: true, status: "needs_verification", expiresAt });
 }
 
-async function postImmediate(env, { thread, name, text, parentId, ipHash, identityId, notifyEmail, request }) {
+async function postImmediate(env, { thread, name, text, parentId, ipHash, identityId, notifyEmail, request, emailHash }) {
   const id = crypto.randomUUID();
   const now = Math.floor(Date.now() / 1000);
   const notifyEnc = notifyEmail ? await encryptEmail(env, notifyEmail) : null;
@@ -204,6 +231,14 @@ async function postImmediate(env, { thread, name, text, parentId, ipHash, identi
   return json({
     ok: true,
     status: "posted",
-    comment: { id, parent_id: parentId, display_name: name, body: text, created_at: now, verified: !!identityId },
+    comment: {
+      id,
+      parent_id: parentId,
+      display_name: name,
+      body: text,
+      created_at: now,
+      verified: !!identityId,
+      email_hash: emailHash || null,
+    },
   });
 }

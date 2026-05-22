@@ -42,6 +42,15 @@ const $empty = $("#empty");
 function showError(msg) { $err.textContent = msg; $err.style.display = "block"; }
 function clearError() { $err.style.display = "none"; }
 
+function getPassword() {
+  let pw = sessionStorage.getItem("admin_pw");
+  if (!pw) {
+    pw = prompt("Admin-Passwort:");
+    if (pw) sessionStorage.setItem("admin_pw", pw);
+  }
+  return pw || "";
+}
+
 function fmtTime(unix) {
   if (!unix) return "—";
   return new Date(unix * 1000).toLocaleString("de-DE");
@@ -52,11 +61,18 @@ function esc(s) {
 }
 
 async function api(method, url, body) {
+  const headers = body ? { "content-type": "application/json" } : {};
+  const pw = getPassword();
+  if (pw) headers["authorization"] = "Bearer " + pw;
   const res = await fetch(url, {
     method,
-    headers: body ? { "content-type": "application/json" } : {},
+    headers,
     body: body ? JSON.stringify(body) : undefined,
   });
+  if (res.status === 401) {
+    sessionStorage.removeItem("admin_pw");
+    throw new Error("401 Falsches Passwort");
+  }
   if (!res.ok) {
     let detail = "";
     try { detail = (await res.json()).error || ""; } catch {}

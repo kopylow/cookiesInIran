@@ -1,6 +1,6 @@
 import { json, jsonError, getClientIp, readJson } from "../../_lib/http.js";
 import { hashIp } from "../../_lib/hash.js";
-import { rateLimit } from "../../_lib/ratelimit.js";
+import { rateLimit, isBypassed } from "../../_lib/ratelimit.js";
 import { validateReason } from "../../_lib/validation.js";
 
 export async function onRequestPost({ request, env, params }) {
@@ -13,9 +13,11 @@ export async function onRequestPost({ request, env, params }) {
   const ip = getClientIp(request);
   const ipHash = await hashIp(ip, env);
 
-  const rl = await rateLimit(env.KV_RATELIMIT, `report:ip:${ipHash}`, 10, 3600);
-  if (!rl.allowed) {
-    return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(rl.retryAfterSec) });
+  if (!isBypassed(env, ip)) {
+    const rl = await rateLimit(env.KV_RATELIMIT, `report:ip:${ipHash}`, 10, 3600);
+    if (!rl.allowed) {
+      return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(rl.retryAfterSec) });
+    }
   }
 
   const comment = await env.DB.prepare(`SELECT id FROM comments WHERE id = ?`).bind(commentId).first();

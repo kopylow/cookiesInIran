@@ -54,16 +54,19 @@ body {
     --current-bg: var(--color-bg-light);
     --current-text: var(--color-text-light);
     --current-accent: var(--color-accent-light);
+    --current-accent-rgb: 181, 101, 29;
     --current-margin: var(--margin-fluid);
     --current-max-width: var(--container-max-width-fluid);
     --current-line-height: var(--line-height-fluid);
     --current-text-align: justify;
+    --site-easing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body[data-theme="dark"] {
     --current-bg: var(--color-bg-dark);
     --current-text: var(--color-text-dark);
     --current-accent: var(--color-accent-dark);
+    --current-accent-rgb: 212, 163, 115;
     --current-margin: var(--margin-fluid);
     --current-max-width: var(--container-max-width-fluid);
     --current-line-height: var(--line-height-fluid);
@@ -737,10 +740,15 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
 /* --------------------------------------------------------------------------
    N. Comments UI (drawer-comments content)
    -------------------------------------------------------------------------- */
+/* Comments: density + polish.
+   The single most impactful rule is `.comments-root { font-size: 0.9rem }` —
+   the subtree uses em-based sizes, so shrinking the root cascades everywhere. */
 .comments-root {
+    font-size: 0.9rem;
+    line-height: 1.45;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.85rem;
     max-width: 720px;
     margin-inline: auto;
 }
@@ -758,24 +766,26 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
 .comments-switcher .chapter-select {
     flex: 1;
     min-width: 0;
-    padding: 0.4rem 0.6rem;
+    padding: 0.35rem 0.55rem;
     background: var(--current-bg);
     color: var(--current-text);
-    border: 1px solid rgba(128, 128, 128, 0.35);
+    border: 1px solid rgba(128, 128, 128, 0.3);
     border-radius: 6px;
     font: inherit;
+    transition: border-color 0.2s var(--site-easing),
+                background-color 0.2s var(--site-easing),
+                box-shadow 0.2s var(--site-easing);
 }
 
 .comments-identity[hidden] { display: none; }
 .comments-identity {
-    padding: 0.5rem 0.75rem;
+    padding: 0.45rem 0.65rem;
     background: rgba(128, 128, 128, 0.08);
     border-radius: 6px;
     display: flex;
     gap: 0.4rem;
     align-items: center;
     flex-wrap: wrap;
-    font-size: 0.95em;
 }
 .comments-identity .identity-name { font-weight: 600; }
 
@@ -783,13 +793,13 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 1.2em;
-    height: 1.2em;
-    padding: 0 0.3em;
+    min-width: 1em;
+    height: 1em;
+    padding: 0 0.25em;
     border-radius: 999px;
     background: var(--current-accent);
     color: var(--current-bg);
-    font-size: 0.75em;
+    font-size: 0.7em;
     font-weight: 700;
     line-height: 1;
 }
@@ -797,50 +807,104 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
 .comments-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
 }
 .comments-loading, .comments-empty, .comments-error {
     padding: 1rem;
     text-align: center;
     opacity: 0.7;
-    font-style: italic;
 }
-.comments-error { color: #b00; opacity: 1; font-style: normal; }
+.comments-empty {
+    padding: 1.2rem 1rem;
+    opacity: 0.65;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+.comments-empty-icon {
+    opacity: 0.5;
+    color: var(--current-accent);
+}
+.comments-error { color: #b00; opacity: 1; }
 
 .comment-group {
-    border: 1px solid rgba(128, 128, 128, 0.2);
-    border-radius: 8px;
-    padding: 0.75rem;
-    background: rgba(128, 128, 128, 0.04);
+    padding-block: 0.2rem 0.35rem;
 }
+.comment-group + .comment-group {
+    border-top: 1px solid rgba(128, 128, 128, 0.1);
+    margin-top: 0.55rem;
+    padding-top: 0.55rem;
+}
+
 .comment {
-    padding: 0.4rem 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.65rem;
+    row-gap: 0.1rem;
+    align-items: start;
+    padding: 0.3rem 0.45rem 0.3rem 0.7rem;
+    border-inline-start: 2px solid var(--current-accent);
+    border-radius: 0 4px 4px 0;
+    transition: background-color 0.2s var(--site-easing);
 }
-.comment + .comment {
-    border-top: 1px dashed rgba(128, 128, 128, 0.2);
-    margin-top: 0.4rem;
-    padding-top: 0.6rem;
+.comment:hover { background: rgba(128, 128, 128, 0.04); }
+.comment + .comment { margin-top: 0.35rem; }
+.comment.comment-reply {
+    margin-inline-start: 1.1rem;
+    border-inline-start: 1px solid rgba(128, 128, 128, 0.22);
+    padding-inline-start: 0.65rem;
 }
-.comment-reply {
-    padding-inline-start: 1.25rem;
-    border-inline-start: 2px solid rgba(128, 128, 128, 0.25);
-    margin-inline-start: 0.25rem;
+
+.comment-avatar {
+    grid-row: 1 / span 2;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: 600 0.82rem / 1 'IBM Plex Sans', sans-serif;
+    background-color: var(--current-accent);
+    background-image: linear-gradient(
+        135deg,
+        hsl(var(--avatar-hue, 30), 38%, 65%),
+        hsl(calc(var(--avatar-hue, 30) + 30), 48%, 52%)
+    );
+    color: var(--current-bg);
+    user-select: none;
+    flex: 0 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+.comment-avatar[data-color="none"] {
+    background: rgba(128, 128, 128, 0.12);
+    color: rgba(128, 128, 128, 0.5);
+    box-shadow: inset 0 0 0 1.5px rgba(128, 128, 128, 0.3);
+}
+
+.comment-reply .comment-avatar {
+    width: 1.6rem;
+    height: 1.6rem;
+    font-size: 0.72rem;
 }
 
 .comment-head {
+    grid-column: 2;
     display: flex;
-    gap: 0.5rem;
+    gap: 0.4rem;
     align-items: baseline;
     flex-wrap: wrap;
-    font-size: 0.9em;
-    opacity: 0.85;
 }
-.comment-author { font-weight: 600; opacity: 1; }
-.comment-replyto { font-size: 0.9em; opacity: 0.75; }
-.comment-time { margin-inline-start: auto; opacity: 0.6; font-size: 0.85em; }
+.comment-author { font-weight: 600; }
+.comment-time {
+    opacity: 0.55;
+    font-size: 0.78em;
+}
 
 .comment-body {
-    margin: 0.35rem 0 0.4rem;
+    grid-column: 2;
+    margin: 0.2rem 0 0.15rem;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: anywhere;
@@ -853,33 +917,64 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
 }
 
 .comment-actions {
+    grid-column: 2;
     display: flex;
-    gap: 0.5rem;
+    gap: 0.2rem;
     flex-wrap: wrap;
+    margin-top: 0.05rem;
+    margin-inline-start: -0.3rem; /* offset the button's small padding so the row left-aligns to body */
 }
 .comment-actions button {
     background: transparent;
-    border: 1px solid rgba(128, 128, 128, 0.3);
+    border: 0;
     color: inherit;
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
+    padding: 0.05rem 0.3rem;
     font: inherit;
-    font-size: 0.85em;
+    font-size: 0.78em; /* match .comment-time — these are metadata, not controls */
     cursor: pointer;
-    opacity: 0.85;
+    opacity: 0.5;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    transition: background-color 0.2s var(--site-easing),
+                opacity 0.2s var(--site-easing);
 }
-.comment-actions button:hover { opacity: 1; background: rgba(128, 128, 128, 0.1); }
+.comment-actions button:hover {
+    opacity: 1;
+    background: rgba(128, 128, 128, 0.1);
+}
 
 /* Form */
+.comments-root input:focus-visible,
+.comments-root textarea:focus-visible,
+.comments-root select:focus-visible,
+.comment-actions button:focus-visible,
+.comments-verify-modal input:focus-visible {
+    outline: 2px solid var(--current-accent);
+    outline-offset: 1px;
+}
+
+.form-field input:not([type="checkbox"]):focus-visible,
+.form-field textarea:focus-visible,
+.verify-code-input:focus-visible {
+    outline: none;
+    border-color: var(--current-accent);
+    box-shadow: 0 0 0 3px rgba(var(--current-accent-rgb, 181, 101, 29), 0.18);
+}
+
 .comment-form {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
-    padding: 0.75rem;
-    border: 1px solid rgba(128, 128, 128, 0.25);
+    gap: 0.55rem;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid rgba(128, 128, 128, 0.2);
     border-radius: 8px;
     background: rgba(128, 128, 128, 0.04);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03),
+                0 6px 18px -10px rgba(0, 0, 0, 0.06);
 }
+body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
 .comment-form .hp {
     position: absolute;
     inset-inline-start: -9999px;
@@ -890,29 +985,32 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
 .form-field {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    font-size: 0.95em;
+    gap: 0.2rem;
 }
-.form-field > span { font-weight: 600; opacity: 0.85; }
+.form-field > span { font-weight: 600; opacity: 0.85; font-size: 0.88em; }
 .form-field input:not([type="checkbox"]),
-.form-field textarea {
-    padding: 0.5rem 0.6rem;
-    border: 1px solid rgba(128, 128, 128, 0.35);
+.form-field textarea,
+.verify-code-input {
+    padding: 0.45rem 0.55rem;
+    border: 1px solid rgba(128, 128, 128, 0.3);
     border-radius: 6px;
     background: var(--current-bg);
     color: var(--current-text);
     font: inherit;
     width: 100%;
+    transition: border-color 0.2s var(--site-easing),
+                background-color 0.2s var(--site-easing),
+                box-shadow 0.2s var(--site-easing);
 }
-.form-field textarea { resize: vertical; min-height: 5rem; }
+.form-field textarea { resize: vertical; min-height: 3.75rem; line-height: 1.5; }
 .form-field-checkbox {
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
 }
 .form-field-checkbox input[type="checkbox"] {
-    width: 1.15rem;
-    height: 1.15rem;
+    width: 1.05rem;
+    height: 1.05rem;
     margin: 0;
     flex: 0 0 auto;
     accent-color: var(--current-accent);
@@ -921,7 +1019,7 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
 .form-field-checkbox > span { font-weight: 400; flex: 1; min-width: 0; }
 .form-hint {
     opacity: 0.7;
-    font-size: 0.85em;
+    font-size: 0.82em;
     line-height: 1.4;
 }
 .form-reply-indicator[hidden] { display: none; }
@@ -930,21 +1028,29 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     gap: 0.5rem;
     align-items: center;
     flex-wrap: wrap;
-    padding: 0.4rem 0.6rem;
-    background: rgba(128, 128, 128, 0.1);
+    padding: 0.35rem 0.55rem;
+    background: rgba(var(--current-accent-rgb, 181, 101, 29), 0.08);
+    border-inline-start: 2px solid var(--current-accent);
     border-radius: 4px;
-    font-size: 0.9em;
+    font-size: 0.88em;
 }
 .form-reply-indicator button {
     background: transparent;
-    border: 1px solid rgba(128, 128, 128, 0.4);
+    border: 1px solid rgba(128, 128, 128, 0.35);
     color: inherit;
-    padding: 0.15rem 0.5rem;
-    border-radius: 4px;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
     font: inherit;
-    font-size: 0.85em;
+    font-size: 0.82em;
     cursor: pointer;
     margin-inline-start: auto;
+    opacity: 0.75;
+    transition: background-color 0.2s var(--site-easing),
+                opacity 0.2s var(--site-easing);
+}
+.form-reply-indicator button:hover {
+    opacity: 1;
+    background: rgba(128, 128, 128, 0.1);
 }
 .form-row {
     display: flex;
@@ -956,25 +1062,42 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     background: var(--current-accent);
     color: var(--current-bg);
     border: none;
-    padding: 0.55rem 1.1rem;
+    padding: 0.45rem 0.95rem;
     border-radius: 6px;
     font: inherit;
     font-weight: 600;
+    letter-spacing: 0.01em;
     cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s var(--site-easing),
+                box-shadow 0.2s var(--site-easing),
+                opacity 0.2s var(--site-easing);
+}
+.comment-form button[type="submit"]:hover:not(:disabled),
+.verify-submit:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(var(--current-accent-rgb, 181, 101, 29), 0.25);
+}
+.comment-form button[type="submit"]:active:not(:disabled),
+.verify-submit:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 .comment-form button[type="submit"]:disabled,
 .verify-submit:disabled { opacity: 0.5; cursor: wait; }
 .verify-cancel {
     background: transparent;
-    border: 1px solid rgba(128, 128, 128, 0.4);
+    border: 1px solid rgba(128, 128, 128, 0.35);
     color: inherit;
-    padding: 0.55rem 1rem;
+    padding: 0.45rem 0.85rem;
     border-radius: 6px;
     font: inherit;
     cursor: pointer;
+    transition: background-color 0.2s var(--site-easing);
 }
+.verify-cancel:hover { background: rgba(128, 128, 128, 0.1); }
 .form-status, .verify-status {
-    font-size: 0.85em;
+    font-size: 0.82em;
     opacity: 0.8;
     min-height: 1.1em;
 }
@@ -982,7 +1105,7 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     color: #b00;
     opacity: 1;
 }
-.form-footer { font-size: 0.85em; opacity: 0.7; }
+.form-footer { font-size: 0.82em; opacity: 0.7; }
 .form-footer a { color: inherit; text-decoration: underline; }
 
 /* Verify modal */
@@ -1001,22 +1124,104 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     background: var(--current-bg);
     color: var(--current-text);
     border-radius: 10px;
-    padding: 1.25rem;
+    padding: 1.05rem 1.05rem 0.85rem;
     max-width: 380px;
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.65rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 .verify-code-input {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     letter-spacing: 0.4em;
     text-align: center;
-    padding: 0.55rem 0.5rem;
-    border: 1px solid rgba(128, 128, 128, 0.4);
-    border-radius: 6px;
-    background: var(--current-bg);
-    color: var(--current-text);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    box-shadow: inset 0 -2px 0 rgba(var(--current-accent-rgb, 181, 101, 29), 0.25);
+}
+
+/* Comment skeleton (loading state) */
+.comment-skeleton {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.65rem;
+    row-gap: 0.35rem;
+    align-items: start;
+    padding: 0.3rem 0.45rem 0.3rem 0.7rem;
+    border-inline-start: 2px solid rgba(128, 128, 128, 0.2);
+    border-radius: 0 4px 4px 0;
+}
+.comment-skeleton + .comment-skeleton { margin-top: 0.35rem; }
+.comment-skeleton-avatar {
+    grid-row: 1 / span 2;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    background: rgba(128, 128, 128, 0.18);
+}
+.comment-skeleton-line {
+    grid-column: 2;
+    height: 0.7rem;
+    border-radius: 4px;
+    background: rgba(128, 128, 128, 0.15);
+}
+.comment-skeleton-line.short { width: 35%; }
+.comment-skeleton-line.long { width: 80%; height: 0.85rem; }
+
+/* Motion: kept lean and gated behind prefers-reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+    @keyframes commentFadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes modalBackdropFade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes modalBoxIn {
+        from { opacity: 0; transform: scale(0.96); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes replyIndicatorIn {
+        from { opacity: 0; transform: translateY(-4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes skeletonShimmer {
+        0% { background-position: -200px 0; }
+        100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    .comment.is-new {
+        animation: commentFadeIn 0.28s var(--site-easing) both;
+    }
+    /* Light cascade for initial load: stagger up to 5 comments so they fan in. */
+    .comment.is-new:nth-child(1) { animation-delay: 0ms; }
+    .comment.is-new:nth-child(2) { animation-delay: 40ms; }
+    .comment.is-new:nth-child(3) { animation-delay: 80ms; }
+    .comment.is-new:nth-child(4) { animation-delay: 120ms; }
+    .comment.is-new:nth-child(5) { animation-delay: 160ms; }
+
+    .comments-verify-modal:not([hidden]) {
+        animation: modalBackdropFade 0.22s var(--site-easing) both;
+    }
+    .comments-verify-modal:not([hidden]) .comments-verify-box {
+        animation: modalBoxIn 0.24s var(--site-easing) both;
+    }
+
+    .form-reply-indicator:not([hidden]) {
+        animation: replyIndicatorIn 0.2s var(--site-easing) both;
+    }
+
+    .comment-skeleton-avatar,
+    .comment-skeleton-line {
+        background: linear-gradient(
+            90deg,
+            rgba(128, 128, 128, 0.12) 0%,
+            rgba(128, 128, 128, 0.22) 50%,
+            rgba(128, 128, 128, 0.12) 100%
+        );
+        background-size: 200px 100%;
+        background-repeat: no-repeat;
+        animation: skeletonShimmer 1.6s var(--site-easing) infinite;
+    }
 }

@@ -180,6 +180,11 @@
     turnstileLoaded: false,
     turnstileWidgetId: null,
     captchaToken: null,
+    // Track IDs we've already rendered for the current thread, so the fade-in
+    // animation only fires on first appearance (initial load + new posts), not
+    // on every re-fetch of the same thread.
+    seenIds: new Set(),
+    lastThreadKey: null,
   };
 
   function t(key) {
@@ -191,6 +196,25 @@
 
   function escapeHtml(s) {
     return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  function avatarHueFromName(name) {
+    const s = String(name ?? "");
+    let h = 0;
+    for (let i = 0; i < s.length; i++) {
+      h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+    }
+    return Math.abs(h) % 360;
+  }
+
+  function avatarInitial(name) {
+    const trimmed = String(name ?? "").trim();
+    if (!trimmed) return "?";
+    const words = trimmed.split(/\s+/);
+    if (words.length >= 2) {
+      return (Array.from(words[0])[0] + Array.from(words[words.length - 1])[0]).toUpperCase();
+    }
+    return Array.from(trimmed)[0].toUpperCase();
   }
 
   function autolink(text) {
@@ -295,8 +319,24 @@
 
   async function fetchThread() {
     const threadId = threadIdFor(state.currentThread, state.currentLang);
+    if (state.lastThreadKey !== threadId) {
+      state.seenIds = new Set();
+      state.lastThreadKey = threadId;
+    }
     const list = state.rootEl.querySelector(".comments-list");
-    list.innerHTML = `<div class="comments-loading">${escapeHtml(t("loading"))}</div>`;
+    const loadingLabel = escapeHtml(t("loading"));
+    const skeleton = `
+      <div class="comment-skeleton" role="status" aria-label="${loadingLabel}">
+        <div class="comment-skeleton-avatar"></div>
+        <div class="comment-skeleton-line short"></div>
+        <div class="comment-skeleton-line long"></div>
+      </div>
+      <div class="comment-skeleton" aria-hidden="true">
+        <div class="comment-skeleton-avatar"></div>
+        <div class="comment-skeleton-line short"></div>
+        <div class="comment-skeleton-line long"></div>
+      </div>`;
+    list.innerHTML = skeleton;
     try {
       const data = await apiGet(`/api/comments?thread=${encodeURIComponent(threadId)}`);
       renderList(data.comments || []);
@@ -310,7 +350,7 @@
   function renderList(comments) {
     const list = state.rootEl.querySelector(".comments-list");
     if (!comments.length) {
-      list.innerHTML = `<div class="comments-empty">${escapeHtml(t("empty"))}</div>`;
+      list.innerHTML = `<div class="comments-empty"><svg class="comments-empty-icon" aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>${escapeHtml(t("empty"))}</div>`;
       return;
     }
     const byId = new Map(comments.map(c => [c.id, c]));
@@ -347,22 +387,26 @@
 
   function renderComment(c, byId, depth) {
     const el = document.createElement("article");
-    el.className = "comment" + (depth > 0 ? " comment-reply" : "");
+    const isNew = !state.seenIds.has(c.id);
+    if (isNew) state.seenIds.add(c.id);
+    el.className = "comment"
+      + (depth > 0 ? " comment-reply" : "")
+      + (isNew ? " is-new" : "");
     el.dataset.id = c.id;
 
-    const replyToName = c.parent_id && byId.get(c.parent_id) ? byId.get(c.parent_id).display_name : null;
+    const hue = c.email_hash ? avatarHueFromName(c.email_hash) : null;
+    const initial = avatarInitial(c.display_name);
 
     el.innerHTML = `
+      <span class="comment-avatar" data-verified="${c.verified ? "true" : "false"}" ${hue !== null ? `style="--avatar-hue: ${hue};"` : 'data-color="none"'} aria-hidden="true">${escapeHtml(initial)}</span>
       <header class="comment-head">
         <span class="comment-author">${escapeHtml(c.display_name)}</span>
-        ${c.verified ? `<span class="verified-badge" title="${escapeHtml(t("verifiedBadge"))}" aria-label="${escapeHtml(t("verifiedBadge"))}">✓</span>` : ""}
-        ${replyToName && depth > 0 ? `<span class="comment-replyto">${escapeHtml(t("replyingTo"))} <em>${escapeHtml(replyToName)}</em></span>` : ""}
         <time class="comment-time" datetime="${new Date(c.created_at * 1000).toISOString()}">${escapeHtml(relativeTime(c.created_at))}</time>
       </header>
       <div class="comment-body">${autolink(c.body)}</div>
       <footer class="comment-actions">
-        <button class="comment-reply-btn" data-id="${escapeHtml(c.id)}" data-name="${escapeHtml(c.display_name)}">${escapeHtml(t("btnReply"))}</button>
-        <button class="comment-report-btn" data-id="${escapeHtml(c.id)}">${escapeHtml(t("btnReport"))}</button>
+        ${depth === 0 ? `<button class="comment-reply-btn" data-id="${escapeHtml(c.id)}" data-name="${escapeHtml(c.display_name)}"><svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg> ${escapeHtml(t("btnReply"))}</button>` : ""}
+        <button class="comment-report-btn" data-id="${escapeHtml(c.id)}"><svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg> ${escapeHtml(t("btnReport"))}</button>
       </footer>
     `;
     return el;
@@ -629,7 +673,6 @@
         <div class="comments-identity" hidden>
           <span data-i18n="identityVerifiedAs">Du schreibst als</span>
           <strong class="identity-name"></strong>
-          <span class="verified-badge" title="verifiziert" aria-hidden="true">✓</span>
         </div>
 
         <div class="comments-list" aria-live="polite"></div>

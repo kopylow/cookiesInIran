@@ -1,6 +1,14 @@
 // Fixed-window rate limiter backed by KV. Eventually consistent — sufficient
 // for low-traffic abuse mitigation. Returns { allowed, retryAfterSec, remaining }.
 
+export function isBypassed(env, ip) {
+  // Allow local development.
+  if (ip === "127.0.0.1" || ip === "::1") return true;
+  // Allow explicit bypass IP from secrets/env.
+  if (env.BYPASS_IP && ip === env.BYPASS_IP) return true;
+  return false;
+}
+
 export async function rateLimit(kv, key, limit, windowSec) {
   const now = Math.floor(Date.now() / 1000);
   const bucket = Math.floor(now / windowSec);

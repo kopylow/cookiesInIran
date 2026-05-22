@@ -1,7 +1,7 @@
 import { json, jsonError, getClientIp, readJson, isHttps } from "./_lib/http.js";
 import { hashIp, hashEmail, sha256Hex } from "./_lib/hash.js";
 import { validateCode, validateEmail } from "./_lib/validation.js";
-import { rateLimit } from "./_lib/ratelimit.js";
+import { rateLimit, isBypassed } from "./_lib/ratelimit.js";
 import { createSession, buildSessionCookie } from "./_lib/session.js";
 import { encryptEmail, decryptEmail, sendReplyNotification } from "./_lib/email.js";
 
@@ -16,9 +16,11 @@ export async function onRequestPost({ request, env }) {
 
   const ip = getClientIp(request);
   const ipHash = await hashIp(ip, env);
-  const rl = await rateLimit(env.KV_RATELIMIT, `verify:ip:${ipHash}`, 20, 600);
-  if (!rl.allowed) {
-    return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(rl.retryAfterSec) });
+  if (!isBypassed(env, ip)) {
+    const rl = await rateLimit(env.KV_RATELIMIT, `verify:ip:${ipHash}`, 20, 600);
+    if (!rl.allowed) {
+      return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(rl.retryAfterSec) });
+    }
   }
 
   const codeHash = await sha256Hex(code);
@@ -123,6 +125,7 @@ export async function onRequestPost({ request, env }) {
         body: heldComment.body,
         created_at: now,
         verified: true,
+        email_hash: pending.email_hash,
       },
     },
     200,

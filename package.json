@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "wrangler pages dev",
+    "dev:lan": "wrangler pages dev --ip 0.0.0.0 --port 8788",
     "deploy": "wrangler pages deploy",
     "db:schema": "wrangler d1 execute DB --local --file=functions/api/_schema.sql",
     "db:schema:remote": "wrangler d1 execute DB --remote --file=functions/api/_schema.sql",

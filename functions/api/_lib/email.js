@@ -54,7 +54,13 @@ export async function sendReplyNotification(env, { to, parentName, replyName, re
       "authorization": `Bearer ${env.RESEND_API_KEY}`,
       "content-type": "application/json",
     },
-    body: JSON.stringify({ from: env.RESEND_FROM, to, subject: tpl.subject, text: tpl.text }),
+    body: JSON.stringify({
+      from: env.RESEND_FROM,
+      to,
+      subject: tpl.subject,
+      text: tpl.text,
+      ...(env.RESEND_REPLY_TO ? { reply_to: env.RESEND_REPLY_TO } : {}),
+    }),
   });
   if (!r.ok) {
     const body = await r.text();
@@ -76,7 +82,13 @@ export async function sendVerificationCode(env, { to, code, lang }) {
       "authorization": `Bearer ${env.RESEND_API_KEY}`,
       "content-type": "application/json",
     },
-    body: JSON.stringify({ from: env.RESEND_FROM, to, subject: tpl.subject, text: tpl.text }),
+    body: JSON.stringify({
+      from: env.RESEND_FROM,
+      to,
+      subject: tpl.subject,
+      text: tpl.text,
+      ...(env.RESEND_REPLY_TO ? { reply_to: env.RESEND_REPLY_TO } : {}),
+    }),
   });
   if (!r.ok) {
     const body = await r.text();

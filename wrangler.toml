@@ -33,8 +33,9 @@ id = "6effe52e68da47b2bde18e222d05f078"
 
 # --- Non-secret vars (visible in CF dashboard, set per environment) ---
 [vars]
-TURNSTILE_SITE_KEY = "REPLACE_ME_WITH_TURNSTILE_SITE_KEY"
-RESEND_FROM = "Anton Kopylow <noreply@example.com>"
+TURNSTILE_SITE_KEY = "0x4AAAAAADUbbZ-uk9W5i55a"
+RESEND_FROM = "Cookies in Iran <noreply@cookiesiniran.com>"
+RESEND_REPLY_TO = "cookiesiniran@mailbox.org"
 RESEND_REGION = "eu-west-1"
 ALLOWED_LANGS = "de,en,ru"
 MAX_CHAPTER_INDEX = "25"

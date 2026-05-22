@@ -68,9 +68,50 @@ sqlite3 .wrangler/state/v3/d1/miniflare-D1DatabaseObject/<hash>.sqlite < functio
 
 Pick the most-recently-modified `*.sqlite` after starting `pages dev`. The `wrangler d1 execute --local` path looks correct but silently writes to a different DB; do not rely on it for pages-dev tests.
 
+### Production deployment
+
+The site is live at `https://cookiesiniran.com` and `https://cookies-in-iran.pages.dev`.
+
+**First-time deploy to a new Cloudflare account:**
+
+```bash
+npx wrangler pages project create cookies-in-iran --production-branch main
+npx wrangler pages deploy web-landing-page --project-name cookies-in-iran --commit-dirty=true
+```
+
+**After every fresh production deploy, apply the D1 schema** (tables are not created automatically):
+
+```bash
+npx wrangler d1 execute cookies-in-iran-comments --remote --file=functions/api/_schema.sql
+```
+
+This is separate from the local dev schema step. Forgetting it causes silent HTTP 500s on all `/api/comments` requests (Cloudflare error 1101).
+
+### Email sending
+
+Outbound email uses [Resend](https://resend.com) (EU region, required for DSGVO). The sending domain `cookiesiniran.com` is verified in Resend via its Cloudflare DNS integration — do not remove or alter the DKIM/SPF records it manages. DNS records also in place: apex CNAME `cookiesiniran.com → cookies-in-iran.pages.dev` (proxied), DMARC `_dmarc.cookiesiniran.com`.
+
+- **From**: `Cookies in Iran <noreply@cookiesiniran.com>` (set in `wrangler.toml [vars]`)
+- **Reply-To**: `cookiesiniran@mailbox.org` (set in `wrangler.toml [vars]` as `RESEND_REPLY_TO`)
+- Both email sends in `functions/api/_lib/email.js` include `reply_to` so user replies land in the mailbox.org inbox, not bounce.
+- Dev mode (no `RESEND_API_KEY`): codes are logged to the wrangler terminal, no mail sent.
+
 ### Production secrets
 
-`.dev.vars` holds dummy local values. For prod set with `npx wrangler pages secret put NAME`: `RESEND_API_KEY` (EU region), `TURNSTILE_SECRET`, `EMAIL_ENC_KEY` (32-byte base64 for AES-GCM), `EMAIL_HASH_SALT` (stable, never rotate), `IP_HASH_SALT_CURRENT` + `IP_HASH_SALT_PREVIOUS` (rotated quarterly with overlap window), `CF_ACCESS_AUD` (JWT aud claim, gates admin), `CRON_SECRET` (bearer token for the cron-tick external trigger). Also set `TURNSTILE_SITE_KEY` in `wrangler.toml [vars]` and mirror it in the `<meta name="turnstile-site-key">` tag in `index.html`.
+`.dev.vars` holds dummy local values. For prod set with `npx wrangler pages secret put NAME`.
+
+**Already set in production:**
+- `RESEND_API_KEY` — Resend sending key (EU region account)
+
+**Still needed — site partially functional without these:**
+- `TURNSTILE_SECRET` — Cloudflare Turnstile (comment posting skips bot check without it in dev, but should be set in prod)
+- `EMAIL_ENC_KEY` — 32-byte base64 for AES-GCM encryption of stored email addresses
+- `EMAIL_HASH_SALT` — stable salt for email hashing (do NOT rotate — changing it orphans all existing identities)
+- `IP_HASH_SALT_CURRENT` + `IP_HASH_SALT_PREVIOUS` — rotated quarterly with overlap window
+- `CF_ACCESS_AUD` — Cloudflare Access AUD tag, gates the `/admin*` path
+- `CRON_SECRET` — bearer token for the external cron trigger
+
+Also set `TURNSTILE_SITE_KEY` in `wrangler.toml [vars]` and mirror it in the `<meta name="turnstile-site-key">` tag in `index.html`.
 
 ### Cron (Pages Functions have no native cron)
 
