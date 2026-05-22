@@ -265,7 +265,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const buttons = manuscriptContainer.querySelectorAll('.discuss-btn');
         buttons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                openCommentsDrawer();
+                const raw = btn.dataset.chapter;
+                const idx = raw !== undefined ? parseInt(raw, 10) : NaN;
+                openCommentsDrawer(Number.isFinite(idx) ? idx : null);
             });
         });
     }
@@ -311,6 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
     langToggle.addEventListener('change', (e) => {
         currentLang = e.target.value;
         loadManuscript(currentLang);
+        if (window.CommentsUI) window.CommentsUI.setLang(currentLang);
     });
 // Smart Top Bar Hide/Show on Scroll
 let lastScrollY = window.scrollY;
@@ -354,12 +357,13 @@ window.addEventListener('scroll', () => {
         pageWrapper.classList.remove('drawer-open-fullscreen');
     }
 
-    function openCommentsDrawer() {
+    function openCommentsDrawer(chapterIndex) {
         closeAllDrawers();
         topBar.classList.remove('hidden');
         drawerComments.classList.add('open');
         drawerOverlay.classList.add('visible');
         pageWrapper.classList.add('drawer-open-fullscreen');
+        if (window.CommentsUI) window.CommentsUI.open(chapterIndex);
     }
 
     function openSupportDrawer() {
@@ -439,6 +443,12 @@ window.addEventListener('scroll', () => {
     document.addEventListener('touchcancel', endPinch);
 
     // --- Initialize ---
+    if (window.CommentsUI) {
+        window.CommentsUI.init({
+            drawerEl: drawerComments,
+            getCurrentLang: () => currentLang,
+        });
+    }
     window.scrollTo(0, 0);
     loadManuscript(currentLang);
 });

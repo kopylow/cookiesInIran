@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Kommentar-Admin · Kekse im Iran</title>
+<style>
+  :root { color-scheme: light dark; --pad: 1rem; --gap: 0.5rem; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 1100px; margin: 0 auto; padding: var(--pad); }
+  h1 { margin: 0 0 1rem; }
+  .filters { display: flex; gap: var(--gap); margin-bottom: 1rem; align-items: center; }
+  .report { border: 1px solid currentColor; border-radius: 8px; padding: var(--pad); margin-bottom: var(--gap); }
+  .meta { font-size: 0.85em; opacity: 0.7; margin-bottom: 0.5rem; }
+  .body { white-space: pre-wrap; padding: 0.5rem; background: rgba(127,127,127,0.1); border-radius: 4px; margin: 0.5rem 0; }
+  .actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  button { padding: 0.4rem 0.8rem; cursor: pointer; }
+  button.danger { color: #b00; }
+  .status-hidden { opacity: 0.6; }
+  .status-deleted { opacity: 0.4; text-decoration: line-through; }
+  #empty { padding: 2rem; text-align: center; opacity: 0.6; }
+  #error { background: #fee; color: #900; padding: 0.5rem; border-radius: 4px; margin-bottom: 1rem; display: none; }
+</style>
+</head>
+<body>
+<h1>Kommentar-Admin</h1>
+<div id="error"></div>
+<div class="filters">
+  <label><input type="checkbox" id="show-resolved"> Auch erledigte Meldungen zeigen</label>
+  <button id="refresh">Neu laden</button>
+</div>
+<div id="list"></div>
+<div id="empty" hidden>Keine offenen Meldungen.</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const $list = $("#list");
+const $err = $("#error");
+const $empty = $("#empty");
+
+function showError(msg) { $err.textContent = msg; $err.style.display = "block"; }
+function clearError() { $err.style.display = "none"; }
+
+function fmtTime(unix) {
+  if (!unix) return "—";
+  return new Date(unix * 1000).toLocaleString("de-DE");
+}
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+async function api(method, url, body) {
+  const res = await fetch(url, {
+    method,
+    headers: body ? { "content-type": "application/json" } : {},
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    let detail = "";
+    try { detail = (await res.json()).error || ""; } catch {}
+    throw new Error(`${res.status} ${detail}`);
+  }
+  return res.json();
+}
+
+async function load() {
+  clearError();
+  $list.innerHTML = "Lade…";
+  $empty.hidden = true;
+  const includeResolved = $("#show-resolved").checked ? "?resolved=1" : "";
+  try {
+    const data = await api("GET", "/api/admin/reports" + includeResolved);
+    render(data.reports || []);
+  } catch (e) {
+    $list.innerHTML = "";
+    showError("Laden fehlgeschlagen: " + e.message);
+  }
+}
+
+function render(reports) {
+  $list.innerHTML = "";
+  if (!reports.length) { $empty.hidden = false; return; }
+  for (const r of reports) {
+    const card = document.createElement("div");
+    card.className = "report" + (r.status ? " status-" + r.status : "");
+    card.innerHTML = `
+      <div class="meta">
+        Thread: <strong>${esc(r.thread_id)}</strong> · Sprache: <strong>${esc(r.lang)}</strong> ·
+        Gemeldet ${fmtTime(r.reported_at)}${r.resolved_at ? " · erledigt " + fmtTime(r.resolved_at) : ""}
+      </div>
+      <div class="meta">
+        Kommentar von <strong>${esc(r.display_name)}</strong>
+        ${r.identity_id ? "(verifiziert)" : ""} · Status: <strong>${esc(r.status || "n/a")}</strong>
+      </div>
+      ${r.reason ? `<div class="meta">Grund: ${esc(r.reason)}</div>` : ""}
+      <div class="body">${esc(r.body) || "<em>(Kommentar nicht gefunden)</em>"}</div>
+      <div class="actions">
+        ${r.comment_id ? `
+          <button data-act="hide" data-id="${r.comment_id}">Verstecken</button>
+          <button data-act="unhide" data-id="${r.comment_id}">Wieder sichtbar</button>
+          <button data-act="anonymize" data-id="${r.comment_id}" class="danger">DSGVO-Anonymisieren</button>
+          ${r.identity_id ? `<button data-act="ban" data-iid="${r.identity_id}" class="danger">Identität sperren</button>` : ""}
+        ` : ""}
+        <button data-act="resolve" data-rid="${r.report_id}">Erledigt</button>
+      </div>
+    `;
+    $list.appendChild(card);
+  }
+}
+
+$list.addEventListener("click", async (ev) => {
+  const btn = ev.target.closest("button[data-act]");
+  if (!btn) return;
+  const act = btn.dataset.act;
+  btn.disabled = true;
+  try {
+    if (act === "hide") await api("POST", `/api/admin/comments/${btn.dataset.id}/status`, { status: "hidden" });
+    else if (act === "unhide") await api("POST", `/api/admin/comments/${btn.dataset.id}/status`, { status: "visible" });
+    else if (act === "anonymize") {
+      if (!confirm("Diesen Kommentar DSGVO-anonymisieren? Inhalt geht verloren, Threading bleibt.")) { btn.disabled = false; return; }
+      await api("POST", `/api/admin/comments/${btn.dataset.id}/anonymize`);
+    } else if (act === "ban") {
+      const reason = prompt("Grund für die Sperre (optional):") ?? null;
+      await api("POST", `/api/admin/identities/${btn.dataset.iid}/ban`, { reason });
+    } else if (act === "resolve") {
+      await api("POST", `/api/admin/reports/${btn.dataset.rid}/resolve`);
+    }
+    await load();
+  } catch (e) {
+    showError("Aktion fehlgeschlagen: " + e.message);
+    btn.disabled = false;
+  }
+});
+
+$("#refresh").addEventListener("click", load);
+$("#show-resolved").addEventListener("change", load);
+load();
+</script>
+</body>
+</html>

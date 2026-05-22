@@ -34,9 +34,55 @@ Both pipelines read the same Markdown and diverge based on the same per-language
 
 **Frontend state** (`web-landing-page/main.js`): all client-side. Language switching re-fetches the appropriate `manuscript_{lang}.html`. RTL is toggled on `<html>` for Farsi. Theme is light/dark via `data-theme` on body, initialized from `prefers-color-scheme`. A scroll listener at `main.js:162` reads the current chapter's `data-tense` and writes it to `body[data-state]`, which CSS uses to morph the page mood.
 
+## Comments system
+
+A third pipeline on top of the two above: a per-language, per-chapter comment thread with optional email-claim of names, lives entirely on Cloudflare. **One deploy** (CF Pages) serves both the static site and the API; no CORS, no separate worker for the request path.
+
+### Stack and files
+
+- **Backend**: Pages Functions in `functions/api/*.js` (file-routed). Storage: D1 (`functions/api/_schema.sql`) for durable rows, KV for sessions and rate-limit counters. Shared helpers in `functions/api/_lib/` (`http.js`, `hash.js`, `validation.js`, `ratelimit.js`, `turnstile.js`, `session.js`, `email.js`, `admin.js`).
+- **Frontend**: `web-landing-page/comments.js` — plain script (not ES module) that exposes `window.CommentsUI` with `.init()`, `.open(chapterIndex)`, `.setLang(lang)`. Mounted into the existing `#drawer-comments` shell. `main.js` calls `CommentsUI.init()` once after DOM-ready, and wires `setupDiscussButtons()` + the language toggle to it.
+- **Admin panel**: standalone `web-landing-page/admin.html` with vanilla JS, gated in prod by Cloudflare Access on `/admin*`; gated in dev by `ADMIN_DEV_BYPASS=1` in `.dev.vars`.
+- **Privacy pages**: `web-landing-page/privacy-{de,en,ru}.html`, linked from the comment-form footer via `privacyHref` in `comments.js`. Edit these directly; they are not generated.
+- **Config**: `wrangler.toml` (D1 + KV bindings, non-secret vars like `ALLOWED_LANGS = "de,en,ru"`, `MAX_CHAPTER_INDEX = "25"`). FA is **excluded** from `ALLOWED_LANGS` because the frontend doesn't currently support Farsi comments — keep these in sync if the language list changes.
+
+### Thread IDs and identity
+
+- Threads are addressed as `main:{lang}` (top-level) or `ch:{n}:{lang}` (per chapter, `n` validated against `MAX_CHAPTER_INDEX`). The server rejects anything else — clients can't invent thread IDs.
+- Identity is **badge, not lock**: an anonymous post under "Anton" doesn't reserve the name. Only a successful email-code verify creates a row in `identities` and marks future posts with `verified: true` (✓). A second person can still post as "Anton" anonymously without a badge. Conflict messages are intentionally generic so we never leak "this email is registered".
+- Verified users get an `HttpOnly; SameSite=Lax` session cookie `cii_sid` (1-year TTL) so they keep posting without re-entering codes. JS never sees the cookie — call `/api/whoami` for status. Wipe the cookie to test the re-verify flow.
+
+### Local dev
+
+```bash
+npx wrangler pages dev web-landing-page --d1=DB --kv=KV_SESSIONS --kv=KV_RATELIMIT
+```
+
+Then http://127.0.0.1:8788. Dev-mode shortcuts (active when secrets are absent): Turnstile is skipped; Resend emails are logged to the wrangler terminal as `[email-dev] to=… code=NNNNNN`; admin requires no SSO.
+
+**Wrangler D1 quirk**: `wrangler d1 execute DB --local` and `wrangler pages dev` write to *different* sqlite files under `.wrangler/state/v3/d1/miniflare-D1DatabaseObject/`. If endpoints return `no such table: comments`, apply the schema directly to the file `pages dev` is actually using:
+
+```bash
+sqlite3 .wrangler/state/v3/d1/miniflare-D1DatabaseObject/<hash>.sqlite < functions/api/_schema.sql
+```
+
+Pick the most-recently-modified `*.sqlite` after starting `pages dev`. The `wrangler d1 execute --local` path looks correct but silently writes to a different DB; do not rely on it for pages-dev tests.
+
+### Production secrets
+
+`.dev.vars` holds dummy local values. For prod set with `npx wrangler pages secret put NAME`: `RESEND_API_KEY` (EU region), `TURNSTILE_SECRET`, `EMAIL_ENC_KEY` (32-byte base64 for AES-GCM), `EMAIL_HASH_SALT` (stable, never rotate), `IP_HASH_SALT_CURRENT` + `IP_HASH_SALT_PREVIOUS` (rotated quarterly with overlap window), `CF_ACCESS_AUD` (JWT aud claim, gates admin), `CRON_SECRET` (bearer token for the cron-tick external trigger). Also set `TURNSTILE_SITE_KEY` in `wrangler.toml [vars]` and mirror it in the `<meta name="turnstile-site-key">` tag in `index.html`.
+
+### Cron (Pages Functions have no native cron)
+
+`functions/api/admin/cron-tick.js` purges expired `pending_verifications`, resolved `reports` older than 90 days, and expired `bans`. Authenticated by `Authorization: Bearer ${CRON_SECRET}`. Trigger externally — either a tiny standalone Worker with `[triggers] crons = [...]` calling this endpoint, or a GitHub Actions schedule.
+
 ## Content rules (enforced by convention, not tooling)
 
 - Edit only `locales/{lang}/manuscript.md`. Never edit generated `*.html` or `*.tex` files.
 - Markdown subset is intentionally minimal: `# H1` (chapter), `- ` (list item), paragraphs. No `*` emphasis, no `—` em-dashes (use `:` or `,`). See `TRANSLATION_GUIDE.md`.
 - Preserved terms across all translations: "Ghostbusters" + "Who you gonna call?", "Mercedes W124" + "Steel Tank", "Taarof".
 - LaTeX template (`tex-book/main.tex`) owns book typography (A5, 12pt, widow/orphan penalties). Style changes go there, not in `build.py`.
+
+## Project contact
+
+Canonical contact email for the public site (privacy notices, GDPR data requests, mailto links, support footer): **cookiesiniran@mailbox.org**. Use this in any new public-facing page or generated content; do not use Anton's personal Gmail address in checked-in assets.

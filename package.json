@@ -1,5 +1,16 @@
 {
+  "private": true,
+  "scripts": {
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages deploy",
+    "db:schema": "wrangler d1 execute DB --local --file=functions/api/_schema.sql",
+    "db:schema:remote": "wrangler d1 execute DB --remote --file=functions/api/_schema.sql",
+    "tail": "wrangler pages deployment tail"
+  },
   "dependencies": {
     "jsdom": "^29.1.1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
   }
 }

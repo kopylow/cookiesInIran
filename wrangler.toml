@@ -1,0 +1,56 @@
+name = "cookies-in-iran"
+compatibility_date = "2025-09-01"
+pages_build_output_dir = "./web-landing-page"
+
+# --- Bindings ---
+# IDs below are placeholders. Create real resources with:
+#   npx wrangler d1 create cookies-in-iran-comments
+#   npx wrangler kv namespace create KV_SESSIONS
+#   npx wrangler kv namespace create KV_RATELIMIT
+#   npx wrangler r2 bucket create cookies-in-iran-backups
+# Then copy the returned IDs into the fields marked REPLACE_ME.
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cookies-in-iran-comments"
+database_id = "dd46d3a7-5c2c-44ba-865a-b45ada3603be"
+
+[[kv_namespaces]]
+binding = "KV_SESSIONS"
+id = "d3fb8b8dec5c4de6adf9d7cdda5e1d76"
+
+[[kv_namespaces]]
+binding = "KV_RATELIMIT"
+id = "6effe52e68da47b2bde18e222d05f078"
+
+# R2 is only used for nightly backups (Task #11). Enable it later by
+# opting in to R2 in the Cloudflare dashboard, creating the bucket, and
+# uncommenting this block.
+#
+# [[r2_buckets]]
+# binding = "BACKUPS"
+# bucket_name = "cookies-in-iran-backups"
+
+# --- Non-secret vars (visible in CF dashboard, set per environment) ---
+[vars]
+TURNSTILE_SITE_KEY = "REPLACE_ME_WITH_TURNSTILE_SITE_KEY"
+RESEND_FROM = "Anton Kopylow <noreply@example.com>"
+RESEND_REGION = "eu-west-1"
+ALLOWED_LANGS = "de,en,ru"
+MAX_CHAPTER_INDEX = "25"
+
+# --- Secrets (set with `npx wrangler pages secret put NAME`) ---
+# RESEND_API_KEY        — Resend API key (account in EU region)
+# TURNSTILE_SECRET      — Turnstile secret key
+# IP_HASH_SALT_CURRENT  — current quarter's IP-hash salt (rotate quarterly)
+# IP_HASH_SALT_PREVIOUS — previous quarter's IP-hash salt (overlap window)
+# EMAIL_HASH_SALT       — stable salt for email hashing (do NOT rotate)
+# EMAIL_ENC_KEY         — 32-byte base64 for AES-GCM email encryption
+# CF_ACCESS_AUD         — Cloudflare Access AUD tag for the /admin path
+# CRON_SECRET           — bearer token for the external cron trigger
+
+# --- Notes ---
+# Pages Functions do NOT support [triggers]/cron. For daily backup + cleanup:
+#   Option A — separate tiny Worker with cron, calls /api/admin/cron-tick.
+#   Option B — GitHub Actions schedule that POSTs to /api/admin/cron-tick.
+# Either way the endpoint lives in this project; only the trigger is external.

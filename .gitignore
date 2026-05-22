@@ -9,3 +9,7 @@
 /tex-book/*.out
 /tex-book/*.pdf
 /tex-book/*.toc
+
+# Cloudflare Wrangler / Pages local state
+.wrangler/
+.dev.vars
