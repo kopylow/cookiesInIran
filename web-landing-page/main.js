@@ -1,7 +1,7 @@
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
 }
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // DOM Elements
     const manuscriptContainer = document.getElementById('manuscript-container');
     const pageWrapper = document.getElementById('page-wrapper');
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. Dynamic Content Loading ---
     
-    async function loadManuscript(lang) {
+    async function loadManuscript(lang, restoreScroll = false) {
         manuscriptContainer.innerHTML = '<div class="loading">Loading manuscript...</div>';
         try {
             const response = await fetch(`manuscript_${lang}.html`);
@@ -92,7 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
             setupDiscussButtons();
             setupPredictivePreload();
             setupAirlockInteractions();
-            window.scrollTo(0, 0);
+            if (window.CommentsUI) window.CommentsUI.refreshChapters();
+            if (restoreScroll) {
+                const saved = parseInt(localStorage.getItem(SCROLL_POS_KEY_PREFIX + lang), 10);
+                window.scrollTo(0, saved > 0 ? saved : 0);
+            } else {
+                window.scrollTo(0, 0);
+            }
         } catch (error) {
             manuscriptContainer.innerHTML = `<div class="error">Error loading manuscript: ${error.message}</div>`;
         }
@@ -153,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let scrollHandler = null;
+    let saveScrollTimer = null;
     function setupScrollTracking() {
         const chapters = manuscriptContainer.querySelectorAll('.chapter');
         const segments = document.querySelectorAll('.progress-segment');
@@ -189,6 +196,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     seg.classList.remove('passed', 'active');
                 }
             });
+
+            clearTimeout(saveScrollTimer);
+            saveScrollTimer = setTimeout(() => {
+                localStorage.setItem(SCROLL_POS_KEY_PREFIX + currentLang, Math.round(window.scrollY));
+            }, 500);
         };
 
         window.addEventListener('scroll', scrollHandler, { passive: true });
@@ -355,6 +367,7 @@ window.addEventListener('scroll', () => {
         drawerContact.classList.remove('open');
         drawerOverlay.classList.remove('visible');
         pageWrapper.classList.remove('drawer-open-fullscreen');
+        document.body.classList.remove('drawer-open-fullscreen');
     }
 
     function openCommentsDrawer(chapterIndex) {
@@ -363,6 +376,7 @@ window.addEventListener('scroll', () => {
         drawerComments.classList.add('open');
         drawerOverlay.classList.add('visible');
         pageWrapper.classList.add('drawer-open-fullscreen');
+        document.body.classList.add('drawer-open-fullscreen');
         if (window.CommentsUI) window.CommentsUI.open(chapterIndex);
     }
 
@@ -372,6 +386,7 @@ window.addEventListener('scroll', () => {
         drawerSupport.classList.add('open');
         drawerOverlay.classList.add('visible');
         pageWrapper.classList.add('drawer-open-fullscreen');
+        document.body.classList.add('drawer-open-fullscreen');
     }
 
     function openContactDrawer() {
@@ -380,6 +395,7 @@ window.addEventListener('scroll', () => {
         drawerContact.classList.add('open');
         drawerOverlay.classList.add('visible');
         pageWrapper.classList.add('drawer-open-fullscreen');
+        document.body.classList.add('drawer-open-fullscreen');
     }
 
     btnComments.addEventListener('click', openCommentsDrawer);
@@ -390,6 +406,7 @@ window.addEventListener('scroll', () => {
     if (btnSupportMobile) btnSupportMobile.addEventListener('click', openSupportDrawer);
     if (btnContactMobile) btnContactMobile.addEventListener('click', openContactDrawer);
 
+    if (bookTitle) bookTitle.addEventListener('click', closeAllDrawers);
     closeBtns.forEach(btn => btn.addEventListener('click', closeAllDrawers));
     drawerOverlay.addEventListener('click', closeAllDrawers);
 
@@ -399,6 +416,7 @@ window.addEventListener('scroll', () => {
     const MIN_ROOT_FONT_PX = 8;
     const MAX_ROOT_FONT_PX = 32;
     const FONT_SIZE_STORAGE_KEY = 'rootFontSize';
+    const SCROLL_POS_KEY_PREFIX = 'readPos_';
 
     const savedRootFontPx = parseFloat(localStorage.getItem(FONT_SIZE_STORAGE_KEY));
     if (savedRootFontPx >= MIN_ROOT_FONT_PX && savedRootFontPx <= MAX_ROOT_FONT_PX) {
@@ -449,6 +467,23 @@ window.addEventListener('scroll', () => {
             getCurrentLang: () => currentLang,
         });
     }
-    window.scrollTo(0, 0);
-    loadManuscript(currentLang);
+
+    // Handle ?lang=de&comments=1&chapter=5 links (e.g. from reply notification emails).
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramLang = urlParams.get("lang");
+    const paramComments = urlParams.get("comments");
+    const paramChapter = urlParams.get("chapter");
+    if (paramLang && ["de", "en", "ru", "fa"].includes(paramLang)) {
+        currentLang = paramLang;
+        const sel = document.querySelector(`#lang-toggle option[value="${paramLang}"]`);
+        if (sel) langToggle.value = paramLang;
+        if (window.CommentsUI) window.CommentsUI.setLang(paramLang);
+    }
+
+    await loadManuscript(currentLang, paramComments !== "1");
+
+    if (paramComments === "1") {
+        const chapter = paramChapter !== null ? parseInt(paramChapter, 10) : null;
+        openCommentsDrawer(Number.isFinite(chapter) ? chapter : null);
+    }
 });

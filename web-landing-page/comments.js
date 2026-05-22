@@ -289,6 +289,14 @@
     renderWhenReady();
   }
 
+  function resetTurnstile() {
+    if (window.turnstile && state.turnstileWidgetId !== null) {
+      try { window.turnstile.reset(state.turnstileWidgetId); } catch {}
+    }
+    state.captchaToken = null;
+    state.turnstileWidgetId = null;
+  }
+
   // ---------- API ----------
 
   async function apiGet(path) {
@@ -500,12 +508,14 @@
       if (res.status >= 400) {
         const key = ERROR_KEY_MAP[res.data.error] || "errorGeneric";
         setFormStatus(t(key), true);
+        resetTurnstile();
         return;
       }
       if (res.data.status === "needs_verification") {
         state.pendingVerify = { email, expiresAt: res.data.expiresAt };
         showVerifyModal();
         setFormStatus(t("statusNeedsVerify"));
+        resetTurnstile();
         return;
       }
       // Posted!
@@ -513,10 +523,7 @@
       form.querySelector('textarea[name="body"]').value = "";
       setReplyTarget(null);
       setFormStatus(t("statusPosted"));
-      // Reset turnstile so the next post requires a fresh token.
-      if (window.turnstile && state.turnstileWidgetId !== null) {
-        try { window.turnstile.reset(state.turnstileWidgetId); state.captchaToken = null; } catch {}
-      }
+      resetTurnstile();
       await fetchThread();
     } catch (e) {
       submitBtn.disabled = false;
@@ -665,17 +672,19 @@
   function buildDom(drawerContent) {
     drawerContent.innerHTML = `
       <div class="comments-root">
-        <div class="comments-switcher">
-          <label class="chapter-select-label" data-i18n="chapterSelect">Kapitel</label>
-          <select class="chapter-select" aria-label="Thread"></select>
-        </div>
+        <div class="comments-main">
+          <div class="comments-switcher">
+            <label class="chapter-select-label" data-i18n="chapterSelect">Kapitel</label>
+            <select class="chapter-select" aria-label="Thread"></select>
+          </div>
 
-        <div class="comments-identity" hidden>
-          <span data-i18n="identityVerifiedAs">Du schreibst als</span>
-          <strong class="identity-name"></strong>
-        </div>
+          <div class="comments-identity" hidden>
+            <span data-i18n="identityVerifiedAs">Du schreibst als</span>
+            <strong class="identity-name"></strong>
+          </div>
 
-        <div class="comments-list" aria-live="polite"></div>
+          <div class="comments-list" aria-live="polite"></div>
+        </div>
 
         <form class="comment-form" novalidate>
           <div class="form-reply-indicator" hidden>
@@ -805,6 +814,10 @@
       refreshLabels();
       fetchWhoami();
       fetchThread();
+    },
+
+    refreshChapters() {
+      populateChapterSelect();
     },
   };
 

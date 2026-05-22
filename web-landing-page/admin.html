@@ -6,39 +6,101 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Kommentar-Admin · Kekse im Iran</title>
 <style>
-  :root { color-scheme: light dark; --pad: 1rem; --gap: 0.5rem; }
+  :root { color-scheme: light dark; --pad: 1rem; --gap: 0.5rem; --accent: #0060df; }
   * { box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 1100px; margin: 0 auto; padding: var(--pad); }
-  h1 { margin: 0 0 1rem; }
-  .filters { display: flex; gap: var(--gap); margin-bottom: 1rem; align-items: center; }
-  .report { border: 1px solid currentColor; border-radius: 8px; padding: var(--pad); margin-bottom: var(--gap); }
-  .meta { font-size: 0.85em; opacity: 0.7; margin-bottom: 0.5rem; }
-  .body { white-space: pre-wrap; padding: 0.5rem; background: rgba(127,127,127,0.1); border-radius: 4px; margin: 0.5rem 0; }
-  .actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-  button { padding: 0.4rem 0.8rem; cursor: pointer; }
+  h1 { margin: 0 0 1rem; font-size: 1.4rem; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 2px; margin-bottom: 1.5rem; border-bottom: 2px solid currentColor; }
+  .tab { padding: 0.5rem 1.2rem; cursor: pointer; border: none; background: none; font-size: 1rem; opacity: 0.55; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+  .tab.active { opacity: 1; border-bottom-color: var(--accent); font-weight: 600; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Filters */
+  .filters { display: flex; gap: var(--gap); margin-bottom: 1rem; align-items: center; flex-wrap: wrap; }
+  .filters select, .filters input { padding: 0.35rem 0.5rem; font-size: 0.9rem; }
+  .filters label { display: flex; align-items: center; gap: 0.3rem; font-size: 0.9rem; }
+
+  /* Cards */
+  .card { border: 1px solid rgba(127,127,127,0.35); border-radius: 8px; padding: var(--pad); margin-bottom: var(--gap); }
+  .card.status-hidden { opacity: 0.6; }
+  .card.status-deleted { opacity: 0.35; }
+  .meta { font-size: 0.8rem; opacity: 0.7; margin-bottom: 0.4rem; }
+  .meta strong { opacity: 1; }
+  .body { white-space: pre-wrap; padding: 0.5rem; background: rgba(127,127,127,0.1); border-radius: 4px; margin: 0.5rem 0; font-size: 0.95rem; }
+  .actions { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .badge { display: inline-block; font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 4px; border: 1px solid currentColor; vertical-align: middle; margin-left: 0.3rem; }
+  .badge.verified { color: #0a7; border-color: #0a7; }
+  .badge.hidden { color: #c80; border-color: #c80; }
+  .badge.deleted { color: #c00; border-color: #c00; }
+
+  /* Buttons */
+  button { padding: 0.35rem 0.75rem; cursor: pointer; font-size: 0.9rem; border-radius: 4px; border: 1px solid currentColor; background: none; }
+  button:disabled { opacity: 0.4; cursor: default; }
   button.danger { color: #b00; }
-  .status-hidden { opacity: 0.6; }
-  .status-deleted { opacity: 0.4; text-decoration: line-through; }
-  #empty { padding: 2rem; text-align: center; opacity: 0.6; }
-  #error { background: #fee; color: #900; padding: 0.5rem; border-radius: 4px; margin-bottom: 1rem; display: none; }
+  button.primary { color: var(--accent); border-color: var(--accent); }
+
+  /* Pagination */
+  .pagination { display: flex; gap: var(--gap); align-items: center; margin-top: 1rem; }
+
+  /* Status bar */
+  #empty-comments, #empty-reports { padding: 2rem; text-align: center; opacity: 0.6; display: none; }
+  #error { background: rgba(200,0,0,0.1); color: #c00; padding: 0.5rem 1rem; border-radius: 4px; margin-bottom: 1rem; display: none; border: 1px solid #c00; }
 </style>
 </head>
 <body>
 <h1>Kommentar-Admin</h1>
 <div id="error"></div>
-<div class="filters">
-  <label><input type="checkbox" id="show-resolved"> Auch erledigte Meldungen zeigen</label>
-  <button id="refresh">Neu laden</button>
+
+<div class="tabs">
+  <button class="tab active" data-tab="comments">Alle Kommentare</button>
+  <button class="tab" data-tab="reports">Meldungen</button>
 </div>
-<div id="list"></div>
-<div id="empty" hidden>Keine offenen Meldungen.</div>
+
+<!-- ── COMMENTS TAB ── -->
+<div id="panel-comments" class="panel active">
+  <div class="filters">
+    <select id="c-lang">
+      <option value="">Alle Sprachen</option>
+      <option value="de">DE</option>
+      <option value="en">EN</option>
+      <option value="ru">RU</option>
+    </select>
+    <select id="c-status">
+      <option value="">Alle Status</option>
+      <option value="visible">Sichtbar</option>
+      <option value="hidden">Versteckt</option>
+      <option value="deleted">Gelöscht</option>
+    </select>
+    <input id="c-thread" type="text" placeholder="Thread-ID (z.B. ch:3:de)" style="width:180px">
+    <button id="c-load" class="primary">Laden</button>
+    <button id="c-refresh">↺</button>
+  </div>
+  <div id="comments-list"></div>
+  <div id="empty-comments">Keine Kommentare gefunden.</div>
+  <div class="pagination">
+    <button id="c-prev" disabled>← Zurück</button>
+    <button id="c-next" disabled>Weiter →</button>
+  </div>
+</div>
+
+<!-- ── REPORTS TAB ── -->
+<div id="panel-reports" class="panel">
+  <div class="filters">
+    <label><input type="checkbox" id="show-resolved"> Auch erledigte Meldungen zeigen</label>
+    <button id="r-refresh">↺</button>
+  </div>
+  <div id="reports-list"></div>
+  <div id="empty-reports">Keine offenen Meldungen.</div>
+</div>
 
 <script>
 const $ = (s) => document.querySelector(s);
-const $list = $("#list");
 const $err = $("#error");
-const $empty = $("#empty");
 
+// ── Utilities ──────────────────────────────────────────────────────────────
 function showError(msg) { $err.textContent = msg; $err.style.display = "block"; }
 function clearError() { $err.style.display = "none"; }
 
@@ -81,78 +143,204 @@ async function api(method, url, body) {
   return res.json();
 }
 
-async function load() {
+// ── Tabs ───────────────────────────────────────────────────────────────────
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    $(`#panel-${tab.dataset.tab}`).classList.add("active");
+  });
+});
+
+// ── Comments tab ───────────────────────────────────────────────────────────
+const $cList = $("#comments-list");
+const $cEmpty = $("#empty-comments");
+const $cPrev = $("#c-prev");
+const $cNext = $("#c-next");
+
+let beforeStack = []; // cursor stack for back-navigation
+let currentBefore = null;
+let currentNextBefore = null;
+
+async function loadComments(before) {
   clearError();
-  $list.innerHTML = "Lade…";
-  $empty.hidden = true;
-  const includeResolved = $("#show-resolved").checked ? "?resolved=1" : "";
+  $cList.innerHTML = "Lade…";
+  $cEmpty.style.display = "none";
+  const lang = $("#c-lang").value;
+  const status = $("#c-status").value;
+  const thread = $("#c-thread").value.trim();
+  const params = new URLSearchParams({ limit: "50" });
+  if (lang) params.set("lang", lang);
+  if (status) params.set("status", status);
+  if (thread) params.set("thread", thread);
+  if (before) params.set("before", before);
   try {
-    const data = await api("GET", "/api/admin/reports" + includeResolved);
-    render(data.reports || []);
+    const data = await api("GET", "/api/admin/comments?" + params);
+    renderComments(data.comments || []);
+    currentNextBefore = data.next_before || null;
+    $cNext.disabled = !currentNextBefore;
   } catch (e) {
-    $list.innerHTML = "";
+    $cList.innerHTML = "";
     showError("Laden fehlgeschlagen: " + e.message);
   }
 }
 
-function render(reports) {
-  $list.innerHTML = "";
-  if (!reports.length) { $empty.hidden = false; return; }
-  for (const r of reports) {
+function renderComments(comments) {
+  $cList.innerHTML = "";
+  if (!comments.length) { $cEmpty.style.display = "block"; return; }
+  for (const c of comments) {
     const card = document.createElement("div");
-    card.className = "report" + (r.status ? " status-" + r.status : "");
+    card.className = "card" + (c.status !== "visible" ? " status-" + c.status : "");
+    const verifiedBadge = c.identity_id ? `<span class="badge verified">✓</span>` : "";
+    const statusBadge = c.status !== "visible" ? `<span class="badge ${esc(c.status)}">${esc(c.status)}</span>` : "";
     card.innerHTML = `
       <div class="meta">
-        Thread: <strong>${esc(r.thread_id)}</strong> · Sprache: <strong>${esc(r.lang)}</strong> ·
-        Gemeldet ${fmtTime(r.reported_at)}${r.resolved_at ? " · erledigt " + fmtTime(r.resolved_at) : ""}
+        Thread: <strong>${esc(c.thread_id)}</strong> · ${fmtTime(c.created_at)}
+        ${c.parent_id ? `· Antwort auf <code>${esc(c.parent_id.slice(0,8))}…</code>` : ""}
       </div>
       <div class="meta">
-        Kommentar von <strong>${esc(r.display_name)}</strong>
-        ${r.identity_id ? "(verifiziert)" : ""} · Status: <strong>${esc(r.status || "n/a")}</strong>
+        <strong>${esc(c.display_name)}</strong>${verifiedBadge}${statusBadge}
+        · ID: <code>${esc(c.id.slice(0,8))}…</code>
       </div>
-      ${r.reason ? `<div class="meta">Grund: ${esc(r.reason)}</div>` : ""}
-      <div class="body">${esc(r.body) || "<em>(Kommentar nicht gefunden)</em>"}</div>
+      <div class="body">${esc(c.body)}</div>
       <div class="actions">
-        ${r.comment_id ? `
-          <button data-act="hide" data-id="${r.comment_id}">Verstecken</button>
-          <button data-act="unhide" data-id="${r.comment_id}">Wieder sichtbar</button>
-          <button data-act="anonymize" data-id="${r.comment_id}" class="danger">DSGVO-Anonymisieren</button>
-          ${r.identity_id ? `<button data-act="ban" data-iid="${r.identity_id}" class="danger">Identität sperren</button>` : ""}
-        ` : ""}
-        <button data-act="resolve" data-rid="${r.report_id}">Erledigt</button>
+        <button data-act="visible" data-id="${esc(c.id)}">Sichtbar</button>
+        <button data-act="hidden" data-id="${esc(c.id)}">Verstecken</button>
+        <button data-act="deleted" data-id="${esc(c.id)}" class="danger">Löschen</button>
+        <button data-act="anonymize" data-id="${esc(c.id)}" class="danger">DSGVO</button>
+        ${c.identity_id ? `<button data-act="ban" data-iid="${esc(c.identity_id)}" class="danger">Sperren</button>` : ""}
       </div>
     `;
-    $list.appendChild(card);
+    $cList.appendChild(card);
   }
 }
 
-$list.addEventListener("click", async (ev) => {
+$cList.addEventListener("click", async (ev) => {
   const btn = ev.target.closest("button[data-act]");
   if (!btn) return;
   const act = btn.dataset.act;
+  const id = btn.dataset.id;
   btn.disabled = true;
   try {
-    if (act === "hide") await api("POST", `/api/admin/comments/${btn.dataset.id}/status`, { status: "hidden" });
-    else if (act === "unhide") await api("POST", `/api/admin/comments/${btn.dataset.id}/status`, { status: "visible" });
-    else if (act === "anonymize") {
-      if (!confirm("Diesen Kommentar DSGVO-anonymisieren? Inhalt geht verloren, Threading bleibt.")) { btn.disabled = false; return; }
-      await api("POST", `/api/admin/comments/${btn.dataset.id}/anonymize`);
+    if (act === "visible" || act === "hidden" || act === "deleted") {
+      if (act === "deleted" && !confirm("Kommentar löschen?")) { btn.disabled = false; return; }
+      await api("POST", `/api/admin/comments/${id}/status`, { status: act });
+    } else if (act === "anonymize") {
+      if (!confirm("DSGVO-anonymisieren? Inhalt geht verloren, Threading bleibt.")) { btn.disabled = false; return; }
+      await api("POST", `/api/admin/comments/${id}/anonymize`);
     } else if (act === "ban") {
       const reason = prompt("Grund für die Sperre (optional):") ?? null;
       await api("POST", `/api/admin/identities/${btn.dataset.iid}/ban`, { reason });
-    } else if (act === "resolve") {
-      await api("POST", `/api/admin/reports/${btn.dataset.rid}/resolve`);
     }
-    await load();
+    await loadComments(currentBefore);
   } catch (e) {
     showError("Aktion fehlgeschlagen: " + e.message);
     btn.disabled = false;
   }
 });
 
-$("#refresh").addEventListener("click", load);
-$("#show-resolved").addEventListener("change", load);
-load();
+$("#c-load").addEventListener("click", () => {
+  beforeStack = [];
+  currentBefore = null;
+  $cPrev.disabled = true;
+  loadComments(null);
+});
+
+$("#c-refresh").addEventListener("click", () => loadComments(currentBefore));
+
+$cNext.addEventListener("click", () => {
+  beforeStack.push(currentBefore);
+  currentBefore = currentNextBefore;
+  $cPrev.disabled = false;
+  loadComments(currentBefore);
+});
+
+$cPrev.addEventListener("click", () => {
+  currentBefore = beforeStack.pop() || null;
+  $cPrev.disabled = beforeStack.length === 0;
+  loadComments(currentBefore);
+});
+
+// ── Reports tab ────────────────────────────────────────────────────────────
+const $rList = $("#reports-list");
+const $rEmpty = $("#empty-reports");
+
+async function loadReports() {
+  clearError();
+  $rList.innerHTML = "Lade…";
+  $rEmpty.style.display = "none";
+  const includeResolved = $("#show-resolved").checked ? "?resolved=1" : "";
+  try {
+    const data = await api("GET", "/api/admin/reports" + includeResolved);
+    renderReports(data.reports || []);
+  } catch (e) {
+    $rList.innerHTML = "";
+    showError("Laden fehlgeschlagen: " + e.message);
+  }
+}
+
+function renderReports(reports) {
+  $rList.innerHTML = "";
+  if (!reports.length) { $rEmpty.style.display = "block"; return; }
+  for (const r of reports) {
+    const card = document.createElement("div");
+    card.className = "card" + (r.status ? " status-" + r.status : "");
+    card.innerHTML = `
+      <div class="meta">
+        Thread: <strong>${esc(r.thread_id)}</strong> · Gemeldet ${fmtTime(r.reported_at)}${r.resolved_at ? " · erledigt " + fmtTime(r.resolved_at) : ""}
+      </div>
+      <div class="meta">
+        Von <strong>${esc(r.display_name)}</strong>${r.identity_id ? " <span class='badge verified'>✓</span>" : ""} · Status: <strong>${esc(r.status || "n/a")}</strong>
+      </div>
+      ${r.reason ? `<div class="meta">Grund: ${esc(r.reason)}</div>` : ""}
+      <div class="body">${esc(r.body) || "<em>(Kommentar nicht gefunden)</em>"}</div>
+      <div class="actions">
+        ${r.comment_id ? `
+          <button data-act="r-visible" data-id="${esc(r.comment_id)}">Sichtbar</button>
+          <button data-act="r-hidden" data-id="${esc(r.comment_id)}">Verstecken</button>
+          <button data-act="r-deleted" data-id="${esc(r.comment_id)}" class="danger">Löschen</button>
+          <button data-act="r-anonymize" data-id="${esc(r.comment_id)}" class="danger">DSGVO</button>
+          ${r.identity_id ? `<button data-act="r-ban" data-iid="${esc(r.identity_id)}" class="danger">Sperren</button>` : ""}
+        ` : ""}
+        <button data-act="r-resolve" data-rid="${esc(r.report_id)}">Erledigt</button>
+      </div>
+    `;
+    $rList.appendChild(card);
+  }
+}
+
+$rList.addEventListener("click", async (ev) => {
+  const btn = ev.target.closest("button[data-act]");
+  if (!btn) return;
+  const act = btn.dataset.act;
+  btn.disabled = true;
+  try {
+    if (act === "r-visible" || act === "r-hidden" || act === "r-deleted") {
+      if (act === "r-deleted" && !confirm("Kommentar löschen?")) { btn.disabled = false; return; }
+      await api("POST", `/api/admin/comments/${btn.dataset.id}/status`, { status: act.slice(2) });
+    } else if (act === "r-anonymize") {
+      if (!confirm("DSGVO-anonymisieren? Inhalt geht verloren, Threading bleibt.")) { btn.disabled = false; return; }
+      await api("POST", `/api/admin/comments/${btn.dataset.id}/anonymize`);
+    } else if (act === "r-ban") {
+      const reason = prompt("Grund für die Sperre (optional):") ?? null;
+      await api("POST", `/api/admin/identities/${btn.dataset.iid}/ban`, { reason });
+    } else if (act === "r-resolve") {
+      await api("POST", `/api/admin/reports/${btn.dataset.rid}/resolve`);
+    }
+    await loadReports();
+  } catch (e) {
+    showError("Aktion fehlgeschlagen: " + e.message);
+    btn.disabled = false;
+  }
+});
+
+$("#r-refresh").addEventListener("click", loadReports);
+$("#show-resolved").addEventListener("change", loadReports);
+
+// ── Boot ───────────────────────────────────────────────────────────────────
+loadComments(null);
+loadReports();
 </script>
 </body>
 </html>

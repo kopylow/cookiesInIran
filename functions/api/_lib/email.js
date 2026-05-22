@@ -4,39 +4,39 @@
 const RESEND_URL = "https://api.resend.com/emails";
 
 const templates = {
-  de: (code) => ({
+  de: (code, name) => ({
     subject: "Dein Bestätigungscode für die Kommentare",
-    text: `Hallo,\n\ndein Bestätigungscode lautet:\n\n  ${code}\n\nGib ihn im Kommentar-Formular ein, um deinen Kommentar zu veröffentlichen. Der Code ist 15 Minuten gültig.\n\nFalls du das nicht warst, kannst du diese E-Mail ignorieren.\n\n— Kekse im Iran\n`,
+    text: `Hallo ${name},\n\ndein Bestätigungscode lautet:\n\n  ${code}\n\nGib ihn im Kommentar-Formular ein, um deinen Kommentar zu veröffentlichen. Der Code ist 15 Minuten gültig.\n\nFalls du das nicht warst, kannst du diese E-Mail ignorieren.\n\n— Kekse im Iran\n`,
   }),
-  en: (code) => ({
+  en: (code, name) => ({
     subject: "Your confirmation code for comments",
-    text: `Hi,\n\nyour confirmation code is:\n\n  ${code}\n\nEnter it in the comment form to publish your comment. The code is valid for 15 minutes.\n\nIf this wasn't you, you can ignore this email.\n\n— Cookies in Iran\n`,
+    text: `Hi ${name},\n\nyour confirmation code is:\n\n  ${code}\n\nEnter it in the comment form to publish your comment. The code is valid for 15 minutes.\n\nIf this wasn't you, you can ignore this email.\n\n— Cookies in Iran\n`,
   }),
-  ru: (code) => ({
+  ru: (code, name) => ({
     subject: "Ваш код подтверждения для комментариев",
-    text: `Здравствуйте,\n\nваш код подтверждения:\n\n  ${code}\n\nВведите его в форме комментария, чтобы опубликовать комментарий. Код действителен 15 минут.\n\nЕсли это были не вы, просто проигнорируйте это письмо.\n\n— Cookies in Iran\n`,
+    text: `Здравствуйте, ${name},\n\nваш код подтверждения:\n\n  ${code}\n\nВведите его в форме комментария, чтобы опубликовать комментарий. Код действителен 15 минут.\n\nЕсли это были не вы, просто проигнорируйте это письмо.\n\n— Cookies in Iran\n`,
   }),
-  fa: (code) => ({
+  fa: (code, name) => ({
     subject: "کد تأیید شما برای نظرات",
-    text: `سلام،\n\nکد تأیید شما:\n\n  ${code}\n\nآن را در فرم نظر وارد کنید تا نظرتان منتشر شود. این کد ۱۵ دقیقه اعتبار دارد.\n\nاگر شما این درخواست را نفرستاده‌اید، می‌توانید این پیام را نادیده بگیرید.\n\n— Cookies in Iran\n`,
+    text: `سلام ${name}،\n\nکد تأیید شما:\n\n  ${code}\n\nآن را در فرم نظر وارد کنید تا نظرتان منتشر شود. این کد ۱۵ دقیقه اعتبار دارد.\n\nاگر شما این درخواست را نفرستاده‌اید، می‌توانید این پیام را نادیده بگیرید.\n\n— Cookies in Iran\n`,
   }),
 };
 
 const replyTemplates = {
   de: ({ parentName, replyName, snippet, url }) => ({
-    subject: `Neue Antwort auf deinen Kommentar`,
+    subject: `${replyName} hat auf deinen Kommentar geantwortet`,
     text: `Hallo ${parentName},\n\n${replyName} hat auf deinen Kommentar geantwortet:\n\n  „${snippet}"\n\nLies die ganze Antwort hier: ${url}\n\nFalls du keine weiteren Benachrichtigungen mehr möchtest, ignoriere diese E-Mail einfach — bei zukünftigen Kommentaren kannst du die Checkbox weglassen.\n\n— Kekse im Iran\n`,
   }),
   en: ({ parentName, replyName, snippet, url }) => ({
-    subject: `New reply to your comment`,
+    subject: `${replyName} replied to your comment`,
     text: `Hi ${parentName},\n\n${replyName} replied to your comment:\n\n  "${snippet}"\n\nRead the full reply here: ${url}\n\nIf you don't want further notifications, simply ignore this email — for future comments, leave the checkbox unchecked.\n\n— Cookies in Iran\n`,
   }),
   ru: ({ parentName, replyName, snippet, url }) => ({
-    subject: `Новый ответ на ваш комментарий`,
+    subject: `${replyName} ответил(а) на ваш комментарий`,
     text: `Здравствуйте, ${parentName},\n\n${replyName} ответил(а) на ваш комментарий:\n\n  «${snippet}»\n\nПрочитать полный ответ: ${url}\n\nЕсли вы больше не хотите получать такие уведомления, просто проигнорируйте это письмо — в будущих комментариях не устанавливайте флажок.\n\n— Cookies in Iran\n`,
   }),
   fa: ({ parentName, replyName, snippet, url }) => ({
-    subject: `پاسخ جدید به نظر شما`,
+    subject: `${replyName} به نظر شما پاسخ داد`,
     text: `سلام ${parentName}،\n\n${replyName} به نظر شما پاسخ داد:\n\n  «${snippet}»\n\nپاسخ کامل را اینجا بخوانید: ${url}\n\nاگر دیگر این اعلان‌ها را نمی‌خواهید، این پیام را نادیده بگیرید — برای نظرات بعدی، تیک مربوطه را نزنید.\n\n— Cookies in Iran\n`,
   }),
 };
@@ -69,13 +69,13 @@ export async function sendReplyNotification(env, { to, parentName, replyName, re
   return r.json();
 }
 
-export async function sendVerificationCode(env, { to, code, lang }) {
+export async function sendVerificationCode(env, { to, code, lang, name }) {
   if (!env.RESEND_API_KEY) {
     // Dev mode — log only.
     console.log(`[email-dev] to=${to} lang=${lang} code=${code}`);
     return { dev: true };
   }
-  const tpl = (templates[lang] || templates.en)(code);
+  const tpl = (templates[lang] || templates.en)(code, name);
   const r = await fetch(RESEND_URL, {
     method: "POST",
     headers: {

@@ -270,6 +270,11 @@ body {
     display: none; /* Hide on smaller screens */
 }
 
+#book-title {
+    font-weight: bold;
+    cursor: pointer;
+}
+
 @media (min-width: 768px) {
     .top-bar-center { display: flex; }
 }
@@ -496,9 +501,9 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     top: 0;
     padding-top: 60px; /* Offset for top-bar */
     /* Logical property: right for LTR, left for RTL */
-    inset-inline-end: calc(-1 * var(--drawer-width)); 
+    inset-inline-end: calc(-1 * var(--drawer-width));
     width: var(--drawer-width);
-    height: 100vh;
+    height: 100dvh;
     background-color: var(--current-bg);
     border-inline-start: 1px solid rgba(128, 128, 128, 0.2);
     z-index: var(--z-index-drawer);
@@ -538,6 +543,7 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
 
 .drawer-content {
     padding: 1.5rem;
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
     overflow-y: auto;
     flex-grow: 1;
 }
@@ -577,6 +583,10 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     z-index: 2800; /* Above topbar but below drawers */
     display: flex;
     gap: 2px;
+}
+
+body.drawer-open-fullscreen #progress-indicator {
+    display: none;
 }
 
 /* Mobile: Vertical line of segments on the start side */
@@ -751,6 +761,38 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     gap: 0.85rem;
     max-width: 720px;
     margin-inline: auto;
+}
+
+.comments-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    min-width: 0;
+}
+
+@media (min-width: 1024px) {
+    .comments-root {
+        max-width: 1100px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 400px);
+        column-gap: 2.25rem;
+        align-items: start;
+    }
+    .comments-root > .comments-main {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .comments-root > .comment-form {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: start;
+        position: sticky;
+        top: 1.25rem;
+        max-height: calc(100dvh - 6rem);
+        overflow-y: auto;
+        border-inline-start: 1px solid rgba(128, 128, 128, 0.12);
+        padding-inline-start: 1.5rem;
+    }
 }
 
 .comments-switcher {

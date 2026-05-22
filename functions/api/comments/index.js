@@ -184,7 +184,7 @@ export async function onRequestPost({ request, env }) {
   ]);
 
   try {
-    await sendVerificationCode(env, { to: email, code, lang: thread.lang });
+    await sendVerificationCode(env, { to: email, code, lang: thread.lang, name });
   } catch (e) {
     console.error("verification email send failed:", e);
     return jsonError("email_send_failed", 502, "email_send_failed");
@@ -213,13 +213,14 @@ async function postImmediate(env, { thread, name, text, parentId, ipHash, identi
         const to = await decryptEmail(env, parent.notify_email_enc);
         if (to) {
           const origin = request ? new URL(request.url).origin : "";
+          const chapterParam = thread.kind === "ch" ? `&chapter=${thread.chapter}` : "";
           await sendReplyNotification(env, {
             to,
             parentName: parent.display_name,
             replyName: name,
             replyBody: text,
             lang: thread.lang,
-            url: `${origin}/#${thread.id}`,
+            url: `${origin}/?lang=${thread.lang}&comments=1${chapterParam}`,
           });
         }
       }

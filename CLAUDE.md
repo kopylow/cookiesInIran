@@ -100,16 +100,17 @@ Outbound email uses [Resend](https://resend.com) (EU region, required for DSGVO)
 
 `.dev.vars` holds dummy local values. For prod set with `npx wrangler pages secret put NAME`.
 
-**Already set in production:**
+**All secrets set in production:**
 - `RESEND_API_KEY` — Resend sending key (EU region account)
-
-**Still needed — site partially functional without these:**
-- `TURNSTILE_SECRET` — Cloudflare Turnstile (comment posting skips bot check without it in dev, but should be set in prod)
+- `TURNSTILE_SECRET` — Cloudflare Turnstile secret
 - `EMAIL_ENC_KEY` — 32-byte base64 for AES-GCM encryption of stored email addresses
 - `EMAIL_HASH_SALT` — stable salt for email hashing (do NOT rotate — changing it orphans all existing identities)
 - `IP_HASH_SALT_CURRENT` + `IP_HASH_SALT_PREVIOUS` — rotated quarterly with overlap window
-- `CF_ACCESS_AUD` — Cloudflare Access AUD tag, gates the `/admin*` path
 - `CRON_SECRET` — bearer token for the external cron trigger
+- `ADMIN_PASSWORD` — admin panel password
+
+**Still needed:**
+- `CF_ACCESS_AUD` — Cloudflare Access AUD tag, gates the `/admin*` path (currently using ADMIN_PASSWORD fallback)
 
 Also set `TURNSTILE_SITE_KEY` in `wrangler.toml [vars]` and mirror it in the `<meta name="turnstile-site-key">` tag in `index.html`.
 
