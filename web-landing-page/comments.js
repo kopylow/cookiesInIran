@@ -300,7 +300,6 @@
       try { window.turnstile.reset(state.turnstileWidgetId); } catch {}
     }
     state.captchaToken = null;
-    state.turnstileWidgetId = null;
   }
 
   // ---------- API ----------
@@ -324,6 +323,8 @@
       const data = await apiGet("/api/whoami");
       if (data.verified) {
         state.identity = { verified: true, name: data.name, lang: data.lang };
+        const nameInput = state.rootEl?.querySelector('input[name="name"]');
+        if (nameInput) nameInput.value = data.name;
       } else {
         state.identity = { verified: false, name: null, lang: null };
       }
@@ -480,19 +481,17 @@
   function updateIdentityBanner() {
     const banner = state.rootEl.querySelector(".comments-identity");
     if (!banner) return;
-    if (state.identity.verified && state.identity.lang === state.currentLang) {
+    const nameInput = state.rootEl.querySelector('input[name="name"]');
+    const verifiedHere = state.identity.verified && state.identity.lang === state.currentLang;
+    // Banner only appears while the typed name still matches the verified name —
+    // the server only attaches the badge when those agree (functions/api/comments/index.js:112),
+    // so a divergent input would post anonymously and the banner would lie.
+    const typed = (nameInput?.value || "").trim();
+    if (verifiedHere && typed === state.identity.name) {
       banner.hidden = false;
       banner.querySelector(".identity-name").textContent = state.identity.name;
-      // Pre-fill name field, lock it.
-      const nameInput = state.rootEl.querySelector('input[name="name"]');
-      if (nameInput) {
-        nameInput.value = state.identity.name;
-        nameInput.readOnly = true;
-      }
     } else {
       banner.hidden = true;
-      const nameInput = state.rootEl.querySelector('input[name="name"]');
-      if (nameInput) nameInput.readOnly = false;
     }
   }
 
@@ -658,12 +657,14 @@
       if (res.status >= 400) {
         const key = ERROR_KEY_MAP[res.data.error] || "errorGeneric";
         setVerifyStatus(t(key), true);
+        resetTurnstile();
         return;
       }
       if (res.data.status === "needs_verification") {
         state.pendingVerify.expiresAt = res.data.expiresAt;
         startCountdown();
         setVerifyStatus(t("statusNeedsVerify"));
+        resetTurnstile();
       }
     } catch {
       if (resendBtn) resendBtn.disabled = false;
@@ -915,6 +916,11 @@
 
     const form = root.querySelector(".comment-form");
     form.addEventListener("submit", handleSubmit);
+
+    // Re-evaluate the verified banner whenever the name field changes —
+    // keeps the "posting as ✓" cue honest if the user edits away from their verified name.
+    const nameInput = form.querySelector('input[name="name"]');
+    nameInput.addEventListener("input", updateIdentityBanner);
 
     // Lazy-load Turnstile when the user starts engaging with the form.
     const bodyTa = form.querySelector('textarea[name="body"]');

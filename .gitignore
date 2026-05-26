@@ -13,3 +13,7 @@
 # Cloudflare Wrangler / Pages local state
 .wrangler/
 .dev.vars
+
+# Local dev artifacts (playwright sessions, verify-skill screenshots)
+.playwright-mcp/
+/verify-*.png
