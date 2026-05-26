@@ -990,17 +990,6 @@ body[data-theme="dark"] .comments-switcher {
     flex-wrap: wrap;
 }
 .comment-author { font-weight: 600; }
-.comment-verified {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    background: var(--current-accent, #b5651d);
-    color: #fff;
-    flex-shrink: 0;
-}
 .comment-time {
     opacity: 0.55;
     font-size: 0.78em;
