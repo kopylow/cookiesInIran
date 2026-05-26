@@ -1,0 +1,15 @@
+name: Cron tick
+
+on:
+  schedule:
+    - cron: "0 3 * * *"  # 03:00 UTC daily
+  workflow_dispatch:
+
+jobs:
+  cron-tick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger cron tick
+        run: |
+          curl -sf -X POST https://cookiesiniran.com/api/admin/cron-tick \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
