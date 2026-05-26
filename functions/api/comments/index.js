@@ -77,9 +77,12 @@ export async function onRequestPost({ request, env }) {
   ).bind(ipHash, Math.floor(Date.now() / 1000)).first();
   if (ban) return jsonError("banned", 403, "banned");
 
-  // Per-IP post rate limit.
+  // Per-IP post rate limit: 3/min blocks machine-speed spam, 20/hr allows chapter-walk.
   if (!isBypassed(env, ip)) {
-    const rl = await rateLimit(env.KV_RATELIMIT, `post:ip:${ipHash}`, 5, 600);
+    const rl = await rateLimitAll(env.KV_RATELIMIT, `post:ip:${ipHash}`, [
+      { label: "m", limit: 3,  windowSec: 60   },
+      { label: "h", limit: 20, windowSec: 3600 },
+    ]);
     if (!rl.allowed) {
       return jsonError("rate_limited", 429, "rate_limited", { "retry-after": String(rl.retryAfterSec) });
     }
