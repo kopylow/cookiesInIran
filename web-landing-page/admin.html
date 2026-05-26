@@ -52,6 +52,12 @@
 </head>
 <body>
 <h1>Kommentar-Admin</h1>
+<div style="margin-bottom: 1rem;">
+  <label style="font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem; opacity: 0.8;">
+    <input type="checkbox" id="skip-confirm">
+    Ohne Bestätigungs-Dialoge arbeiten (Löschen, DSGVO, Sperren direkt ausführen)
+  </label>
+</div>
 <div id="error"></div>
 
 <div class="tabs">
@@ -103,6 +109,18 @@ const $err = $("#error");
 // ── Utilities ──────────────────────────────────────────────────────────────
 function showError(msg) { $err.textContent = msg; $err.style.display = "block"; }
 function clearError() { $err.style.display = "none"; }
+
+function confirmAction(msg) {
+  const skip = $("#skip-confirm");
+  if (skip && skip.checked) return true;
+  return confirm(msg);
+}
+
+function promptAction(msg, def = "") {
+  const skip = $("#skip-confirm");
+  if (skip && skip.checked) return def;
+  return prompt(msg, def);
+}
 
 function getPassword() {
   let pw = sessionStorage.getItem("admin_pw");
@@ -224,14 +242,15 @@ $cList.addEventListener("click", async (ev) => {
   btn.disabled = true;
   try {
     if (act === "visible" || act === "hidden" || act === "deleted") {
-      if (act === "deleted" && !confirm("Kommentar löschen?")) { btn.disabled = false; return; }
+      if (act === "deleted" && !confirmAction("Kommentar löschen?")) { btn.disabled = false; return; }
       await api("POST", `/api/admin/comments/${id}/status`, { status: act });
     } else if (act === "anonymize") {
-      if (!confirm("DSGVO-anonymisieren? Inhalt geht verloren, Threading bleibt.")) { btn.disabled = false; return; }
+      if (!confirmAction("DSGVO-anonymisieren? Inhalt geht verloren, Threading bleibt.")) { btn.disabled = false; return; }
       await api("POST", `/api/admin/comments/${id}/anonymize`);
     } else if (act === "ban") {
-      const reason = prompt("Grund für die Sperre (optional):") ?? null;
-      const days = prompt("Sperrdauer in Tagen (leer = unbefristet):", "");
+      const reason = promptAction("Grund für die Sperre (optional):", "") || null;
+      const days = promptAction("Sperrdauer in Tagen (leer = unbefristet):", "");
+      if (reason === null && days === null) { btn.disabled = false; return; } // canceled prompt returns null
       const untilSec = days && Number(days) > 0
         ? Math.floor(Date.now() / 1000) + Math.floor(Number(days) * 86400)
         : null;
@@ -321,14 +340,15 @@ $rList.addEventListener("click", async (ev) => {
   btn.disabled = true;
   try {
     if (act === "r-visible" || act === "r-hidden" || act === "r-deleted") {
-      if (act === "r-deleted" && !confirm("Kommentar löschen?")) { btn.disabled = false; return; }
+      if (act === "r-deleted" && !confirmAction("Kommentar löschen?")) { btn.disabled = false; return; }
       await api("POST", `/api/admin/comments/${btn.dataset.id}/status`, { status: act.slice(2) });
     } else if (act === "r-anonymize") {
-      if (!confirm("DSGVO-anonymisieren? Inhalt geht verloren, Threading bleibt.")) { btn.disabled = false; return; }
+      if (!confirmAction("DSGVO-anonymisieren? Inhalt geht verloren, Threading bleibt.")) { btn.disabled = false; return; }
       await api("POST", `/api/admin/comments/${btn.dataset.id}/anonymize`);
     } else if (act === "r-ban") {
-      const reason = prompt("Grund für die Sperre (optional):") ?? null;
-      const days = prompt("Sperrdauer in Tagen (leer = unbefristet):", "");
+      const reason = promptAction("Grund für die Sperre (optional):", "") || null;
+      const days = promptAction("Sperrdauer in Tagen (leer = unbefristet):", "");
+      if (reason === null && days === null) { btn.disabled = false; return; }
       const untilSec = days && Number(days) > 0
         ? Math.floor(Date.now() / 1000) + Math.floor(Number(days) * 86400)
         : null;
