@@ -7,7 +7,7 @@ import { verifyTurnstile } from "../_lib/turnstile.js";
 import { rateLimit, rateLimitAll, isBypassed } from "../_lib/ratelimit.js";
 import { lookupSession } from "../_lib/session.js";
 import {
-  sendVerificationCode, sendReplyNotification, encryptEmail, decryptEmail,
+  sendVerificationCode, sendReplyNotification, encryptEmail, decryptEmail, generateUnsubscribeToken,
 } from "../_lib/email.js";
 
 export async function onRequestGet({ request, env }) {
@@ -15,15 +15,24 @@ export async function onRequestGet({ request, env }) {
   const thread = parseThreadId(env, url.searchParams.get("thread"));
   if (!thread) return jsonError("invalid thread", 400, "invalid_thread");
 
-  const { results = [] } = await env.DB.prepare(
-    `SELECT c.id, c.parent_id, c.display_name, c.body, c.created_at, c.identity_id, i.email_hash
-     FROM comments c
-     LEFT JOIN identities i ON i.id = c.identity_id
-     WHERE c.thread_id = ? AND c.status = 'visible'
-     ORDER BY c.created_at ASC
-     LIMIT 1000`
-  ).bind(thread.id).all();
+  const limit = Math.min(Math.max(1, parseInt(url.searchParams.get("limit") || "50", 10)), 100);
+  const offset = Math.max(0, parseInt(url.searchParams.get("offset") || "0", 10));
 
+  const [{ results = [] }, countRow] = await Promise.all([
+    env.DB.prepare(
+      `SELECT c.id, c.parent_id, c.display_name, c.body, c.created_at, c.identity_id, i.email_hash
+       FROM comments c
+       LEFT JOIN identities i ON i.id = c.identity_id
+       WHERE c.thread_id = ? AND c.status = 'visible'
+       ORDER BY c.created_at ASC
+       LIMIT ? OFFSET ?`
+    ).bind(thread.id, limit, offset).all(),
+    env.DB.prepare(
+      `SELECT COUNT(*) AS cnt FROM comments WHERE thread_id = ? AND status = 'visible'`
+    ).bind(thread.id).first(),
+  ]);
+
+  const total = countRow?.cnt ?? 0;
   const comments = results.map(c => ({
     id: c.id,
     parent_id: c.parent_id,
@@ -34,7 +43,7 @@ export async function onRequestGet({ request, env }) {
     email_hash: c.email_hash || null,
   }));
 
-  return json({ ok: true, thread: thread.id, comments });
+  return json({ ok: true, thread: thread.id, comments, total, hasMore: offset + comments.length < total });
 }
 
 export async function onRequestPost({ request, env }) {
@@ -217,13 +226,17 @@ async function postImmediate(env, { thread, name, text, parentId, ipHash, identi
         if (to) {
           const origin = request ? new URL(request.url).origin : "";
           const chapterParam = thread.kind === "ch" ? `&chapter=${thread.chapter}` : "";
+          const threadUrl = `${origin}/?lang=${thread.lang}&comments=1${chapterParam}`;
+          const unsubToken = await generateUnsubscribeToken(env, parentId);
+          const unsubscribeUrl = `${origin}/api/unsubscribe?id=${encodeURIComponent(parentId)}&token=${encodeURIComponent(unsubToken)}`;
           await sendReplyNotification(env, {
             to,
             parentName: parent.display_name,
             replyName: name,
             replyBody: text,
             lang: thread.lang,
-            url: `${origin}/?lang=${thread.lang}&comments=1${chapterParam}`,
+            url: threadUrl,
+            unsubscribeUrl,
           });
         }
       }

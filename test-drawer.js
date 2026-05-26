@@ -17,6 +17,18 @@ window.fetch = () => Promise.resolve({
 // Mock IntersectionObserver
 window.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} };
 
+// Mock matchMedia (jsdom has no layout engine, so this API is absent)
+window.matchMedia = (query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+});
+
 const script = document.createElement('script');
 script.textContent = js;
 document.body.appendChild(script);

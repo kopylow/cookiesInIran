@@ -18,7 +18,7 @@
       verifiedBadge: "verifiziert",
       formName: "Name",
       formEmail: "E-Mail (optional)",
-      formEmailHint: "Mit E-Mail bekommst du einen Code per Mail, damit nur du unter diesem Namen schreiben kannst. Optional: bei Antworten benachrichtigt werden.",
+      formEmailHint: "Reserviert deinen Namen exklusiv für dich und benachrichtigt dich optional bei Antworten.",
       formBody: "Kommentar",
       formNotify: "Benachrichtige mich bei Antworten",
       formSubmit: "Absenden",
@@ -55,6 +55,7 @@
       errorCodeExpired: "Der Code ist abgelaufen. Bitte einen neuen anfordern.",
       statusNeedsVerify: "Wir haben dir einen Code per E-Mail geschickt.",
       statusPosted: "Veröffentlicht.",
+      loadMore: (n) => `Weitere laden (noch ${n})`,
     },
     en: {
       mainThread: "Main thread",
@@ -67,7 +68,7 @@
       verifiedBadge: "verified",
       formName: "Name",
       formEmail: "Email (optional)",
-      formEmailHint: "With an email, you'll get a code so only you can post under this name. Optional: get notified of replies.",
+      formEmailHint: "Reserves your name exclusively for you and optionally notifies you of replies.",
       formBody: "Comment",
       formNotify: "Notify me of replies",
       formSubmit: "Post",
@@ -104,6 +105,7 @@
       errorCodeExpired: "The code has expired. Please request a new one.",
       statusNeedsVerify: "We sent a code to your email.",
       statusPosted: "Posted.",
+      loadMore: (n) => `Load more (${n} remaining)`,
     },
     ru: {
       mainThread: "Главная тема",
@@ -116,7 +118,7 @@
       verifiedBadge: "подтверждено",
       formName: "Имя",
       formEmail: "E-mail (необязательно)",
-      formEmailHint: "С e-mail вы получите код, чтобы только вы могли писать под этим именем. По желанию: получать уведомления об ответах.",
+      formEmailHint: "Сохраняет ваше имя исключительно за вами и при желании уведомляет об ответах.",
       formBody: "Комментарий",
       formNotify: "Уведомлять меня об ответах",
       formSubmit: "Отправить",
@@ -153,6 +155,7 @@
       errorCodeExpired: "Срок действия кода истёк. Запросите новый.",
       statusNeedsVerify: "Мы отправили код на вашу почту.",
       statusPosted: "Опубликовано.",
+      loadMore: (n) => `Загрузить ещё (осталось ${n})`,
     },
   };
 
@@ -169,13 +172,16 @@
     invalid_body: "errorBodyRequired",
   };
 
+  let pendingReportId = null;
+  let countdownInterval = null;
+
   let state = {
     drawerEl: null,
     rootEl: null,
     currentLang: "de",
     currentThread: { kind: "main" }, // or { kind: "ch", index: N }
     identity: { verified: false, name: null, lang: null },
-    pendingVerify: null, // { email, expiresAt }
+    pendingVerify: null, // { email, expiresAt, name, body, parentId, notifyOnReply, threadId }
     chapters: [],         // [{ index, title }]
     turnstileLoaded: false,
     turnstileWidgetId: null,
@@ -325,37 +331,49 @@
     updateIdentityBanner();
   }
 
-  async function fetchThread() {
+  const PAGE_SIZE = 50;
+
+  async function fetchThread(offset = 0) {
     const threadId = threadIdFor(state.currentThread, state.currentLang);
     if (state.lastThreadKey !== threadId) {
       state.seenIds = new Set();
       state.lastThreadKey = threadId;
     }
     const list = state.rootEl.querySelector(".comments-list");
-    const loadingLabel = escapeHtml(t("loading"));
-    const skeleton = `
-      <div class="comment-skeleton" role="status" aria-label="${loadingLabel}">
-        <div class="comment-skeleton-avatar"></div>
-        <div class="comment-skeleton-line short"></div>
-        <div class="comment-skeleton-line long"></div>
-      </div>
-      <div class="comment-skeleton" aria-hidden="true">
-        <div class="comment-skeleton-avatar"></div>
-        <div class="comment-skeleton-line short"></div>
-        <div class="comment-skeleton-line long"></div>
-      </div>`;
-    list.innerHTML = skeleton;
+    if (offset === 0) {
+      const loadingLabel = escapeHtml(t("loading"));
+      list.innerHTML = `
+        <div class="comment-skeleton" role="status" aria-label="${loadingLabel}">
+          <div class="comment-skeleton-avatar"></div>
+          <div class="comment-skeleton-line short"></div>
+          <div class="comment-skeleton-line long"></div>
+        </div>
+        <div class="comment-skeleton" aria-hidden="true">
+          <div class="comment-skeleton-avatar"></div>
+          <div class="comment-skeleton-line short"></div>
+          <div class="comment-skeleton-line long"></div>
+        </div>`;
+    }
     try {
-      const data = await apiGet(`/api/comments?thread=${encodeURIComponent(threadId)}`);
-      renderList(data.comments || []);
+      const data = await apiGet(
+        `/api/comments?thread=${encodeURIComponent(threadId)}&limit=${PAGE_SIZE}&offset=${offset}`
+      );
+      const comments = data.comments || [];
+      if (offset === 0) {
+        renderList(comments, data.hasMore, data.total);
+      } else {
+        appendComments(comments, data.hasMore, data.total, offset);
+      }
     } catch {
-      list.innerHTML = `<div class="comments-error">${escapeHtml(t("errorGeneric"))}</div>`;
+      if (offset === 0) {
+        list.innerHTML = `<div class="comments-error">${escapeHtml(t("errorGeneric"))}</div>`;
+      }
     }
   }
 
   // ---------- Render ----------
 
-  function renderList(comments) {
+  function renderList(comments, hasMore = false, total = 0) {
     const list = state.rootEl.querySelector(".comments-list");
     if (!comments.length) {
       list.innerHTML = `<div class="comments-empty"><svg class="comments-empty-icon" aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>${escapeHtml(t("empty"))}</div>`;
@@ -367,14 +385,50 @@
     for (const top of topLevel) {
       const group = document.createElement("div");
       group.className = "comment-group";
-      group.appendChild(renderComment(top, byId, /*depth*/ 0));
-      // Flatten all descendants under this top-level into one indented list.
+      group.appendChild(renderComment(top, byId, 0));
       const descendants = collectDescendants(top.id, comments);
       for (const d of descendants) {
-        group.appendChild(renderComment(d, byId, /*depth*/ 1));
+        group.appendChild(renderComment(d, byId, 1));
       }
       list.appendChild(group);
     }
+    if (hasMore) {
+      list.appendChild(buildLoadMoreBtn(comments.length, total));
+    }
+  }
+
+  function appendComments(comments, hasMore, total, offset) {
+    const list = state.rootEl.querySelector(".comments-list");
+    const oldBtn = list.querySelector(".comments-load-more");
+    if (oldBtn) oldBtn.remove();
+    const byId = new Map([...list.querySelectorAll("[data-id]")].map(el => [el.dataset.id, {}]).concat(comments.map(c => [c.id, c])));
+    const newTopLevel = comments.filter(c => !c.parent_id || !byId.has(c.parent_id));
+    for (const top of newTopLevel) {
+      const group = document.createElement("div");
+      group.className = "comment-group";
+      group.appendChild(renderComment(top, new Map(comments.map(c => [c.id, c])), 0));
+      const descendants = collectDescendants(top.id, comments);
+      for (const d of descendants) {
+        group.appendChild(renderComment(d, new Map(comments.map(c => [c.id, c])), 1));
+      }
+      list.appendChild(group);
+    }
+    if (hasMore) {
+      list.appendChild(buildLoadMoreBtn(offset + comments.length, total));
+    }
+  }
+
+  function buildLoadMoreBtn(loaded, total) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "comments-load-more";
+    const labelFn = t("loadMore");
+    btn.textContent = typeof labelFn === "function" ? labelFn(total - loaded) : `Load more (${total - loaded} remaining)`;
+    btn.addEventListener("click", () => {
+      btn.disabled = true;
+      fetchThread(loaded);
+    });
+    return btn;
   }
 
   function collectDescendants(rootId, comments) {
@@ -512,7 +566,11 @@
         return;
       }
       if (res.data.status === "needs_verification") {
-        state.pendingVerify = { email, expiresAt: res.data.expiresAt };
+        state.pendingVerify = {
+          email, expiresAt: res.data.expiresAt,
+          name, body, parentId, notifyOnReply,
+          threadId: threadIdFor(state.currentThread, state.currentLang),
+        };
         showVerifyModal();
         setFormStatus(t("statusNeedsVerify"));
         resetTurnstile();
@@ -541,17 +599,75 @@
     input.value = "";
     input.focus();
     setVerifyStatus("");
+    startCountdown();
   }
   function hideVerifyModal() {
     const modal = state.rootEl.querySelector(".comments-verify-modal");
     modal.hidden = true;
     state.pendingVerify = null;
+    stopCountdown();
   }
   function setVerifyStatus(text, isError = false) {
     const el = state.rootEl.querySelector(".verify-status");
     if (!el) return;
     el.textContent = text || "";
     el.classList.toggle("error", !!isError);
+  }
+
+  function startCountdown() {
+    stopCountdown();
+    const el = state.rootEl.querySelector(".verify-countdown");
+    if (!el) return;
+    function tick() {
+      if (!state.pendingVerify) { stopCountdown(); return; }
+      const remaining = state.pendingVerify.expiresAt - Math.floor(Date.now() / 1000);
+      if (remaining <= 0) {
+        el.textContent = t("errorCodeExpired");
+        stopCountdown();
+        return;
+      }
+      const m = Math.floor(remaining / 60);
+      const s = remaining % 60;
+      el.textContent = `${m}:${s.toString().padStart(2, "0")}`;
+    }
+    tick();
+    countdownInterval = setInterval(tick, 1000);
+  }
+  function stopCountdown() {
+    if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+    const el = state.rootEl?.querySelector(".verify-countdown");
+    if (el) el.textContent = "";
+  }
+
+  async function handleResend() {
+    if (!state.pendingVerify) return;
+    const resendBtn = state.rootEl.querySelector(".verify-resend");
+    if (resendBtn) resendBtn.disabled = true;
+    setVerifyStatus("");
+    const { email, name, body, parentId, notifyOnReply, threadId } = state.pendingVerify;
+    const payload = {
+      name, body, parent_id: parentId,
+      email,
+      notifyOnReply: !!(email && notifyOnReply),
+      turnstileToken: state.captchaToken || undefined,
+    };
+    try {
+      const res = await apiPost(`/api/comments?thread=${encodeURIComponent(threadId)}`, payload);
+      if (resendBtn) resendBtn.disabled = false;
+      if (res.status >= 400) {
+        const key = ERROR_KEY_MAP[res.data.error] || "errorGeneric";
+        setVerifyStatus(t(key), true);
+        return;
+      }
+      if (res.data.status === "needs_verification") {
+        state.pendingVerify.expiresAt = res.data.expiresAt;
+        startCountdown();
+        setVerifyStatus(t("statusNeedsVerify"));
+      }
+    } catch {
+      if (resendBtn) resendBtn.disabled = false;
+      setVerifyStatus(t("errorGeneric"), true);
+    }
   }
 
   async function handleVerifySubmit() {
@@ -589,20 +705,49 @@
 
   // ---------- Report ----------
 
-  async function handleReport(commentId) {
-    if (!confirm(t("reportConfirm"))) return;
-    const reason = prompt(t("reportPrompt")) || null;
+  function showReportModal(commentId) {
+    pendingReportId = commentId;
+    const modal = state.rootEl.querySelector(".comments-report-modal");
+    modal.hidden = false;
+    modal.querySelector(".report-reason-input").value = "";
+    setReportStatus("");
+    modal.querySelector(".report-submit").focus();
+  }
+  function hideReportModal() {
+    const modal = state.rootEl.querySelector(".comments-report-modal");
+    modal.hidden = true;
+    pendingReportId = null;
+  }
+  function setReportStatus(text, isError = false) {
+    const el = state.rootEl.querySelector(".report-status");
+    if (!el) return;
+    el.textContent = text || "";
+    el.classList.toggle("error", !!isError);
+  }
+  async function handleReportSubmit() {
+    if (!pendingReportId) return;
+    const modal = state.rootEl.querySelector(".comments-report-modal");
+    const reason = modal.querySelector(".report-reason-input").value.trim() || null;
+    const submitBtn = modal.querySelector(".report-submit");
+    submitBtn.disabled = true;
     try {
-      const res = await apiPost(`/api/comments/${encodeURIComponent(commentId)}/report`, { reason });
-      if (res.status >= 400) {
-        alert(t("errorGeneric"));
-        return;
+      const res = await apiPost(`/api/comments/${encodeURIComponent(pendingReportId)}/report`, { reason });
+      submitBtn.disabled = false;
+      if (res.status >= 400) { setReportStatus(t("errorGeneric"), true); return; }
+      if (res.data.status === "already_reported") {
+        setReportStatus(t("reportAlready"), true);
+      } else {
+        setReportStatus(t("reportThanks"));
+        setTimeout(hideReportModal, 1500);
       }
-      if (res.data.status === "already_reported") alert(t("reportAlready"));
-      else alert(t("reportThanks"));
     } catch {
-      alert(t("errorGeneric"));
+      submitBtn.disabled = false;
+      setReportStatus(t("errorGeneric"), true);
     }
+  }
+
+  function handleReport(commentId) {
+    showReportModal(commentId);
   }
 
   // ---------- Thread switcher ----------
@@ -730,7 +875,26 @@
               <button type="button" class="verify-submit" data-i18n="verifySubmit">Bestätigen</button>
               <button type="button" class="verify-cancel" data-i18n="verifyCancel">Abbrechen</button>
             </div>
+            <div class="verify-footer">
+              <small class="verify-countdown" aria-live="polite"></small>
+              <button type="button" class="verify-resend" data-i18n="verifyResend">Code erneut anfordern</button>
+            </div>
             <small class="verify-status" aria-live="polite"></small>
+          </div>
+        </div>
+
+        <div class="comments-report-modal" hidden role="dialog" aria-modal="true">
+          <div class="comments-report-box">
+            <p data-i18n="reportConfirm">Diesen Kommentar melden?</p>
+            <label class="form-field">
+              <span data-i18n="reportPrompt">Grund (optional):</span>
+              <textarea class="report-reason-input" maxlength="500" rows="3"></textarea>
+            </label>
+            <div class="form-row">
+              <button type="button" class="report-submit" data-i18n="btnReport">Melden</button>
+              <button type="button" class="report-cancel" data-i18n="verifyCancel">Abbrechen</button>
+            </div>
+            <small class="report-status" aria-live="polite"></small>
           </div>
         </div>
       </div>
@@ -771,9 +935,13 @@
 
     root.querySelector(".verify-submit").addEventListener("click", handleVerifySubmit);
     root.querySelector(".verify-cancel").addEventListener("click", hideVerifyModal);
+    root.querySelector(".verify-resend").addEventListener("click", handleResend);
     root.querySelector(".verify-code-input").addEventListener("keydown", (ev) => {
       if (ev.key === "Enter") { ev.preventDefault(); handleVerifySubmit(); }
     });
+
+    root.querySelector(".report-submit").addEventListener("click", handleReportSubmit);
+    root.querySelector(".report-cancel").addEventListener("click", hideReportModal);
   }
 
   // ---------- Public API ----------

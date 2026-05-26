@@ -1,6 +1,16 @@
 // Resend transactional email. Account must be set to EU region in Resend
 // dashboard for DSGVO compliance; the API endpoint stays the same.
 
+// HMAC-SHA256 token bound to a comment ID. Uses EMAIL_HASH_SALT as the key
+// (email-scoped operation; avoids adding a new required secret).
+export async function generateUnsubscribeToken(env, commentId) {
+  const raw = new TextEncoder().encode(env.EMAIL_HASH_SALT || "dev-unsub");
+  const key = await crypto.subtle.importKey("raw", raw, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`unsub:${commentId}`));
+  return btoa(String.fromCharCode(...new Uint8Array(sig)))
+    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+
 const RESEND_URL = "https://api.resend.com/emails";
 
 const templates = {
@@ -23,31 +33,32 @@ const templates = {
 };
 
 const replyTemplates = {
-  de: ({ parentName, replyName, snippet, url }) => ({
+  de: ({ parentName, replyName, snippet, url, unsubUrl }) => ({
     subject: `${replyName} hat auf deinen Kommentar geantwortet`,
-    text: `Hallo ${parentName},\n\n${replyName} hat auf deinen Kommentar geantwortet:\n\n  „${snippet}"\n\nLies die ganze Antwort hier: ${url}\n\nFalls du keine weiteren Benachrichtigungen mehr möchtest, ignoriere diese E-Mail einfach — bei zukünftigen Kommentaren kannst du die Checkbox weglassen.\n\n— Kekse im Iran\n`,
+    text: `Hallo ${parentName},\n\n${replyName} hat auf deinen Kommentar geantwortet:\n\n  „${snippet}"\n\nLies die ganze Antwort hier: ${url}\n\nBenachrichtigungen abbestellen: ${unsubUrl}\n\n— Kekse im Iran\n`,
   }),
-  en: ({ parentName, replyName, snippet, url }) => ({
+  en: ({ parentName, replyName, snippet, url, unsubUrl }) => ({
     subject: `${replyName} replied to your comment`,
-    text: `Hi ${parentName},\n\n${replyName} replied to your comment:\n\n  "${snippet}"\n\nRead the full reply here: ${url}\n\nIf you don't want further notifications, simply ignore this email — for future comments, leave the checkbox unchecked.\n\n— Cookies in Iran\n`,
+    text: `Hi ${parentName},\n\n${replyName} replied to your comment:\n\n  "${snippet}"\n\nRead the full reply here: ${url}\n\nUnsubscribe from notifications: ${unsubUrl}\n\n— Cookies in Iran\n`,
   }),
-  ru: ({ parentName, replyName, snippet, url }) => ({
+  ru: ({ parentName, replyName, snippet, url, unsubUrl }) => ({
     subject: `${replyName} ответил(а) на ваш комментарий`,
-    text: `Здравствуйте, ${parentName},\n\n${replyName} ответил(а) на ваш комментарий:\n\n  «${snippet}»\n\nПрочитать полный ответ: ${url}\n\nЕсли вы больше не хотите получать такие уведомления, просто проигнорируйте это письмо — в будущих комментариях не устанавливайте флажок.\n\n— Cookies in Iran\n`,
+    text: `Здравствуйте, ${parentName},\n\n${replyName} ответил(а) на ваш комментарий:\n\n  «${snippet}»\n\nПрочитать полный ответ: ${url}\n\nОтписаться от уведомлений: ${unsubUrl}\n\n— Cookies in Iran\n`,
   }),
-  fa: ({ parentName, replyName, snippet, url }) => ({
+  fa: ({ parentName, replyName, snippet, url, unsubUrl }) => ({
     subject: `${replyName} به نظر شما پاسخ داد`,
-    text: `سلام ${parentName}،\n\n${replyName} به نظر شما پاسخ داد:\n\n  «${snippet}»\n\nپاسخ کامل را اینجا بخوانید: ${url}\n\nاگر دیگر این اعلان‌ها را نمی‌خواهید، این پیام را نادیده بگیرید — برای نظرات بعدی، تیک مربوطه را نزنید.\n\n— Cookies in Iran\n`,
+    text: `سلام ${parentName}،\n\n${replyName} به نظر شما پاسخ داد:\n\n  «${snippet}»\n\nپاسخ کامل را اینجا بخوانید: ${url}\n\nلغو اشتراک: ${unsubUrl}\n\n— Cookies in Iran\n`,
   }),
 };
 
-export async function sendReplyNotification(env, { to, parentName, replyName, replyBody, lang, url }) {
+export async function sendReplyNotification(env, { to, parentName, replyName, replyBody, lang, url, unsubscribeUrl }) {
   if (!env.RESEND_API_KEY) {
-    console.log(`[email-dev] reply-notify to=${to} lang=${lang} from=${replyName}`);
+    console.log(`[email-dev] reply-notify to=${to} lang=${lang} from=${replyName} unsub=${unsubscribeUrl}`);
     return { dev: true };
   }
   const snippet = replyBody.slice(0, 240) + (replyBody.length > 240 ? "…" : "");
-  const tpl = (replyTemplates[lang] || replyTemplates.en)({ parentName, replyName, snippet, url });
+  const unsubUrl = unsubscribeUrl || url;
+  const tpl = (replyTemplates[lang] || replyTemplates.en)({ parentName, replyName, snippet, url, unsubUrl });
   const r = await fetch(RESEND_URL, {
     method: "POST",
     headers: {

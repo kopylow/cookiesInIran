@@ -25,6 +25,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const drawerOverlay = document.getElementById('drawer-overlay');
     const closeBtns = document.querySelectorAll('.close-drawer');
 
+    // Focus-management state (opener element to restore focus to on close)
+    let drawerOpenerEl = null;
+    let lightboxOpenerEl = null;
+    // IntersectionObserver ref so it can be disconnected on language switch
+    let predictiveObserver = null;
+
+    // Constants
+    const SCROLL_POS_KEY_PREFIX = 'readPos_';
+    const FONT_SIZE_STORAGE_KEY = 'rootFontSize';
+    const MIN_ROOT_FONT_PX = 8;
+    const MAX_ROOT_FONT_PX = 32;
+
     // State
     const supportedLangs = ['de', 'en', 'ru'];
     const browserLang = (navigator.language || navigator.userLanguage || 'de').slice(0, 2).toLowerCase();
@@ -115,14 +127,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const chapters = manuscriptContainer.querySelectorAll('.chapter');
         const airlocks = manuscriptContainer.querySelectorAll('.airlock');
 
-        const observer = new IntersectionObserver((entries) => {
+        if (predictiveObserver) predictiveObserver.disconnect();
+
+        predictiveObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const currentChapter = entry.target;
                     const allChapters = Array.from(chapters);
                     const index = allChapters.indexOf(currentChapter);
 
-                    // Preload the next airlock's image (index + 1)
                     if (index >= 0 && airlocks[index]) {
                         const nextAirlock = airlocks[index];
                         const isMobile = window.matchMedia('(max-width: 768px)').matches;
@@ -137,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }, { threshold: 0.1 });
 
-        chapters.forEach(ch => observer.observe(ch));
+        chapters.forEach(ch => predictiveObserver.observe(ch));
     }
 
     function preloadNextImage(url) {
@@ -297,22 +310,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     ? (airlock.dataset.imgMobile || airlock.dataset.img)
                     : (airlock.dataset.img || airlock.dataset.imgMobile);
                 if (src) {
+                    lightboxOpenerEl = airlock;
                     lightboxImg.src = src;
                     lightbox.classList.add('visible');
                     lightbox.setAttribute('aria-hidden', 'false');
-                    document.body.style.overflow = 'hidden'; // Prevent scrolling
+                    document.body.style.overflow = 'hidden';
+                    lightboxClose.focus();
                 }
             });
         });
-
-        const closeLightbox = () => {
-            lightbox.classList.remove('visible');
-            lightbox.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-        };
-
-        lightbox.addEventListener('click', closeLightbox);
-        lightboxClose.addEventListener('click', closeLightbox);
+        // Lightbox close listeners are wired once in init to avoid accumulation on language switch.
     }
 
     // --- 3. UI Interactions ---
@@ -368,9 +375,11 @@ window.addEventListener('scroll', () => {
         drawerOverlay.classList.remove('visible');
         pageWrapper.classList.remove('drawer-open-fullscreen');
         document.body.classList.remove('drawer-open-fullscreen');
+        if (drawerOpenerEl) { drawerOpenerEl.focus(); drawerOpenerEl = null; }
     }
 
     function openCommentsDrawer(chapterIndex) {
+        drawerOpenerEl = document.activeElement;
         closeAllDrawers();
         topBar.classList.remove('hidden');
         drawerComments.classList.add('open');
@@ -378,24 +387,32 @@ window.addEventListener('scroll', () => {
         pageWrapper.classList.add('drawer-open-fullscreen');
         document.body.classList.add('drawer-open-fullscreen');
         if (window.CommentsUI) window.CommentsUI.open(chapterIndex);
+        const closeBtn = drawerComments.querySelector('.close-drawer');
+        if (closeBtn) closeBtn.focus();
     }
 
     function openSupportDrawer() {
+        drawerOpenerEl = document.activeElement;
         closeAllDrawers();
         topBar.classList.remove('hidden');
         drawerSupport.classList.add('open');
         drawerOverlay.classList.add('visible');
         pageWrapper.classList.add('drawer-open-fullscreen');
         document.body.classList.add('drawer-open-fullscreen');
+        const closeBtn = drawerSupport.querySelector('.close-drawer');
+        if (closeBtn) closeBtn.focus();
     }
 
     function openContactDrawer() {
+        drawerOpenerEl = document.activeElement;
         closeAllDrawers();
         topBar.classList.remove('hidden');
         drawerContact.classList.add('open');
         drawerOverlay.classList.add('visible');
         pageWrapper.classList.add('drawer-open-fullscreen');
         document.body.classList.add('drawer-open-fullscreen');
+        const closeBtn = drawerContact.querySelector('.close-drawer');
+        if (closeBtn) closeBtn.focus();
     }
 
     btnComments.addEventListener('click', openCommentsDrawer);
@@ -410,13 +427,26 @@ window.addEventListener('scroll', () => {
     closeBtns.forEach(btn => btn.addEventListener('click', closeAllDrawers));
     drawerOverlay.addEventListener('click', closeAllDrawers);
 
+    // Focus trap: Tab cycles within the open drawer
+    function trapFocus(drawer, e) {
+        if (e.key !== 'Tab') return;
+        const focusable = [...drawer.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter(el => !el.disabled);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus();
+        }
+    }
+    [drawerComments, drawerSupport, drawerContact].forEach(drawer => {
+        drawer.addEventListener('keydown', (e) => trapFocus(drawer, e));
+    });
+
     // --- Pinch-to-zoom font scaling ---
     // Two-finger pinch scales the document root font-size instead of triggering
     // browser pixel-zoom. All rem-based text/spacing rescales proportionally.
-    const MIN_ROOT_FONT_PX = 8;
-    const MAX_ROOT_FONT_PX = 32;
-    const FONT_SIZE_STORAGE_KEY = 'rootFontSize';
-    const SCROLL_POS_KEY_PREFIX = 'readPos_';
 
     const savedRootFontPx = parseFloat(localStorage.getItem(FONT_SIZE_STORAGE_KEY));
     if (savedRootFontPx >= MIN_ROOT_FONT_PX && savedRootFontPx <= MAX_ROOT_FONT_PX) {
@@ -459,6 +489,30 @@ window.addEventListener('scroll', () => {
     };
     document.addEventListener('touchend', endPinch);
     document.addEventListener('touchcancel', endPinch);
+
+    // --- One-time lightbox close + focus-trap setup ---
+    const lightboxEl = document.getElementById('lightbox');
+    const lightboxCloseEl = document.getElementById('lightbox-close');
+    function closeLightbox() {
+        lightboxEl.classList.remove('visible');
+        lightboxEl.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (lightboxOpenerEl) { lightboxOpenerEl.focus(); lightboxOpenerEl = null; }
+    }
+    lightboxEl.addEventListener('click', closeLightbox);
+    lightboxCloseEl.addEventListener('click', closeLightbox);
+    // Lightbox has one focusable element; Tab wraps back to it
+    lightboxEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') { e.preventDefault(); lightboxCloseEl.focus(); }
+    });
+
+    // Escape closes whatever is open
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (lightboxEl.classList.contains('visible')) { closeLightbox(); return; }
+        const anyOpen = [drawerComments, drawerSupport, drawerContact].some(d => d.classList.contains('open'));
+        if (anyOpen) closeAllDrawers();
+    });
 
     // --- Initialize ---
     if (window.CommentsUI) {

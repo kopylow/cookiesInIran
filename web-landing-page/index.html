@@ -45,7 +45,7 @@
     <div id="progress-indicator"></div>
 
     <!-- Mechanical Drawers -->
-    <div id="drawer-comments" class="drawer fullscreen">
+    <div id="drawer-comments" class="drawer fullscreen" role="dialog" aria-modal="true" aria-label="Comments">
         <div class="drawer-header">
             <h2>Comments</h2>
             <button class="close-drawer" aria-label="Close drawer">×</button>
@@ -55,7 +55,7 @@
         </div>
     </div>
 
-    <div id="drawer-support" class="drawer fullscreen">
+    <div id="drawer-support" class="drawer fullscreen" role="dialog" aria-modal="true" aria-label="Support">
         <div class="drawer-header">
             <h2>Support</h2>
             <button class="close-drawer" aria-label="Close drawer">×</button>
@@ -65,7 +65,7 @@
         </div>
     </div>
 
-    <div id="drawer-contact" class="drawer fullscreen">
+    <div id="drawer-contact" class="drawer fullscreen" role="dialog" aria-modal="true" aria-label="Contact">
         <div class="drawer-header">
             <h2>Contact</h2>
             <button class="close-drawer" aria-label="Close drawer">×</button>
@@ -101,7 +101,7 @@
         </main>
     </div>
 
-    <script src="comments.js"></script>
-    <script src="main.js"></script>
+    <script src="comments.js" defer></script>
+    <script src="main.js" defer></script>
 </body>
 </html>
