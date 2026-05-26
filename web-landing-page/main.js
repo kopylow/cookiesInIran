@@ -91,8 +91,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!response.ok) throw new Error('Failed to load manuscript');
             const html = await response.text();
             
-            // Simple preloading
-            const imageUrls = [...html.matchAll(/url\(['"]?(.*?)['"]?\)/g)].map(m => m[1]);
+            // Preload only actual image files (skip fonts, SVG filters, data URIs, etc.)
+            const imageUrls = [...html.matchAll(/url\(['"]?(.*?)['"]?\)/g)]
+                .map(m => m[1])
+                .filter(u => /\.(jpe?g|png|webp|gif|avif)(\?.*)?$/i.test(u));
             preloadImages(imageUrls);
 
             manuscriptContainer.innerHTML = html;
@@ -106,8 +108,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             setupAirlockInteractions();
             if (window.CommentsUI) window.CommentsUI.refreshChapters();
             if (restoreScroll) {
-                const saved = parseInt(localStorage.getItem(SCROLL_POS_KEY_PREFIX + lang), 10);
-                window.scrollTo(0, saved > 0 ? saved : 0);
+                const savedChapter = parseInt(localStorage.getItem(SCROLL_POS_KEY_PREFIX + lang), 10);
+                const target = Number.isFinite(savedChapter) && savedChapter >= 0
+                    ? document.getElementById(`chapter-${savedChapter}`)
+                    : null;
+                if (target) {
+                    target.scrollIntoView({ behavior: 'instant' });
+                } else {
+                    window.scrollTo(0, 0);
+                }
             } else {
                 window.scrollTo(0, 0);
             }
@@ -212,7 +221,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             clearTimeout(saveScrollTimer);
             saveScrollTimer = setTimeout(() => {
-                localStorage.setItem(SCROLL_POS_KEY_PREFIX + currentLang, Math.round(window.scrollY));
+                localStorage.setItem(SCROLL_POS_KEY_PREFIX + currentLang, currentChapterIndex);
             }, 500);
         };
 

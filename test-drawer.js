@@ -4,7 +4,7 @@ const { JSDOM } = jsdom;
 const html = fs.readFileSync('web-landing-page/index.html', 'utf8');
 const js = fs.readFileSync('web-landing-page/main.js', 'utf8');
 
-const dom = new JSDOM(html, { runScripts: "dangerously" });
+const dom = new JSDOM(html, { runScripts: "dangerously", url: "http://localhost" });
 const window = dom.window;
 const document = window.document;
 
