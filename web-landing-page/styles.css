@@ -990,6 +990,17 @@ body[data-theme="dark"] .comments-switcher {
     flex-wrap: wrap;
 }
 .comment-author { font-weight: 600; }
+.comment-verified {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    background: var(--current-accent, #b5651d);
+    color: #fff;
+    flex-shrink: 0;
+}
 .comment-time {
     opacity: 0.55;
     font-size: 0.78em;
@@ -1379,4 +1390,47 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
         background-repeat: no-repeat;
         animation: skeletonShimmer 1.6s var(--site-easing) infinite;
     }
+}
+
+/* --------------------------------------------------------------------------
+   10. Legal Pages
+   -------------------------------------------------------------------------- */
+.legal-container {
+    max-width: var(--container-max-width-fluid);
+    margin: 4rem auto;
+    padding: 0 var(--current-margin);
+    color: var(--current-text);
+    line-height: var(--current-line-height);
+}
+
+.legal-container h1 {
+    font-size: var(--text-h1);
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.legal-container h2 {
+    font-size: 1.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.legal-container p, .legal-container ul {
+    margin-bottom: 1.25rem;
+}
+
+.legal-container ul {
+    padding-inline-start: 1.5rem;
+}
+
+.legal-container li {
+    margin-bottom: 0.5rem;
+}
+
+.legal-container a {
+    color: var(--current-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }

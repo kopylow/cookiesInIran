@@ -55,10 +55,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const i18n = {
-        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Support", contact: "Kontakt", index: "Inhaltsverzeichnis" },
-        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Support", contact: "Contact", index: "Index" },
-        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Поддержка", contact: "Контакты", index: "Оглавление" },
-        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "پشتیبانی", contact: "تماس", index: "فهرست" }
+        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Support", contact: "Kontakt", index: "Inhaltsverzeichnis", impressum: "Impressum", privacy: "Datenschutz" },
+        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Support", contact: "Contact", index: "Index", impressum: "Impressum", privacy: "Privacy" },
+        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Поддержка", contact: "Контакты", index: "Оглавление", impressum: "Импрессум", privacy: "Конфиденциальность" },
+        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "پشتیبانی", contact: "تماس", index: "فهرست", impressum: "اطلاعات حقوقی", privacy: "حریم خصوصی" }
     };
 
     function updateUI(lang) {
@@ -80,6 +80,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         drawerComments.querySelector('.drawer-header h2').textContent = t.comments;
         drawerSupport.querySelector('.drawer-header h2').textContent = t.support;
         drawerContact.querySelector('.drawer-header h2').textContent = t.contact;
+        
+        const linkImpressum = document.getElementById('link-impressum');
+        const linkPrivacy = document.getElementById('link-privacy');
+        if (linkImpressum) {
+            linkImpressum.textContent = t.impressum;
+            linkImpressum.href = `impressum-${lang === 'fa' ? 'en' : lang}.html`;
+        }
+        if (linkPrivacy) {
+            linkPrivacy.textContent = t.privacy;
+            linkPrivacy.href = `privacy-${lang === 'fa' ? 'en' : lang}.html`;
+        }
     }
 
     // --- 1. Dynamic Content Loading ---

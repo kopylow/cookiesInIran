@@ -463,6 +463,7 @@
       <span class="comment-avatar" data-verified="${c.verified ? "true" : "false"}" ${hue !== null ? `style="--avatar-hue: ${hue};"` : 'data-color="none"'} aria-hidden="true">${escapeHtml(initial)}</span>
       <header class="comment-head">
         <span class="comment-author">${escapeHtml(c.display_name)}</span>
+        ${c.verified ? `<span class="comment-verified" aria-label="${escapeHtml(t("verifiedBadge"))}" title="${escapeHtml(t("verifiedBadge"))}"><svg aria-hidden="true" width="0.9em" height="0.9em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>` : ""}
         <time class="comment-time" datetime="${new Date(c.created_at * 1000).toISOString()}">${escapeHtml(relativeTime(c.created_at))}</time>
       </header>
       <div class="comment-body">${autolink(c.body)}</div>

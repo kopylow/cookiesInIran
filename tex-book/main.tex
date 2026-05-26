@@ -9,6 +9,7 @@
 \usepackage[a5paper,margin=22mm]{geometry}
 \usepackage{setspace}
 \usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=black, linkcolor=black, citecolor=black}
 \usepackage{xcolor}
 \usepackage{tikz}
 \usepackage{fancyhdr}
@@ -64,7 +65,9 @@
 {\small
 \noindent [COPYRIGHT_TEXT]
 }
-\vspace{2em}
+\par\vspace{1em}
+{\small\href{https://cookiesiniran.com}{cookiesiniran.com}\par}
+\vspace{1em}
 \newpage
 
 \tableofcontents
@@ -78,4 +81,11 @@
 }
 \pagestyle{fancy}
 \input{manuscript.tex}
+
+\newpage
+\thispagestyle{empty}
+\null\vfill
+\begin{center}
+{\small\href{https://cookiesiniran.com}{cookiesiniran.com}}
+\end{center}
 \end{document}

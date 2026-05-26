@@ -231,7 +231,11 @@ $cList.addEventListener("click", async (ev) => {
       await api("POST", `/api/admin/comments/${id}/anonymize`);
     } else if (act === "ban") {
       const reason = prompt("Grund für die Sperre (optional):") ?? null;
-      await api("POST", `/api/admin/identities/${btn.dataset.iid}/ban`, { reason });
+      const days = prompt("Sperrdauer in Tagen (leer = unbefristet):", "");
+      const untilSec = days && Number(days) > 0
+        ? Math.floor(Date.now() / 1000) + Math.floor(Number(days) * 86400)
+        : null;
+      await api("POST", `/api/admin/identities/${btn.dataset.iid}/ban`, { reason, untilSec });
     }
     await loadComments(currentBefore);
   } catch (e) {
@@ -324,7 +328,11 @@ $rList.addEventListener("click", async (ev) => {
       await api("POST", `/api/admin/comments/${btn.dataset.id}/anonymize`);
     } else if (act === "r-ban") {
       const reason = prompt("Grund für die Sperre (optional):") ?? null;
-      await api("POST", `/api/admin/identities/${btn.dataset.iid}/ban`, { reason });
+      const days = prompt("Sperrdauer in Tagen (leer = unbefristet):", "");
+      const untilSec = days && Number(days) > 0
+        ? Math.floor(Date.now() / 1000) + Math.floor(Number(days) * 86400)
+        : null;
+      await api("POST", `/api/admin/identities/${btn.dataset.iid}/ban`, { reason, untilSec });
     } else if (act === "r-resolve") {
       await api("POST", `/api/admin/reports/${btn.dataset.rid}/resolve`);
     }
