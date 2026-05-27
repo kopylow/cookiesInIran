@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function updateUI(lang) {
         const t = i18n[lang];
         if (!t) return;
-        document.title = t.title;
+        document.title = `${t.title} — ${t.author}`;
         document.querySelector('.hero-content h1').textContent = t.title;
         document.querySelector('.hero-content .subtitle').textContent = t.author;
         
