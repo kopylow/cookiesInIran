@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Печенье в Иране</title>
+    <link>https://cookiesiniran.com/</link>
+    <language>ru-RU</language>
+    <description>Аудиокнига "Печенье в Иране" Антона Копылова: история о ракетах, печенье и горьких слезах.</description>
+    <itunes:author>Антон Копылов</itunes:author>
+    <itunes:summary>Аудиокнига "Печенье в Иране" Антона Копылова: история о ракетах, печенье и горьких слезах.</itunes:summary>
+    <itunes:explicit>false</itunes:explicit>
+    <itunes:type>serial</itunes:type>
+    <itunes:image href="https://cookiesiniran.com/Pics/podcast-cover.jpg"/>
+    <image><url>https://cookiesiniran.com/Pics/podcast-cover.jpg</url><title>Печенье в Иране</title><link>https://cookiesiniran.com/</link></image>
+    <itunes:category text="Arts"><itunes:category text="Books"/></itunes:category>
+    <itunes:owner><itunes:name>Антон Копылов</itunes:name><itunes:email>cookiesiniran@mailbox.org</itunes:email></itunes:owner>
+    <atom:link href="https://cookiesiniran.com/podcast_ru.xml" rel="self" type="application/rss+xml"/>
+  </channel>
+</rss>

@@ -25,6 +25,11 @@
     <meta name="twitter:description" content="A story about rockets, cookies and bitter tears.">
     <meta name="twitter:image" content="https://cookiesiniran.com/Pics/cover_cookies_1.jpg">
 
+    <!-- Podcast / audiobook feeds -->
+    <link rel="alternate" type="application/rss+xml" title="Hörbuch (DE)" href="/podcast_de.xml">
+    <link rel="alternate" type="application/rss+xml" title="Audiobook (EN)" href="/podcast_en.xml">
+    <link rel="alternate" type="application/rss+xml" title="Аудиокнига (RU)" href="/podcast_ru.xml">
+
     <!-- Canonical & hreflang -->
     <link rel="canonical" href="https://cookiesiniran.com/">
     <link rel="alternate" hreflang="de" href="https://cookiesiniran.com/">
@@ -76,6 +81,7 @@
             <button id="btn-comments" class="nav-btn">Comments</button>
             <button id="btn-support" class="nav-btn">Support</button>
             <button id="btn-contact" class="nav-btn">Contact</button>
+            <button id="btn-audio" class="nav-btn">Audiobook</button>
         </div>
         <div class="top-bar-right">
             <select id="lang-toggle" aria-label="Change language">
@@ -92,6 +98,7 @@
         <button id="btn-comments-mobile" class="nav-btn">Comments</button>
         <button id="btn-support-mobile" class="nav-btn">Support</button>
         <button id="btn-contact-mobile" class="nav-btn">Contact</button>
+        <button id="btn-audio-mobile" class="nav-btn">Audiobook</button>
     </nav>
 
     <!-- Progress Indicator -->
@@ -128,7 +135,20 @@
         </div>
     </div>
 
+    <div id="drawer-audio" class="drawer fullscreen" role="dialog" aria-modal="true" aria-label="Audiobook">
+        <div class="drawer-header">
+            <h2>Audiobook</h2>
+            <button class="close-drawer" aria-label="Close drawer">×</button>
+        </div>
+        <div class="drawer-content">
+            <p class="audio-empty">Loading…</p>
+        </div>
+    </div>
+
     <div id="drawer-overlay"></div>
+
+    <!-- Persistent audio mini-player (populated by audiobook.js) -->
+    <div id="mini-player" role="region" aria-label="Audio player" hidden></div>
 
     <!-- Lightbox for Photos -->
     <div id="lightbox" aria-hidden="true">
@@ -160,6 +180,7 @@
     </div>
 
     <script src="comments.js" defer></script>
+    <script src="audiobook.js" defer></script>
     <script src="main.js" defer></script>
 </body>
 </html>

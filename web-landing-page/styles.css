@@ -1423,3 +1423,238 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     text-decoration: underline;
     text-underline-offset: 2px;
 }
+
+/* --------------------------------------------------------------------------
+   11. Audiobook: chapter list (drawer) + sticky mini-player
+   -------------------------------------------------------------------------- */
+.audio-empty {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.audio-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.audio-action-link {
+    color: var(--current-accent);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.audio-action-link:hover {
+    text-decoration: underline;
+}
+
+.audio-list {
+    display: flex;
+    flex-direction: column;
+    max-width: var(--container-max-width-fluid);
+    margin: 0 auto;
+}
+
+.audio-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+}
+
+.audio-row.active {
+    color: var(--current-accent);
+}
+
+.audio-play-btn {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: inherit;
+    background: transparent;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.audio-play-btn:hover {
+    border-color: var(--current-accent);
+    color: var(--current-accent);
+}
+.audio-row.active .audio-play-btn {
+    background: var(--current-accent);
+    border-color: var(--current-accent);
+    color: var(--current-bg);
+}
+
+.audio-row-main {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-width: 0;
+}
+.audio-row-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.audio-row-dur {
+    flex: 0 0 auto;
+    opacity: 0.6;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.85rem;
+}
+
+.audio-dl {
+    flex: 0 0 auto;
+    color: inherit;
+    opacity: 0.55;
+    text-decoration: none;
+    font-size: 1.25rem;
+    line-height: 1;
+    padding: 0 0.25rem;
+    transition: opacity 0.2s ease, color 0.2s ease;
+}
+.audio-dl:hover {
+    opacity: 1;
+    color: var(--current-accent);
+}
+
+/* --- Sticky mini-player --- */
+#mini-player {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--current-bg);
+    border-top: 1px solid rgba(128, 128, 128, 0.25);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+    z-index: 2600; /* above top-bar (2500) and drawers (2000) so it stays reachable */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+#mini-player[hidden] {
+    display: none;
+}
+
+.mp-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0.5rem 1rem;
+}
+
+.mp-btn {
+    flex: 0 0 auto;
+    background: transparent;
+    border: none;
+    color: var(--current-text);
+    font-size: 1.1rem;
+    line-height: 1;
+    min-width: 36px;
+    min-height: 36px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.mp-btn:hover {
+    color: var(--current-accent);
+}
+.mp-play {
+    font-size: 1.4rem;
+}
+.mp-speed {
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.mp-meta {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+.mp-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.mp-seekrow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.mp-time {
+    flex: 0 0 auto;
+    font-size: 0.75rem;
+    opacity: 0.65;
+    font-variant-numeric: tabular-nums;
+}
+
+.mp-seek {
+    flex: 1 1 auto;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(128, 128, 128, 0.3);
+    cursor: pointer;
+}
+.mp-seek::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--current-accent);
+    border: none;
+}
+.mp-seek::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border: none;
+    border-radius: 50%;
+    background: var(--current-accent);
+}
+
+/* Keep page content clear of the fixed mini-player. */
+body.mini-player-open #global-footer {
+    margin-bottom: 72px;
+}
+
+/* The mini-player is fixed above the drawer, so the audio chapter list
+   needs room to scroll its last rows clear of it. */
+body.mini-player-open #drawer-audio .drawer-content {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 768px) {
+    /* Sit above the mobile bottom bar (60px). */
+    #mini-player {
+        bottom: 60px;
+    }
+    .mp-prev, .mp-next, .mp-speed {
+        display: none; /* keep the compact bar uncluttered on phones */
+    }
+    body.mini-player-open #main-content {
+        padding-bottom: 140px;
+    }
+    /* Mini-player sits at bottom:60px on mobile, so the audio list needs
+       more clearance than on desktop. */
+    body.mini-player-open #drawer-audio .drawer-content {
+        padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px));
+    }
+}

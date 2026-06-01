@@ -1,0 +1,189 @@
+{
+  "baseUrl": "https://audio.cookiesiniran.com",
+  "cover": "Pics/podcast-cover.jpg",
+  "langs": {
+    "de": {
+      "title": "Kekse im Iran",
+      "author": "Anton Kopylow",
+      "feed": "podcast_de.xml",
+      "zip": null,
+      "chapters": [
+        {
+          "index": 0,
+          "title": "Who you gonna call?",
+          "file": "de/ch-00.mp3",
+          "bytes": 2104482,
+          "duration": 87.6
+        },
+        {
+          "index": 1,
+          "title": "Gehe nicht über Los",
+          "file": "de/ch-01.mp3",
+          "bytes": 3239868,
+          "duration": 134.9
+        },
+        {
+          "index": 2,
+          "title": "Zwischen Raketen und rotem Sand",
+          "file": "de/ch-02.mp3",
+          "bytes": 9075414,
+          "duration": 378.0
+        },
+        {
+          "index": 3,
+          "title": "Zwischen den Welten",
+          "file": "de/ch-03.mp3",
+          "bytes": 3712580,
+          "duration": 154.6
+        },
+        {
+          "index": 4,
+          "title": "Im Vakuum des Blackouts",
+          "file": "de/ch-04.mp3",
+          "bytes": 6761383,
+          "duration": 281.6
+        },
+        {
+          "index": 5,
+          "title": "Eisiger Stillstand",
+          "file": "de/ch-05.mp3",
+          "bytes": 11007640,
+          "duration": 458.5
+        },
+        {
+          "index": 6,
+          "title": "Das versiegelte Schicksal",
+          "file": "de/ch-06.mp3",
+          "bytes": 12350543,
+          "duration": 514.5
+        },
+        {
+          "index": 7,
+          "title": "Der 16.000-Dollar-Panzer",
+          "file": "de/ch-07.mp3",
+          "bytes": 4958308,
+          "duration": 206.5
+        },
+        {
+          "index": 8,
+          "title": "No Problem, it's just 18.000€",
+          "file": "de/ch-08.mp3",
+          "bytes": 5542614,
+          "duration": 230.8
+        },
+        {
+          "index": 9,
+          "title": "Die bittere Träne der Freiheit",
+          "file": "de/ch-09.mp3",
+          "bytes": 9286695,
+          "duration": 386.8
+        },
+        {
+          "index": 10,
+          "title": "Das Gesetz der Schachtel",
+          "file": "de/ch-10.mp3",
+          "bytes": 6466097,
+          "duration": 269.3
+        },
+        {
+          "index": 11,
+          "title": "Zwischen Lammkoteletts und Existenzangst",
+          "file": "de/ch-11.mp3",
+          "bytes": 7167642,
+          "duration": 298.5
+        },
+        {
+          "index": 12,
+          "title": "Bürokratie im Leerlauf",
+          "file": "de/ch-12.mp3",
+          "bytes": 6337575,
+          "duration": 264.0
+        },
+        {
+          "index": 13,
+          "title": "Ein Lichtblick mit Hindernissen",
+          "file": "de/ch-13.mp3",
+          "bytes": 3750825,
+          "duration": 156.2
+        },
+        {
+          "index": 14,
+          "title": "Ein Anwalt muss her",
+          "file": "de/ch-14.mp3",
+          "bytes": 3592837,
+          "duration": 149.6
+        },
+        {
+          "index": 15,
+          "title": "Das Siegel aus Tinte und Tränen",
+          "file": "de/ch-15.mp3",
+          "bytes": 6130058,
+          "duration": 255.3
+        },
+        {
+          "index": 16,
+          "title": "Warten, warten",
+          "file": "de/ch-16.mp3",
+          "bytes": 2236141,
+          "duration": 93.1
+        },
+        {
+          "index": 17,
+          "title": "Tag des Gerichts",
+          "file": "de/ch-17.mp3",
+          "bytes": 10807021,
+          "duration": 450.2
+        },
+        {
+          "index": 18,
+          "title": "In Khoy, um Khoy und um Khoy herum",
+          "file": "de/ch-18.mp3",
+          "bytes": 9553771,
+          "duration": 398.0
+        },
+        {
+          "index": 19,
+          "title": "Brilles hämisches Grinsen",
+          "file": "de/ch-19.mp3",
+          "bytes": 6152001,
+          "duration": 256.2
+        },
+        {
+          "index": 20,
+          "title": "Zwischen Notaren, Lämmern und Hummer",
+          "file": "de/ch-20.mp3",
+          "bytes": 10830217,
+          "duration": 451.1
+        },
+        {
+          "index": 21,
+          "title": "Tourist, Tourist",
+          "file": "de/ch-21.mp3",
+          "bytes": 5488072,
+          "duration": 228.6
+        },
+        {
+          "index": 22,
+          "title": "Epilog",
+          "file": "de/ch-22.mp3",
+          "bytes": 5353907,
+          "duration": 223.0
+        }
+      ]
+    },
+    "en": {
+      "title": "Cookies in Iran",
+      "author": "Anton Kopylow",
+      "feed": "podcast_en.xml",
+      "zip": null,
+      "chapters": []
+    },
+    "ru": {
+      "title": "Печенье в Иране",
+      "author": "Антон Копылов",
+      "feed": "podcast_ru.xml",
+      "zip": null,
+      "chapters": []
+    }
+  }
+}

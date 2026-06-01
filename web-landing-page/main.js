@@ -18,10 +18,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnSupportMobile = document.getElementById('btn-support-mobile');
     const btnContact = document.getElementById('btn-contact');
     const btnContactMobile = document.getElementById('btn-contact-mobile');
+    const btnAudio = document.getElementById('btn-audio');
+    const btnAudioMobile = document.getElementById('btn-audio-mobile');
     const drawerBook = document.getElementById('drawer-book');
     const drawerComments = document.getElementById('drawer-comments');
     const drawerSupport = document.getElementById('drawer-support');
     const drawerContact = document.getElementById('drawer-contact');
+    const drawerAudio = document.getElementById('drawer-audio');
+    const miniPlayer = document.getElementById('mini-player');
     const drawerOverlay = document.getElementById('drawer-overlay');
     const closeBtns = document.querySelectorAll('.close-drawer');
 
@@ -55,10 +59,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const i18n = {
-        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Support", contact: "Kontakt", index: "Inhaltsverzeichnis", impressum: "Impressum", privacy: "Datenschutz" },
-        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Support", contact: "Contact", index: "Index", impressum: "Impressum", privacy: "Privacy" },
-        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Поддержка", contact: "Контакты", index: "Оглавление", impressum: "Импрессум", privacy: "Конфиденциальность" },
-        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "پشتیبانی", contact: "تماس", index: "فهرست", impressum: "اطلاعات حقوقی", privacy: "حریم خصوصی" }
+        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Support", contact: "Kontakt", audiobook: "Hörbuch", index: "Inhaltsverzeichnis", impressum: "Impressum", privacy: "Datenschutz" },
+        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Support", contact: "Contact", audiobook: "Audiobook", index: "Index", impressum: "Impressum", privacy: "Privacy" },
+        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Поддержка", contact: "Контакты", audiobook: "Аудиокнига", index: "Оглавление", impressum: "Импрессум", privacy: "Конфиденциальность" },
+        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "پشتیبانی", contact: "تماس", audiobook: "کتاب صوتی", index: "فهرست", impressum: "اطلاعات حقوقی", privacy: "حریم خصوصی" }
     };
 
     function updateUI(lang) {
@@ -72,14 +76,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnComments.textContent = t.comments;
         btnSupport.textContent = t.support;
         btnContact.textContent = t.contact;
-        
+        if (btnAudio) btnAudio.textContent = t.audiobook;
+
         if (btnCommentsMobile) btnCommentsMobile.textContent = t.comments;
         if (btnSupportMobile) btnSupportMobile.textContent = t.support;
         if (btnContactMobile) btnContactMobile.textContent = t.contact;
-        
+        if (btnAudioMobile) btnAudioMobile.textContent = t.audiobook;
+
         drawerComments.querySelector('.drawer-header h2').textContent = t.comments;
         drawerSupport.querySelector('.drawer-header h2').textContent = t.support;
         drawerContact.querySelector('.drawer-header h2').textContent = t.contact;
+        if (drawerAudio) drawerAudio.querySelector('.drawer-header h2').textContent = t.audiobook;
         
         const linkImpressum = document.getElementById('link-impressum');
         const linkPrivacy = document.getElementById('link-privacy');
@@ -353,6 +360,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentLang = e.target.value;
         loadManuscript(currentLang);
         if (window.CommentsUI) window.CommentsUI.setLang(currentLang);
+        if (window.AudioPlayer) window.AudioPlayer.setLang(currentLang);
     });
 // Smart Top Bar Hide/Show on Scroll
 let lastScrollY = window.scrollY;
@@ -392,6 +400,7 @@ window.addEventListener('scroll', () => {
         drawerComments.classList.remove('open');
         drawerSupport.classList.remove('open');
         drawerContact.classList.remove('open');
+        if (drawerAudio) drawerAudio.classList.remove('open');
         drawerOverlay.classList.remove('visible');
         pageWrapper.classList.remove('drawer-open-fullscreen');
         document.body.classList.remove('drawer-open-fullscreen');
@@ -435,13 +444,28 @@ window.addEventListener('scroll', () => {
         if (closeBtn) closeBtn.focus();
     }
 
+    function openAudioDrawer() {
+        drawerOpenerEl = document.activeElement;
+        closeAllDrawers();
+        topBar.classList.remove('hidden');
+        drawerAudio.classList.add('open');
+        drawerOverlay.classList.add('visible');
+        pageWrapper.classList.add('drawer-open-fullscreen');
+        document.body.classList.add('drawer-open-fullscreen');
+        if (window.AudioPlayer) window.AudioPlayer.open();
+        const closeBtn = drawerAudio.querySelector('.close-drawer');
+        if (closeBtn) closeBtn.focus();
+    }
+
     btnComments.addEventListener('click', openCommentsDrawer);
     btnSupport.addEventListener('click', openSupportDrawer);
     btnContact.addEventListener('click', openContactDrawer);
+    if (btnAudio) btnAudio.addEventListener('click', openAudioDrawer);
 
     if (btnCommentsMobile) btnCommentsMobile.addEventListener('click', openCommentsDrawer);
     if (btnSupportMobile) btnSupportMobile.addEventListener('click', openSupportDrawer);
     if (btnContactMobile) btnContactMobile.addEventListener('click', openContactDrawer);
+    if (btnAudioMobile) btnAudioMobile.addEventListener('click', openAudioDrawer);
 
     if (bookTitle) bookTitle.addEventListener('click', closeAllDrawers);
     closeBtns.forEach(btn => btn.addEventListener('click', closeAllDrawers));
@@ -460,7 +484,7 @@ window.addEventListener('scroll', () => {
             e.preventDefault(); first.focus();
         }
     }
-    [drawerComments, drawerSupport, drawerContact].forEach(drawer => {
+    [drawerComments, drawerSupport, drawerContact, drawerAudio].filter(Boolean).forEach(drawer => {
         drawer.addEventListener('keydown', (e) => trapFocus(drawer, e));
     });
 
@@ -530,7 +554,7 @@ window.addEventListener('scroll', () => {
     document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
         if (lightboxEl.classList.contains('visible')) { closeLightbox(); return; }
-        const anyOpen = [drawerComments, drawerSupport, drawerContact].some(d => d.classList.contains('open'));
+        const anyOpen = [drawerComments, drawerSupport, drawerContact, drawerAudio].filter(Boolean).some(d => d.classList.contains('open'));
         if (anyOpen) closeAllDrawers();
     });
 
@@ -538,6 +562,14 @@ window.addEventListener('scroll', () => {
     if (window.CommentsUI) {
         window.CommentsUI.init({
             drawerEl: drawerComments,
+            getCurrentLang: () => currentLang,
+        });
+    }
+
+    if (window.AudioPlayer) {
+        window.AudioPlayer.init({
+            drawerEl: drawerAudio,
+            miniEl: miniPlayer,
             getCurrentLang: () => currentLang,
         });
     }
@@ -552,6 +584,7 @@ window.addEventListener('scroll', () => {
         const sel = document.querySelector(`#lang-toggle option[value="${paramLang}"]`);
         if (sel) langToggle.value = paramLang;
         if (window.CommentsUI) window.CommentsUI.setLang(paramLang);
+        if (window.AudioPlayer) window.AudioPlayer.setLang(paramLang);
     }
 
     await loadManuscript(currentLang, paramComments !== "1");
