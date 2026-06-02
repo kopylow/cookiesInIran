@@ -48,10 +48,31 @@
   /* Status bar */
   #empty-comments, #empty-reports { padding: 2rem; text-align: center; opacity: 0.6; display: none; }
   #error { background: rgba(200,0,0,0.1); color: #c00; padding: 0.5rem 1rem; border-radius: 4px; margin-bottom: 1rem; display: none; border: 1px solid #c00; }
+
+  /* Login gate */
+  #login-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: Canvas; z-index: 1000; padding: var(--pad); }
+  #login-overlay.hidden { display: none; }
+  .login-box { width: 100%; max-width: 340px; border: 1px solid rgba(127,127,127,0.35); border-radius: 8px; padding: 1.5rem; }
+  .login-box h2 { margin: 0 0 1rem; font-size: 1.2rem; }
+  .login-box input { width: 100%; padding: 0.55rem 0.6rem; font-size: 1rem; margin-bottom: 0.75rem; border-radius: 4px; border: 1px solid rgba(127,127,127,0.5); background: none; color: inherit; }
+  .login-box button { width: 100%; }
+  #login-error { color: #c00; font-size: 0.85rem; margin-top: 0.6rem; min-height: 1.1em; }
+  #logout { float: right; font-size: 0.85rem; }
 </style>
 </head>
 <body>
-<h1>Kommentar-Admin</h1>
+
+<!-- ── LOGIN GATE ── -->
+<div id="login-overlay" class="hidden">
+  <form class="login-box" id="login-form" autocomplete="on">
+    <h2>Admin-Login</h2>
+    <input type="password" id="login-pw" placeholder="Admin-Passwort" autocomplete="current-password">
+    <button type="submit" class="primary" id="login-btn">Anmelden</button>
+    <div id="login-error"></div>
+  </form>
+</div>
+
+<h1>Kommentar-Admin <button id="logout">Abmelden</button></h1>
 <div style="margin-bottom: 1rem;">
   <label style="font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem; opacity: 0.8;">
     <input type="checkbox" id="skip-confirm">
@@ -122,13 +143,28 @@ function promptAction(msg, def = "") {
   return prompt(msg, def);
 }
 
-function getPassword() {
-  let pw = sessionStorage.getItem("admin_pw");
-  if (!pw) {
-    pw = prompt("Admin-Passwort:");
-    if (pw) sessionStorage.setItem("admin_pw", pw);
-  }
-  return pw || "";
+// ── Auth state ───────────────────────────────────────────────────────────────
+// The password lives in one in-memory variable, hydrated from sessionStorage so a
+// page reload in the same tab stays logged in. The login overlay is the only place
+// it is set; api() reads it and, on a 401, clears it and re-shows the overlay.
+let adminPw = sessionStorage.getItem("admin_pw") || "";
+
+function showLogin(msg) {
+  $("#login-error").textContent = msg || "";
+  $("#login-overlay").classList.remove("hidden");
+  const input = $("#login-pw");
+  input.value = "";
+  input.focus();
+}
+
+function hideLogin() {
+  $("#login-overlay").classList.add("hidden");
+}
+
+function logout() {
+  adminPw = "";
+  sessionStorage.removeItem("admin_pw");
+  showLogin();
 }
 
 function fmtTime(unix) {
@@ -142,15 +178,16 @@ function esc(s) {
 
 async function api(method, url, body) {
   const headers = body ? { "content-type": "application/json" } : {};
-  const pw = getPassword();
-  if (pw) headers["authorization"] = "Bearer " + pw;
+  if (adminPw) headers["authorization"] = "Bearer " + adminPw;
   const res = await fetch(url, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
   });
   if (res.status === 401) {
+    adminPw = "";
     sessionStorage.removeItem("admin_pw");
+    showLogin("Falsches Passwort.");
     throw new Error("401 Falsches Passwort");
   }
   if (!res.ok) {
@@ -366,9 +403,44 @@ $rList.addEventListener("click", async (ev) => {
 $("#r-refresh").addEventListener("click", loadReports);
 $("#show-resolved").addEventListener("change", loadReports);
 
-// ── Boot ───────────────────────────────────────────────────────────────────
-loadComments(null);
-loadReports();
+// ── Login / boot ─────────────────────────────────────────────────────────────
+function bootLoad() {
+  loadComments(null);
+  loadReports();
+}
+
+$("#login-form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const pw = $("#login-pw").value;
+  if (!pw) { showLogin("Bitte Passwort eingeben."); return; }
+  const btn = $("#login-btn");
+  btn.disabled = true;
+  adminPw = pw;
+  try {
+    // A cheap authenticated request validates the password before we commit it.
+    await api("GET", "/api/admin/comments?limit=1");
+    sessionStorage.setItem("admin_pw", pw);
+    hideLogin();
+    bootLoad();
+  } catch (e) {
+    // api() already re-shows the overlay with "Falsches Passwort" on a 401;
+    // surface anything else (e.g. network/server errors) here.
+    if (adminPw) showLogin("Login fehlgeschlagen: " + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$("#logout").addEventListener("click", logout);
+
+// Hydrated from sessionStorage: try straight through, falling back to the gate
+// if the cached password is stale (api() shows the overlay on 401). With no
+// cached password, show the gate immediately instead of firing doomed requests.
+if (adminPw) {
+  bootLoad();
+} else {
+  showLogin();
+}
 </script>
 </body>
 </html>
