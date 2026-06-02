@@ -1709,6 +1709,13 @@ body.mini-player-open #drawer-audio .drawer-content {
     body.mini-player-open #main-content {
         padding-bottom: 140px;
     }
+    /* On mobile the mini-player sits at bottom:60px (above the bottom bar), so
+       its top is ~120px from the viewport bottom. The desktop footer clearance
+       (72px) is too small here, leaving the footer text behind the player.
+       Match the #main-content clearance so the footer scrolls fully clear. */
+    body.mini-player-open #global-footer {
+        margin-bottom: calc(140px + env(safe-area-inset-bottom, 0px));
+    }
     /* Mini-player sits at bottom:60px on mobile, so the audio list needs
        more clearance than on desktop. */
     body.mini-player-open #drawer-audio .drawer-content {
