@@ -166,7 +166,7 @@ body {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background-image: url('Pics/1.jpg');
+    background-image: url('Pics/1.jpg?v=2');
     background-size: cover;
     background-position: center;
     background-attachment: fixed; /* Parallax effect */
@@ -181,7 +181,7 @@ body {
 @media (max-width: 768px) {
     #hero {
         background-attachment: scroll;
-        background-image: url('Pics/mobile/1.jpg');
+        background-image: url('Pics/mobile/1.jpg?v=2');
     }
 }
 
@@ -254,7 +254,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 1.5rem;
+    padding: 0 calc(1.5rem / var(--zoom, 1));
     z-index: var(--z-index-topbar);
     transition: transform 0.3s ease;
 }
@@ -266,7 +266,21 @@ body {
 .top-bar-left, .top-bar-center, .top-bar-right {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: calc(1.5rem / var(--zoom, 1));
+}
+
+/* Counter-scale the nav chrome: main.js sets --zoom = currentRoot / baseRoot
+   when pinch-zoom changes the root font-size. Dividing these rem sizes by it
+   cancels the zoom for the menu only, so just the manuscript text rescales.
+   At default zoom --zoom is 1, so appearance is unchanged. */
+#top-bar button {
+    font-size: calc(0.9rem / var(--zoom, 1));
+}
+#top-bar #book-title {
+    font-size: calc(var(--text-base) / var(--zoom, 1));
+}
+#top-bar select {
+    padding: calc(0.25rem / var(--zoom, 1)) calc(0.5rem / var(--zoom, 1));
 }
 
 .top-bar-center {
@@ -298,7 +312,7 @@ body {
         border-top: 1px solid rgba(128, 128, 128, 0.2);
         justify-content: space-around;
         align-items: center;
-        padding: 0 1rem;
+        padding: 0 calc(1rem / var(--zoom, 1));
         z-index: var(--z-index-topbar);
         transition: transform 0.3s ease;
     }
@@ -321,7 +335,8 @@ body {
         flex: 1;
         min-width: 0;
         /* override global button: uppercase + 0.9rem + letter-spacing is too wide */
-        font-size: 0.6rem;
+        /* counter-scaled (see --zoom note) so pinch-zoom leaves the tab bar fixed */
+        font-size: calc(0.72rem / var(--zoom, 1));
         letter-spacing: 0;
         text-transform: none;
         line-height: 1;
@@ -336,8 +351,8 @@ body {
        so the glyph is monochrome and follows the light/dark text color. */
     #bottom-bar .nav-btn::before {
         content: "";
-        width: 22px;
-        height: 22px;
+        width: 26px;
+        height: 26px;
         background-color: currentColor;
         -webkit-mask-position: center;
         mask-position: center;
@@ -1539,7 +1554,14 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     font-size: 0.85rem;
     color: inherit;
     background: transparent;
+    /* Optically center the ▶ triangle: its visual mass leans left, so nudge
+       it right. border-box keeps the circle at 38px while padding shifts the glyph. */
+    padding-left: 3px;
     transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.audio-play-btn.is-playing {
+    /* ⏸ is symmetric — drop the triangle nudge so the pause bars stay centered. */
+    padding-left: 0;
 }
 .audio-play-btn:hover {
     border-color: var(--current-accent);

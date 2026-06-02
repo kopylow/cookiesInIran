@@ -157,7 +157,11 @@
       const isActive = Number(row.dataset.pos) === currentPos;
       row.classList.toggle("active", isActive);
       const btn = row.querySelector(".audio-play-btn");
-      if (btn) btn.textContent = isActive && !audio.paused ? "⏸" : "▶";
+      if (btn) {
+        const playing = isActive && !audio.paused;
+        btn.textContent = playing ? "⏸" : "▶";
+        btn.classList.toggle("is-playing", playing);
+      }
     });
   }
 
