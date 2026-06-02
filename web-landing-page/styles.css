@@ -1716,8 +1716,16 @@ body.mini-player-open #drawer-audio .drawer-content {
     body.mini-player-open #global-footer {
         margin-bottom: calc(140px + env(safe-area-inset-bottom, 0px));
     }
-    /* Mini-player sits at bottom:60px on mobile, so the audio list needs
-       more clearance than on desktop. */
+    /* The bottom bar (60px, z-index 2500) stays visible above the audio drawer
+       (z-index 2000) while it's open - you tapped the bar to open it, and the
+       scroll-hide handler is disabled while a drawer is open. The base drawer
+       padding (~18px) leaves the last chapter row behind the bar, so it can't
+       be scrolled into view. Clear the bar even before playback starts. */
+    #drawer-audio .drawer-content {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    }
+    /* Once playback starts the mini-player sits at bottom:60px on mobile, so the
+       audio list needs more clearance than the bar alone. */
     body.mini-player-open #drawer-audio .drawer-content {
         padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px));
     }
