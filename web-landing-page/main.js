@@ -144,10 +144,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function preloadImages(urls) {
-        urls.forEach(url => {
+        // Each airlock lists both a desktop and a mobile url(); only warm the
+        // variant this viewport will actually paint, so we don't split bandwidth
+        // across images the device never shows.
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+        const wanted = urls.filter(u => (/\/mobile\//.test(u) ? isMobile : !isMobile));
+        const queue = wanted.length ? wanted : urls;
+
+        // Eager, but windowed. Firing every request at once makes HTTP/2 give each
+        // an equal ~1/n bandwidth slice, so the first image is as slow as the last.
+        // A small concurrency window keeps bandwidth on the earliest images (the
+        // ones the reader reaches first); low priority lets the visible hero win.
+        const CONCURRENCY = 3;
+        let i = 0;
+        const startNext = () => {
+            if (i >= queue.length) return;
             const img = new Image();
-            img.src = url;
-        });
+            img.fetchPriority = 'low';
+            const advance = () => startNext();
+            img.onload = advance;
+            img.onerror = advance;
+            img.src = queue[i++];
+        };
+        for (let c = 0; c < CONCURRENCY; c++) startNext();
     }
 
     function setupPredictivePreload() {
@@ -492,10 +511,20 @@ window.addEventListener('scroll', () => {
     // Two-finger pinch scales the document root font-size instead of triggering
     // browser pixel-zoom. All rem-based text/spacing rescales proportionally.
 
+    // Base root font-size as defined by CSS (12px mobile / 16px desktop), read
+    // BEFORE any saved override. --zoom = currentRoot / base lets CSS counter-
+    // scale the nav chrome so pinch-zoom only grows manuscript text, not menus.
+    const ROOT_BASE_FONT_PX = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const updateZoomVar = () => {
+        const cur = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        document.documentElement.style.setProperty('--zoom', (cur / ROOT_BASE_FONT_PX).toFixed(4));
+    };
+
     const savedRootFontPx = parseFloat(localStorage.getItem(FONT_SIZE_STORAGE_KEY));
     if (savedRootFontPx >= MIN_ROOT_FONT_PX && savedRootFontPx <= MAX_ROOT_FONT_PX) {
         document.documentElement.style.fontSize = savedRootFontPx + 'px';
     }
+    updateZoomVar();
 
     let pinchStartDistance = null;
     let pinchStartFontPx = null;
@@ -520,6 +549,7 @@ window.addEventListener('scroll', () => {
         const scale = pinchDistance(e.touches) / pinchStartDistance;
         const clamped = Math.max(MIN_ROOT_FONT_PX, Math.min(MAX_ROOT_FONT_PX, pinchStartFontPx * scale));
         document.documentElement.style.fontSize = clamped + 'px';
+        updateZoomVar();
         if (e.cancelable) e.preventDefault();
     }, { passive: false });
 
