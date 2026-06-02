@@ -9,5 +9,19 @@
 /api/*
   Cache-Control: no-store
 
+# Source CSS/JS are referenced (versioned) from the always-fresh HTML
+# (index.html is served max-age=0). The default Pages caching for these assets
+# (max-age=14400) made edits invisible for up to 4h. no-cache lets the browser
+# revalidate every load (cheap 304s) so a deploy is visible immediately. Hashed
+# font files keep their long cache; only these hand-edited text assets revalidate.
+/styles.css
+  Cache-Control: no-cache
+/main.js
+  Cache-Control: no-cache
+/comments.js
+  Cache-Control: no-cache
+/audiobook.js
+  Cache-Control: no-cache
+
 /admin*
   X-Robots-Tag: noindex, nofollow
