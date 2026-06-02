@@ -307,6 +307,40 @@ body {
         transform: translateY(100%);
     }
 
+    /* Four tabs no longer fit as plain UPPERCASE words (DE "KOMMENTARE" overflows
+       a ~360px phone). Stack a glyph above a small caption per tab instead. The
+       icon is a ::before pseudo-element, so main.js's textContent label updates
+       leave it untouched. Bar height stays 60px so #mini-player { bottom: 60px }
+       remains valid. */
+    #bottom-bar .nav-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        flex: 1;
+        min-width: 0;
+        /* override global button: uppercase + 0.9rem + letter-spacing is too wide */
+        font-size: 0.6rem;
+        letter-spacing: 0;
+        text-transform: none;
+        line-height: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    #bottom-bar .nav-btn::before {
+        font-size: 1.3rem;
+        line-height: 1;
+    }
+
+    #btn-audio-mobile::before    { content: "🎧"; }
+    #btn-comments-mobile::before { content: "💬"; }
+    #btn-support-mobile::before  { content: "♥"; }
+    #btn-contact-mobile::before  { content: "✉"; }
+
     #main-content {
         padding-bottom: 80px; /* Space for bottom bar */
     }
