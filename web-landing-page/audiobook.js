@@ -15,7 +15,6 @@
   const I18N = {
     de: {
       comingSoon: "Das Hörbuch erscheint bald.",
-      subscribe: "Podcast abonnieren (Spotify / Apple)",
       downloadAll: "Alle Kapitel herunterladen (ZIP)",
       play: "Abspielen",
       pause: "Pause",
@@ -28,7 +27,6 @@
     },
     en: {
       comingSoon: "The audiobook is coming soon.",
-      subscribe: "Subscribe to the podcast (Spotify / Apple)",
       downloadAll: "Download all chapters (ZIP)",
       play: "Play",
       pause: "Pause",
@@ -41,7 +39,6 @@
     },
     ru: {
       comingSoon: "Аудиокнига скоро появится.",
-      subscribe: "Подписаться на подкаст (Spotify / Apple)",
       downloadAll: "Скачать все главы (ZIP)",
       play: "Слушать",
       pause: "Пауза",
@@ -125,11 +122,8 @@
 
     const block = manifest.langs[currentLang];
 
-    // Header actions: subscribe + optional download-all
+    // Header actions: optional download-all
     const actions = el("div", { class: "audio-actions" });
-    if (block.feed) {
-      actions.appendChild(el("a", { class: "audio-action-link", href: block.feed, target: "_blank", rel: "noopener" }, t().subscribe));
-    }
     if (block.zip) {
       actions.appendChild(el("a", { class: "audio-action-link", href: urlFor({ file: block.zip }), download: "" }, t().downloadAll));
     }

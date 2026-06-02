@@ -118,7 +118,7 @@ Also set `TURNSTILE_SITE_KEY` in `wrangler.toml [vars]` and mirror it in the `<m
 
 `functions/api/admin/cron-tick.js` purges expired `pending_verifications`, resolved `reports` older than 90 days, and expired `bans`. Authenticated by `Authorization: Bearer ${CRON_SECRET}`. Trigger externally — either a tiny standalone Worker with `[triggers] crons = [...]` calling this endpoint, or a GitHub Actions schedule.
 
-## Audiobook (streaming + download + podcast)
+## Audiobook (streaming + download)
 
 A third output alongside the print PDFs and web page, for DE/EN/RU narration (no Farsi). It
 is **immutable static content**, so unlike the comments system it needs **no Pages Function,
@@ -128,15 +128,14 @@ no D1, no API** — just R2 for the audio bytes plus generated static files.
 
 Sibling to `build.py`. Reads chapter `# H1` titles from `locales/{lang}/manuscript.md` (same
 parse as `build.py`) and, for each `audio_src/{lang}/ch-NN.mp3` master, records byte-size
-(`os.path.getsize`) + duration (`ffprobe`). Emits two artifacts that are the single source of
-truth for both the on-site player and the podcast platforms:
+(`os.path.getsize`) + duration (`ffprobe`). Emits one artifact that is the single source of
+truth for the on-site player:
 
 - `web-landing-page/audio/manifest.json` — chapter list (index, title, file, bytes, duration)
   per language, plus `baseUrl`, optional `zip`. Consumed by `audiobook.js`.
-- `web-landing-page/podcast_{de,en,ru}.xml` — RSS 2.0 + iTunes feeds for Spotify/Apple.
 
 Run `python3 build_audio.py`. It degrades gracefully: with no masters it still writes an empty
-manifest + item-less feeds, so it is safe to run before any recording exists. `requirements`:
+manifest, so it is safe to run before any recording exists. `requirements`:
 `ffprobe` (from ffmpeg) for durations.
 
 ### Masters and R2
@@ -157,7 +156,7 @@ manifest + item-less feeds, so it is safe to run before any recording exists. `r
 ### Cover art, upload, and deploy
 
 The masters and the live site are refreshed in a fixed order — **R2 holds the bytes, Pages holds
-the manifest/feeds/UI, and both must be refreshed for a change to go live**. A half-finished run
+the manifest/UI, and both must be refreshed for a change to go live**. A half-finished run
 where R2 has the audio but Pages still serves the old `manifest.json` makes chapters silently
 invisible in the player (the player reads the manifest from Pages, never from R2).
 
@@ -171,9 +170,8 @@ invisible in the player (the player reads the manifest from Pages, never from R2
    ```
    The 8 MB PNGs are too heavy to embed raw (×23 chapters ×3 langs); the ~330 KB JPEG keeps files
    small. Streaming is unaffected — the `<audio>` element ignores embedded art on resource loads.
-2. **`python3 build_audio.py`** — regenerate `manifest.json` + feeds. Re-run this *after* embedding
-   art, because embedding changes every file's byte size and the manifest/`<enclosure length>` bake
-   `os.path.getsize` in.
+2. **`python3 build_audio.py`** — regenerate `manifest.json`. Re-run this *after* embedding
+   art, because embedding changes every file's byte size and the manifest bakes `os.path.getsize` in.
 3. **`python3 upload_audio.py`** — uploads every master in the manifest to R2 with `--remote` and a
    per-object `Content-Disposition: attachment; filename*=…` so downloads save as
    `"{Book} - NN - {Title}.mp3"` instead of `ch-NN.mp3`. This is required because the player links
@@ -182,7 +180,7 @@ invisible in the player (the player reads the manifest from Pages, never from R2
    Non-ASCII titles (Cyrillic, umlauts) use RFC 5987 `filename*`. **`--remote` is load-bearing**:
    without it the put only writes local dev state and public requests 404.
 4. **`npx wrangler pages deploy web-landing-page --project-name cookies-in-iran --commit-dirty=true`**
-   — publishes the new manifest + feeds. This is the step that actually surfaces new chapters in the
+   — publishes the new manifest. This is the step that actually surfaces new chapters in the
    player.
 
 **CDN cache gotcha**: R2-on-custom-domain sits behind Cloudflare's CDN (per-PoP). Any object you
@@ -202,12 +200,6 @@ purge via API — that needs a scoped Cache-Purge API token.
 - `main.js` mounts it exactly like comments: `AudioPlayer.init()` after DOM-ready, `openAudioDrawer()`
   wired to the "Hörbuch/Audiobook" nav buttons, and `AudioPlayer.setLang()` called from the language
   toggle. Styles live in the "Audiobook" section of `styles.css`.
-
-### Podcast distribution
-
-After deploy, submit `https://cookiesiniran.com/podcast_{lang}.xml` to Apple Podcasts Connect and
-Spotify for Podcasters. Requires a square cover ≥1400×1400 at `web-landing-page/Pics/podcast-cover.jpg`
-(referenced by the feeds). Channel owner email is the canonical `cookiesiniran@mailbox.org`.
 
 ## Content rules (enforced by convention, not tooling)
 

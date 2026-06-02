@@ -1,11 +1,9 @@
 {
   "baseUrl": "https://audio.cookiesiniran.com",
-  "cover": "Pics/podcast-cover.jpg",
   "langs": {
     "de": {
       "title": "Kekse im Iran",
       "author": "Anton Kopylow",
-      "feed": "podcast_de.xml",
       "zip": null,
       "chapters": [
         {
@@ -174,7 +172,6 @@
     "en": {
       "title": "Cookies in Iran",
       "author": "Anton Kopylow",
-      "feed": "podcast_en.xml",
       "zip": null,
       "chapters": [
         {
@@ -343,7 +340,6 @@
     "ru": {
       "title": "Печенье в Иране",
       "author": "Антон Копылов",
-      "feed": "podcast_ru.xml",
       "zip": null,
       "chapters": [
         {
