@@ -14,5 +14,235 @@
     <itunes:category text="Arts"><itunes:category text="Books"/></itunes:category>
     <itunes:owner><itunes:name>Антон Копылов</itunes:name><itunes:email>cookiesiniran@mailbox.org</itunes:email></itunes:owner>
     <atom:link href="https://cookiesiniran.com/podcast_ru.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Who you gonna call?</title>
+      <itunes:episode>1</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-00.mp3" length="2320392" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch00</guid>
+      <pubDate>Thu, 01 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:01:23</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Не проходите поле «Вперед»</title>
+      <itunes:episode>2</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-01.mp3" length="3498410" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch01</guid>
+      <pubDate>Fri, 02 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:02:12</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Между ракетами и красным песком</title>
+      <itunes:episode>3</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-02.mp3" length="9036161" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch02</guid>
+      <pubDate>Sat, 03 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:06:03</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Между мирами</title>
+      <itunes:episode>4</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-03.mp3" length="3952941" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch03</guid>
+      <pubDate>Sun, 04 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:02:31</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>В вакууме блэкаута</title>
+      <itunes:episode>5</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-04.mp3" length="7229950" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch04</guid>
+      <pubDate>Mon, 05 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:04:47</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Ледяной застой</title>
+      <itunes:episode>6</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-05.mp3" length="11131390" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch05</guid>
+      <pubDate>Tue, 06 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:07:30</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Запечатанная судьба</title>
+      <itunes:episode>7</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-06.mp3" length="12498743" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch06</guid>
+      <pubDate>Wed, 07 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:08:27</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Танк за 16 000 долларов</title>
+      <itunes:episode>8</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-07.mp3" length="5058861" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch07</guid>
+      <pubDate>Thu, 08 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:03:17</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>No Problem, it's just 18.000€</title>
+      <itunes:episode>9</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-08.mp3" length="5599282" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch08</guid>
+      <pubDate>Fri, 09 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:03:39</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Горькая слеза свободы</title>
+      <itunes:episode>10</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-09.mp3" length="9470631" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch09</guid>
+      <pubDate>Sat, 10 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:06:21</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Закон коробки</title>
+      <itunes:episode>11</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-10.mp3" length="6678246" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch10</guid>
+      <pubDate>Sun, 11 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:04:24</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Между бараньими отбивными и экзистенциальным страхом</title>
+      <itunes:episode>12</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-11.mp3" length="7463173" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch11</guid>
+      <pubDate>Mon, 12 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:04:57</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Бюрократия на холостом ходу</title>
+      <itunes:episode>13</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-12.mp3" length="6807395" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch12</guid>
+      <pubDate>Tue, 13 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:04:30</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Луч света с препятствиями</title>
+      <itunes:episode>14</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-13.mp3" length="4089616" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch13</guid>
+      <pubDate>Wed, 14 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:02:36</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Нужен адвокат</title>
+      <itunes:episode>15</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-14.mp3" length="3924104" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch14</guid>
+      <pubDate>Thu, 15 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:02:30</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Печать из чернил и слез</title>
+      <itunes:episode>16</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-15.mp3" length="6414932" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch15</guid>
+      <pubDate>Fri, 16 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:04:13</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Ждать, ждать</title>
+      <itunes:episode>17</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-16.mp3" length="2458948" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch16</guid>
+      <pubDate>Sat, 17 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:01:29</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Судный день</title>
+      <itunes:episode>18</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-17.mp3" length="11135781" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch17</guid>
+      <pubDate>Sun, 18 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:07:30</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>В Хой, за Хой и вокруг да около Хоя</title>
+      <itunes:episode>19</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-18.mp3" length="10147725" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch18</guid>
+      <pubDate>Mon, 19 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:06:49</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Злорадная ухмылка Очкарика</title>
+      <itunes:episode>20</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-19.mp3" length="6720878" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch19</guid>
+      <pubDate>Tue, 20 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:04:26</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Между нотариусами, ягнятами и лобстерами</title>
+      <itunes:episode>21</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-20.mp3" length="11447369" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch20</guid>
+      <pubDate>Wed, 21 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:07:43</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Турист, турист</title>
+      <itunes:episode>22</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-21.mp3" length="6078265" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch21</guid>
+      <pubDate>Thu, 22 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:03:59</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
+      <title>Эпилог</title>
+      <itunes:episode>23</itunes:episode>
+      <itunes:author>Антон Копылов</itunes:author>
+      <enclosure url="https://audio.cookiesiniran.com/ru/ch-22.mp3" length="5684548" type="audio/mpeg"/>
+      <guid isPermaLink="false">cii-ru-ch22</guid>
+      <pubDate>Fri, 23 Jan 2026 09:00:00 +0000</pubDate>
+      <itunes:duration>00:03:43</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
   </channel>
 </rss>

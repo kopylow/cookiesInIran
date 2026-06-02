@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A memoir ("Kekse im Iran" / "Cookies in Iran" by Anton Kopylow) localized into 4 languages (DE, EN, RU, FA) with two outputs: print PDFs (LaTeX) and a static web landing page. Content project, not software — no test suite, no linter, no CI. `AGENTS.md` and `GEMINI.md` cover the same territory and should be kept in rough sync if you change conventions here.
+A memoir ("Kekse im Iran" / "Cookies in Iran" by Anton Kopylow) localized into 4 languages (DE, EN, RU, FA) with two outputs: print PDFs (LaTeX) and a static web landing page. Content project, not software — no test suite, no linter, no CI.
 
 ## Build
 
@@ -117,6 +117,97 @@ Also set `TURNSTILE_SITE_KEY` in `wrangler.toml [vars]` and mirror it in the `<m
 ### Cron (Pages Functions have no native cron)
 
 `functions/api/admin/cron-tick.js` purges expired `pending_verifications`, resolved `reports` older than 90 days, and expired `bans`. Authenticated by `Authorization: Bearer ${CRON_SECRET}`. Trigger externally — either a tiny standalone Worker with `[triggers] crons = [...]` calling this endpoint, or a GitHub Actions schedule.
+
+## Audiobook (streaming + download + podcast)
+
+A third output alongside the print PDFs and web page, for DE/EN/RU narration (no Farsi). It
+is **immutable static content**, so unlike the comments system it needs **no Pages Function,
+no D1, no API** — just R2 for the audio bytes plus generated static files.
+
+### Generator: `build_audio.py`
+
+Sibling to `build.py`. Reads chapter `# H1` titles from `locales/{lang}/manuscript.md` (same
+parse as `build.py`) and, for each `audio_src/{lang}/ch-NN.mp3` master, records byte-size
+(`os.path.getsize`) + duration (`ffprobe`). Emits two artifacts that are the single source of
+truth for both the on-site player and the podcast platforms:
+
+- `web-landing-page/audio/manifest.json` — chapter list (index, title, file, bytes, duration)
+  per language, plus `baseUrl`, optional `zip`. Consumed by `audiobook.js`.
+- `web-landing-page/podcast_{de,en,ru}.xml` — RSS 2.0 + iTunes feeds for Spotify/Apple.
+
+Run `python3 build_audio.py`. It degrades gracefully: with no masters it still writes an empty
+manifest + item-less feeds, so it is safe to run before any recording exists. `requirements`:
+`ffprobe` (from ffmpeg) for durations.
+
+### Masters and R2
+
+- Narration masters live **outside the repo** under `audio_src/{lang}/ch-NN.mp3` (zero-padded,
+  index = chapter order) and optionally `audio_src/{lang}/<Title>_Audiobook.zip` for "download
+  all". They are ~1 GB total — never commit them (would bloat the ~62 MB repo).
+- Audio is served from an R2 bucket on a custom domain: `https://audio.cookiesiniran.com/{lang}/ch-NN.mp3`.
+  R2 gives free egress + native HTTP range (streaming/seek) + CDN caching. This subdomain is the
+  only external origin in the CSP `media-src` (`web-landing-page/_headers`) — keep the two in sync.
+  Set up: `npx wrangler r2 bucket create cookies-in-iran-audio`, then connect the custom domain in
+  the bucket's Settings → Public access, then upload masters with `python3 upload_audio.py` (see
+  "Cover art, upload, and deploy" below — do **not** hand-roll `npx wrangler r2 object put`, the
+  script bakes the download filenames).
+- For local UI testing without R2, regenerate with `AUDIO_BASE_URL=` (empty/same-origin) and drop
+  test mp3s where the page can fetch them.
+
+### Cover art, upload, and deploy
+
+The masters and the live site are refreshed in a fixed order — **R2 holds the bytes, Pages holds
+the manifest/feeds/UI, and both must be refreshed for a change to go live**. A half-finished run
+where R2 has the audio but Pages still serves the old `manifest.json` makes chapters silently
+invisible in the player (the player reads the manifest from Pages, never from R2).
+
+1. **Embed cover art into the masters** (optional, one-time per recording). Each `audio_src/{lang}/`
+   has an `img.png` book-cover photo; bake a compact JPEG and embed it as an ID3v2.3 `APIC` frame,
+   copying audio losslessly so narration bytes are untouched:
+   ```bash
+   ffmpeg -y -i "$lang/img.png" -vf "scale='min(1600,iw)':-2" -q:v 3 "$lang/cover.jpg"
+   ffmpeg -y -i in.mp3 -i "$lang/cover.jpg" -map 0:a -map 1:v -c:a copy -c:v copy \
+     -id3v2_version 3 -disposition:v:0 attached_pic out.mp3
+   ```
+   The 8 MB PNGs are too heavy to embed raw (×23 chapters ×3 langs); the ~330 KB JPEG keeps files
+   small. Streaming is unaffected — the `<audio>` element ignores embedded art on resource loads.
+2. **`python3 build_audio.py`** — regenerate `manifest.json` + feeds. Re-run this *after* embedding
+   art, because embedding changes every file's byte size and the manifest/`<enclosure length>` bake
+   `os.path.getsize` in.
+3. **`python3 upload_audio.py`** — uploads every master in the manifest to R2 with `--remote` and a
+   per-object `Content-Disposition: attachment; filename*=…` so downloads save as
+   `"{Book} - NN - {Title}.mp3"` instead of `ch-NN.mp3`. This is required because the player links
+   downloads straight at the R2 origin (`audio.cookiesiniran.com`), a *different* origin than the
+   page, so the HTML `download="…"` attribute is ignored — only the R2 header controls the name.
+   Non-ASCII titles (Cyrillic, umlauts) use RFC 5987 `filename*`. **`--remote` is load-bearing**:
+   without it the put only writes local dev state and public requests 404.
+4. **`npx wrangler pages deploy web-landing-page --project-name cookies-in-iran --commit-dirty=true`**
+   — publishes the new manifest + feeds. This is the step that actually surfaces new chapters in the
+   player.
+
+**CDN cache gotcha**: R2-on-custom-domain sits behind Cloudflare's CDN (per-PoP). Any object you
+`GET` *before* re-uploading caches the old response at that edge; a fresh `put` does not purge it.
+Symptom: one object serves a stale/missing `Content-Disposition` (`cf-cache-status: HIT`) while the
+rest are correct. Fix: purge that URL in the dashboard (Caching → Purge Cache → Custom), or "Purge
+Everything" since the audio is immutable. The OAuth wrangler token is `zone (read)` only and cannot
+purge via API — that needs a scoped Cache-Purge API token.
+
+### Frontend
+
+- `web-landing-page/audiobook.js` — plain script exposing `window.AudioPlayer` with
+  `.init()/.open()/.setLang()`, mirroring `comments.js`'s `window.CommentsUI`. Renders the chapter
+  list + per-chapter download links into `#drawer-audio`, and drives a persistent `#mini-player`
+  (play/pause/seek/speed/prev-next) that survives drawer open/close. Last position per language is
+  the only durable state (localStorage `audioPos_{lang}`).
+- `main.js` mounts it exactly like comments: `AudioPlayer.init()` after DOM-ready, `openAudioDrawer()`
+  wired to the "Hörbuch/Audiobook" nav buttons, and `AudioPlayer.setLang()` called from the language
+  toggle. Styles live in the "Audiobook" section of `styles.css`.
+
+### Podcast distribution
+
+After deploy, submit `https://cookiesiniran.com/podcast_{lang}.xml` to Apple Podcasts Connect and
+Spotify for Podcasters. Requires a square cover ≥1400×1400 at `web-landing-page/Pics/podcast-cover.jpg`
+(referenced by the feeds). Channel owner email is the canonical `cookiesiniran@mailbox.org`.
 
 ## Content rules (enforced by convention, not tooling)
 

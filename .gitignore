@@ -17,3 +17,8 @@
 # Local dev artifacts (playwright sessions, verify-skill screenshots)
 .playwright-mcp/
 /verify-*.png
+
+# Audiobook narration masters (uploaded to R2, never committed) + local test fixtures
+/audio_src/
+/web-landing-page/audio/_localtest/
+/__pycache__/

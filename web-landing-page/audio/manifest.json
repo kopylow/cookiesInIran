@@ -12,161 +12,161 @@
           "index": 0,
           "title": "Who you gonna call?",
           "file": "de/ch-00.mp3",
-          "bytes": 2104482,
+          "bytes": 2433222,
           "duration": 87.6
         },
         {
           "index": 1,
           "title": "Gehe nicht über Los",
           "file": "de/ch-01.mp3",
-          "bytes": 3239868,
+          "bytes": 3568608,
           "duration": 134.9
         },
         {
           "index": 2,
           "title": "Zwischen Raketen und rotem Sand",
           "file": "de/ch-02.mp3",
-          "bytes": 9075414,
+          "bytes": 9404154,
           "duration": 378.0
         },
         {
           "index": 3,
           "title": "Zwischen den Welten",
           "file": "de/ch-03.mp3",
-          "bytes": 3712580,
+          "bytes": 4041320,
           "duration": 154.6
         },
         {
           "index": 4,
           "title": "Im Vakuum des Blackouts",
           "file": "de/ch-04.mp3",
-          "bytes": 6761383,
+          "bytes": 7090123,
           "duration": 281.6
         },
         {
           "index": 5,
           "title": "Eisiger Stillstand",
           "file": "de/ch-05.mp3",
-          "bytes": 11007640,
+          "bytes": 11336380,
           "duration": 458.5
         },
         {
           "index": 6,
           "title": "Das versiegelte Schicksal",
           "file": "de/ch-06.mp3",
-          "bytes": 12350543,
+          "bytes": 12679283,
           "duration": 514.5
         },
         {
           "index": 7,
           "title": "Der 16.000-Dollar-Panzer",
           "file": "de/ch-07.mp3",
-          "bytes": 4958308,
+          "bytes": 5287048,
           "duration": 206.5
         },
         {
           "index": 8,
           "title": "No Problem, it's just 18.000€",
           "file": "de/ch-08.mp3",
-          "bytes": 5542614,
+          "bytes": 5871354,
           "duration": 230.8
         },
         {
           "index": 9,
           "title": "Die bittere Träne der Freiheit",
           "file": "de/ch-09.mp3",
-          "bytes": 9286695,
+          "bytes": 9615435,
           "duration": 386.8
         },
         {
           "index": 10,
           "title": "Das Gesetz der Schachtel",
           "file": "de/ch-10.mp3",
-          "bytes": 6466097,
+          "bytes": 6794837,
           "duration": 269.3
         },
         {
           "index": 11,
           "title": "Zwischen Lammkoteletts und Existenzangst",
           "file": "de/ch-11.mp3",
-          "bytes": 7167642,
+          "bytes": 7496382,
           "duration": 298.5
         },
         {
           "index": 12,
           "title": "Bürokratie im Leerlauf",
           "file": "de/ch-12.mp3",
-          "bytes": 6337575,
+          "bytes": 6666315,
           "duration": 264.0
         },
         {
           "index": 13,
           "title": "Ein Lichtblick mit Hindernissen",
           "file": "de/ch-13.mp3",
-          "bytes": 3750825,
+          "bytes": 4079565,
           "duration": 156.2
         },
         {
           "index": 14,
           "title": "Ein Anwalt muss her",
           "file": "de/ch-14.mp3",
-          "bytes": 3592837,
+          "bytes": 3921577,
           "duration": 149.6
         },
         {
           "index": 15,
           "title": "Das Siegel aus Tinte und Tränen",
           "file": "de/ch-15.mp3",
-          "bytes": 6130058,
+          "bytes": 6458798,
           "duration": 255.3
         },
         {
           "index": 16,
           "title": "Warten, warten",
           "file": "de/ch-16.mp3",
-          "bytes": 2236141,
+          "bytes": 2564881,
           "duration": 93.1
         },
         {
           "index": 17,
           "title": "Tag des Gerichts",
           "file": "de/ch-17.mp3",
-          "bytes": 10807021,
+          "bytes": 11135761,
           "duration": 450.2
         },
         {
           "index": 18,
           "title": "In Khoy, um Khoy und um Khoy herum",
           "file": "de/ch-18.mp3",
-          "bytes": 9553771,
+          "bytes": 9882511,
           "duration": 398.0
         },
         {
           "index": 19,
           "title": "Brilles hämisches Grinsen",
           "file": "de/ch-19.mp3",
-          "bytes": 6152001,
+          "bytes": 6480741,
           "duration": 256.2
         },
         {
           "index": 20,
           "title": "Zwischen Notaren, Lämmern und Hummer",
           "file": "de/ch-20.mp3",
-          "bytes": 10830217,
+          "bytes": 11158957,
           "duration": 451.1
         },
         {
           "index": 21,
           "title": "Tourist, Tourist",
           "file": "de/ch-21.mp3",
-          "bytes": 5488072,
+          "bytes": 5816812,
           "duration": 228.6
         },
         {
           "index": 22,
           "title": "Epilog",
           "file": "de/ch-22.mp3",
-          "bytes": 5353907,
+          "bytes": 5682647,
           "duration": 223.0
         }
       ]
@@ -176,14 +176,338 @@
       "author": "Anton Kopylow",
       "feed": "podcast_en.xml",
       "zip": null,
-      "chapters": []
+      "chapters": [
+        {
+          "index": 0,
+          "title": "Who you gonna call?",
+          "file": "en/ch-00.mp3",
+          "bytes": 1962847,
+          "duration": 67.8
+        },
+        {
+          "index": 1,
+          "title": "Do Not Pass Go",
+          "file": "en/ch-01.mp3",
+          "bytes": 3307004,
+          "duration": 123.8
+        },
+        {
+          "index": 2,
+          "title": "Between Rockets and Red Sand",
+          "file": "en/ch-02.mp3",
+          "bytes": 8238505,
+          "duration": 329.3
+        },
+        {
+          "index": 3,
+          "title": "Between Worlds",
+          "file": "en/ch-03.mp3",
+          "bytes": 3616085,
+          "duration": 136.7
+        },
+        {
+          "index": 4,
+          "title": "In the Vacuum of the Blackout",
+          "file": "en/ch-04.mp3",
+          "bytes": 6483703,
+          "duration": 256.2
+        },
+        {
+          "index": 5,
+          "title": "Icy Standstill",
+          "file": "en/ch-05.mp3",
+          "bytes": 9147566,
+          "duration": 367.2
+        },
+        {
+          "index": 6,
+          "title": "The Sealed Fate",
+          "file": "en/ch-06.mp3",
+          "bytes": 11141231,
+          "duration": 450.3
+        },
+        {
+          "index": 7,
+          "title": "The 16,000-Dollar Tank",
+          "file": "en/ch-07.mp3",
+          "bytes": 4661192,
+          "duration": 180.3
+        },
+        {
+          "index": 8,
+          "title": "No Problem, It Is Just 18,000 Euros",
+          "file": "en/ch-08.mp3",
+          "bytes": 5195344,
+          "duration": 202.5
+        },
+        {
+          "index": 9,
+          "title": "The Bitter Tear of Freedom",
+          "file": "en/ch-09.mp3",
+          "bytes": 8459189,
+          "duration": 338.5
+        },
+        {
+          "index": 10,
+          "title": "The Law of the Box",
+          "file": "en/ch-10.mp3",
+          "bytes": 6157697,
+          "duration": 242.6
+        },
+        {
+          "index": 11,
+          "title": "Between Lamb Chops and Existential Dread",
+          "file": "en/ch-11.mp3",
+          "bytes": 6713792,
+          "duration": 265.8
+        },
+        {
+          "index": 12,
+          "title": "Bureaucratic Standstill",
+          "file": "en/ch-12.mp3",
+          "bytes": 6115692,
+          "duration": 240.9
+        },
+        {
+          "index": 13,
+          "title": "A Glimmer of Hope with Obstacles",
+          "file": "en/ch-13.mp3",
+          "bytes": 3783480,
+          "duration": 143.7
+        },
+        {
+          "index": 14,
+          "title": "A Lawyer Is Needed",
+          "file": "en/ch-14.mp3",
+          "bytes": 3491326,
+          "duration": 131.5
+        },
+        {
+          "index": 15,
+          "title": "The Seal of Ink and Tears",
+          "file": "en/ch-15.mp3",
+          "bytes": 5819150,
+          "duration": 228.5
+        },
+        {
+          "index": 16,
+          "title": "Waiting, Waiting",
+          "file": "en/ch-16.mp3",
+          "bytes": 2328982,
+          "duration": 83.1
+        },
+        {
+          "index": 17,
+          "title": "Day of Judgment",
+          "file": "en/ch-17.mp3",
+          "bytes": 10087976,
+          "duration": 406.4
+        },
+        {
+          "index": 18,
+          "title": "In Khoy, Around Khoy, and All Around Khoy",
+          "file": "en/ch-18.mp3",
+          "bytes": 9070454,
+          "duration": 364.0
+        },
+        {
+          "index": 19,
+          "title": "Glasses' Mocking Grin",
+          "file": "en/ch-19.mp3",
+          "bytes": 6037325,
+          "duration": 237.6
+        },
+        {
+          "index": 20,
+          "title": "Between Notaries, Lambs, and Lobster",
+          "file": "en/ch-20.mp3",
+          "bytes": 10479186,
+          "duration": 422.7
+        },
+        {
+          "index": 21,
+          "title": "Tourist, Tourist",
+          "file": "en/ch-21.mp3",
+          "bytes": 5469318,
+          "duration": 213.9
+        },
+        {
+          "index": 22,
+          "title": "Epilogue",
+          "file": "en/ch-22.mp3",
+          "bytes": 5148325,
+          "duration": 200.6
+        }
+      ]
     },
     "ru": {
       "title": "Печенье в Иране",
       "author": "Антон Копылов",
       "feed": "podcast_ru.xml",
       "zip": null,
-      "chapters": []
+      "chapters": [
+        {
+          "index": 0,
+          "title": "Who you gonna call?",
+          "file": "ru/ch-00.mp3",
+          "bytes": 2320392,
+          "duration": 82.8
+        },
+        {
+          "index": 1,
+          "title": "Не проходите поле «Вперед»",
+          "file": "ru/ch-01.mp3",
+          "bytes": 3498410,
+          "duration": 131.9
+        },
+        {
+          "index": 2,
+          "title": "Между ракетами и красным песком",
+          "file": "ru/ch-02.mp3",
+          "bytes": 9036161,
+          "duration": 362.6
+        },
+        {
+          "index": 3,
+          "title": "Между мирами",
+          "file": "ru/ch-03.mp3",
+          "bytes": 3952941,
+          "duration": 150.8
+        },
+        {
+          "index": 4,
+          "title": "В вакууме блэкаута",
+          "file": "ru/ch-04.mp3",
+          "bytes": 7229950,
+          "duration": 287.4
+        },
+        {
+          "index": 5,
+          "title": "Ледяной застой",
+          "file": "ru/ch-05.mp3",
+          "bytes": 11131390,
+          "duration": 449.9
+        },
+        {
+          "index": 6,
+          "title": "Запечатанная судьба",
+          "file": "ru/ch-06.mp3",
+          "bytes": 12498743,
+          "duration": 506.9
+        },
+        {
+          "index": 7,
+          "title": "Танк за 16 000 долларов",
+          "file": "ru/ch-07.mp3",
+          "bytes": 5058861,
+          "duration": 196.9
+        },
+        {
+          "index": 8,
+          "title": "No Problem, it's just 18.000€",
+          "file": "ru/ch-08.mp3",
+          "bytes": 5599282,
+          "duration": 219.4
+        },
+        {
+          "index": 9,
+          "title": "Горькая слеза свободы",
+          "file": "ru/ch-09.mp3",
+          "bytes": 9470631,
+          "duration": 380.7
+        },
+        {
+          "index": 10,
+          "title": "Закон коробки",
+          "file": "ru/ch-10.mp3",
+          "bytes": 6678246,
+          "duration": 264.4
+        },
+        {
+          "index": 11,
+          "title": "Между бараньими отбивными и экзистенциальным страхом",
+          "file": "ru/ch-11.mp3",
+          "bytes": 7463173,
+          "duration": 297.1
+        },
+        {
+          "index": 12,
+          "title": "Бюрократия на холостом ходу",
+          "file": "ru/ch-12.mp3",
+          "bytes": 6807395,
+          "duration": 269.8
+        },
+        {
+          "index": 13,
+          "title": "Луч света с препятствиями",
+          "file": "ru/ch-13.mp3",
+          "bytes": 4089616,
+          "duration": 156.5
+        },
+        {
+          "index": 14,
+          "title": "Нужен адвокат",
+          "file": "ru/ch-14.mp3",
+          "bytes": 3924104,
+          "duration": 149.6
+        },
+        {
+          "index": 15,
+          "title": "Печать из чернил и слез",
+          "file": "ru/ch-15.mp3",
+          "bytes": 6414932,
+          "duration": 253.4
+        },
+        {
+          "index": 16,
+          "title": "Ждать, ждать",
+          "file": "ru/ch-16.mp3",
+          "bytes": 2458948,
+          "duration": 88.6
+        },
+        {
+          "index": 17,
+          "title": "Судный день",
+          "file": "ru/ch-17.mp3",
+          "bytes": 11135781,
+          "duration": 450.1
+        },
+        {
+          "index": 18,
+          "title": "В Хой, за Хой и вокруг да около Хоя",
+          "file": "ru/ch-18.mp3",
+          "bytes": 10147725,
+          "duration": 408.9
+        },
+        {
+          "index": 19,
+          "title": "Злорадная ухмылка Очкарика",
+          "file": "ru/ch-19.mp3",
+          "bytes": 6720878,
+          "duration": 266.1
+        },
+        {
+          "index": 20,
+          "title": "Между нотариусами, ягнятами и лобстерами",
+          "file": "ru/ch-20.mp3",
+          "bytes": 11447369,
+          "duration": 463.1
+        },
+        {
+          "index": 21,
+          "title": "Турист, турист",
+          "file": "ru/ch-21.mp3",
+          "bytes": 6078265,
+          "duration": 239.4
+        },
+        {
+          "index": 22,
+          "title": "Эпилог",
+          "file": "ru/ch-22.mp3",
+          "bytes": 5684548,
+          "duration": 223.0
+        }
+      ]
     }
   }
 }
