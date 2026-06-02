@@ -72,6 +72,16 @@ Pick the most-recently-modified `*.sqlite` after starting `pages dev`. The `wran
 
 The site is live at `https://cookiesiniran.com` and `https://cookies-in-iran.pages.dev`.
 
+**Deploys are automatic on push to `main`.** `.github/workflows/deploy.yml` runs
+`cloudflare/pages-action@v1` on every push to `main` (and on manual `workflow_dispatch`),
+deploying the `web-landing-page/` directory to the `cookies-in-iran` Pages project. It needs repo
+secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. So the normal release flow is just
+`git push` — confirm a run landed with `npx wrangler pages deployment list --project-name cookies-in-iran`
+(the `Source` column shows the deployed commit SHA). The manual `npx wrangler pages deploy …`
+command below is the fallback (no GitHub, account bootstrap, or out-of-band deploy). Because every
+push ships to prod, the `?v=` cache-bust discipline (see below) must be honored on each push, not
+just on manual deploys.
+
 **First-time deploy to a new Cloudflare account:**
 
 ```bash
@@ -116,7 +126,7 @@ Also set `TURNSTILE_SITE_KEY` in `wrangler.toml [vars]` and mirror it in the `<m
 
 ### Cron (Pages Functions have no native cron)
 
-`functions/api/admin/cron-tick.js` purges expired `pending_verifications`, resolved `reports` older than 90 days, and expired `bans`. Authenticated by `Authorization: Bearer ${CRON_SECRET}`. Trigger externally — either a tiny standalone Worker with `[triggers] crons = [...]` calling this endpoint, or a GitHub Actions schedule.
+`functions/api/admin/cron-tick.js` purges expired `pending_verifications`, resolved `reports` older than 90 days, and expired `bans`. Authenticated by `Authorization: Bearer ${CRON_SECRET}`. This is wired up via **`.github/workflows/cron.yml`**: a GitHub Actions schedule (`0 3 * * *`, 03:00 UTC daily, plus manual `workflow_dispatch`) that `curl`s `https://cookiesiniran.com/api/admin/cron-tick` with the `CRON_SECRET` repo secret as the bearer token.
 
 ## Audiobook (streaming + download)
 
@@ -179,9 +189,11 @@ invisible in the player (the player reads the manifest from Pages, never from R2
    page, so the HTML `download="…"` attribute is ignored — only the R2 header controls the name.
    Non-ASCII titles (Cyrillic, umlauts) use RFC 5987 `filename*`. **`--remote` is load-bearing**:
    without it the put only writes local dev state and public requests 404.
-4. **`npx wrangler pages deploy web-landing-page --project-name cookies-in-iran --commit-dirty=true`**
-   — publishes the new manifest. This is the step that actually surfaces new chapters in the
-   player.
+4. **Publish the new manifest** — this is the step that actually surfaces new chapters in the
+   player. `manifest.json` lives under `web-landing-page/`, so committing it and pushing to `main`
+   auto-deploys it via the Pages GitHub Action (see "Production deployment"). To publish without a
+   commit (e.g. a quick out-of-band manifest refresh), run the manual fallback:
+   `npx wrangler pages deploy web-landing-page --project-name cookies-in-iran --commit-dirty=true`.
 
 **CDN cache gotcha**: R2-on-custom-domain sits behind Cloudflare's CDN (per-PoP). Any object you
 `GET` *before* re-uploading caches the old response at that edge; a fresh `put` does not purge it.
