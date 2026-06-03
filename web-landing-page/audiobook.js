@@ -10,7 +10,8 @@
 
   const MANIFEST_URL = "audio/manifest.json";
   const POS_KEY_PREFIX = "audioPos_"; // audioPos_{lang} -> {pos, time}
-  const SPEEDS = [1, 1.25, 1.5];
+  const SPEEDS = [1, 1.25, 1.5, 1.75, 2];
+  const SEEK_SECONDS = 15; // skip-back / skip-forward step within the current chapter
 
   const I18N = {
     de: {
@@ -21,6 +22,8 @@
       download: "Herunterladen",
       prev: "Vorheriges Kapitel",
       next: "Nächstes Kapitel",
+      back: "15 Sekunden zurück",
+      fwd: "15 Sekunden vor",
       close: "Player schließen",
       speed: "Geschwindigkeit",
       loadError: "Hörbuch konnte nicht geladen werden.",
@@ -33,6 +36,8 @@
       download: "Download",
       prev: "Previous chapter",
       next: "Next chapter",
+      back: "Back 15 seconds",
+      fwd: "Forward 15 seconds",
       close: "Close player",
       speed: "Speed",
       loadError: "Could not load the audiobook.",
@@ -45,6 +50,8 @@
       download: "Скачать",
       prev: "Предыдущая глава",
       next: "Следующая глава",
+      back: "Назад на 15 секунд",
+      fwd: "Вперёд на 15 секунд",
       close: "Закрыть плеер",
       speed: "Скорость",
       loadError: "Не удалось загрузить аудиокнигу.",
@@ -172,7 +179,9 @@
     const inner = el("div", { class: "mp-inner" });
 
     const prev = el("button", { class: "mp-btn mp-prev", type: "button", "aria-label": t().prev }, "⏮");
+    const back = el("button", { class: "mp-btn mp-back", type: "button", "aria-label": t().back }, "⏪");
     const play = el("button", { class: "mp-btn mp-play", type: "button", "aria-label": t().pause }, "⏸");
+    const fwd = el("button", { class: "mp-btn mp-fwd", type: "button", "aria-label": t().fwd }, "⏩");
     const next = el("button", { class: "mp-btn mp-next", type: "button", "aria-label": t().next }, "⏭");
 
     const meta = el("div", { class: "mp-meta" });
@@ -188,14 +197,16 @@
     const speed = el("button", { class: "mp-btn mp-speed", type: "button", "aria-label": t().speed }, "1×");
     const close = el("button", { class: "mp-btn mp-close", type: "button", "aria-label": t().close }, "×");
 
-    inner.append(prev, play, next, meta, speed, close);
+    inner.append(prev, back, play, fwd, next, meta, speed, close);
     miniEl.appendChild(inner);
 
-    mp = { play, prev, next, title, seek, time, speed, close };
+    mp = { play, prev, back, fwd, next, title, seek, time, speed, close };
 
     play.addEventListener("click", togglePlay);
     prev.addEventListener("click", () => skip(-1));
     next.addEventListener("click", () => skip(1));
+    back.addEventListener("click", () => seekBy(-SEEK_SECONDS));
+    fwd.addEventListener("click", () => seekBy(SEEK_SECONDS));
     close.addEventListener("click", closeMini);
     speed.addEventListener("click", cycleSpeed);
 
@@ -268,6 +279,17 @@
     const chapters = chaptersForLang(currentLang);
     const target = currentPos + delta;
     if (target >= 0 && target < chapters.length) loadChapter(target, true, 0);
+  }
+
+  // Nudge the playhead within the current chapter (skip-back / skip-forward),
+  // clamped to [0, duration]. Distinct from skip(), which changes chapters.
+  function seekBy(deltaSec) {
+    if (currentPos < 0) return;
+    const dur = audio.duration || 0;
+    let target = (audio.currentTime || 0) + deltaSec;
+    if (target < 0) target = 0;
+    if (dur && target > dur) target = dur;
+    audio.currentTime = target;
   }
 
   function cycleSpeed() {

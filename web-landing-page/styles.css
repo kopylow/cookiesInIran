@@ -1734,7 +1734,7 @@ body.mini-player-open #drawer-audio .drawer-content {
     #bottom-bar.hidden ~ #mini-player {
         bottom: 0;
     }
-    .mp-prev, .mp-next, .mp-speed {
+    .mp-prev, .mp-next {
         display: none; /* keep the compact bar uncluttered on phones */
     }
     body.mini-player-open #main-content {
