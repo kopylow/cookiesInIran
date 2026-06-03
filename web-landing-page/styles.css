@@ -1619,6 +1619,9 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
     z-index: 2600; /* above top-bar (2500) and drawers (2000) so it stays reachable */
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* Glide down in lockstep with the bottom bar (transform 0.3s ease) when it
+       hides on scroll - see the .hidden sibling rule in the mobile query. */
+    transition: bottom 0.3s ease;
 }
 #mini-player[hidden] {
     display: none;
@@ -1724,6 +1727,12 @@ body.mini-player-open #drawer-audio .drawer-content {
     /* Sit above the mobile bottom bar (60px). */
     #mini-player {
         bottom: 60px;
+    }
+    /* ...but when the bar slides away on scroll-down, its reserved 60px would
+       leave an empty strip of page under the player. Drop the player flush to
+       the screen edge whenever the bar is hidden, so it always hugs the bottom. */
+    #bottom-bar.hidden ~ #mini-player {
+        bottom: 0;
     }
     .mp-prev, .mp-next, .mp-speed {
         display: none; /* keep the compact bar uncluttered on phones */
