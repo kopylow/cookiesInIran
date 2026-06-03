@@ -12,6 +12,17 @@
   const POS_KEY_PREFIX = "audioPos_"; // audioPos_{lang} -> {pos, time}
   const SPEEDS = [1, 1.25, 1.5, 1.75, 2];
 
+  // Media-control glyphs with a trailing U+FE0E (text-presentation selector) so
+  // iOS/Android render the monochrome text form instead of swapping in a color
+  // emoji (▶️/⏸️). Same reasoning as the nav-bar Feather masks (styles.css:350).
+  const VS = "\uFE0E"; // U+FE0E text-presentation selector
+  const ICON = {
+    play: "▶" + VS,
+    pause: "⏸" + VS,
+    prev: "⏮" + VS,
+    next: "⏭" + VS,
+  };
+
   const I18N = {
     de: {
       comingSoon: "Das Hörbuch erscheint bald.",
@@ -133,7 +144,7 @@
     chapters.forEach((ch, pos) => {
       const row = el("div", { class: "audio-row", "data-pos": String(pos) });
 
-      const playBtn = el("button", { class: "audio-play-btn", type: "button", "aria-label": `${t().play}: ${ch.title}` }, "▶");
+      const playBtn = el("button", { class: "audio-play-btn", type: "button", "aria-label": `${t().play}: ${ch.title}` }, ICON.play);
       playBtn.addEventListener("click", () => toggleChapter(pos));
 
       const main = el("div", { class: "audio-row-main" });
@@ -159,7 +170,7 @@
       const btn = row.querySelector(".audio-play-btn");
       if (btn) {
         const playing = isActive && !audio.paused;
-        btn.textContent = playing ? "⏸" : "▶";
+        btn.textContent = playing ? ICON.pause : ICON.play;
         btn.classList.toggle("is-playing", playing);
       }
     });
@@ -171,9 +182,9 @@
     miniEl.innerHTML = "";
     const inner = el("div", { class: "mp-inner" });
 
-    const prev = el("button", { class: "mp-btn mp-prev", type: "button", "aria-label": t().prev }, "⏮");
-    const play = el("button", { class: "mp-btn mp-play", type: "button", "aria-label": t().pause }, "⏸");
-    const next = el("button", { class: "mp-btn mp-next", type: "button", "aria-label": t().next }, "⏭");
+    const prev = el("button", { class: "mp-btn mp-prev", type: "button", "aria-label": t().prev }, ICON.prev);
+    const play = el("button", { class: "mp-btn mp-play", type: "button", "aria-label": t().pause }, ICON.pause);
+    const next = el("button", { class: "mp-btn mp-next", type: "button", "aria-label": t().next }, ICON.next);
 
     const meta = el("div", { class: "mp-meta" });
     const title = el("div", { class: "mp-title" }, "");
@@ -297,8 +308,8 @@
   }
 
   // --- audio element events ---
-  audio.addEventListener("play", () => { highlightRow(); if (mp) { mp.play.textContent = "⏸"; mp.play.setAttribute("aria-label", t().pause); } });
-  audio.addEventListener("pause", () => { highlightRow(); if (mp) { mp.play.textContent = "▶"; mp.play.setAttribute("aria-label", t().play); } persist(); });
+  audio.addEventListener("play", () => { highlightRow(); if (mp) { mp.play.textContent = ICON.pause; mp.play.setAttribute("aria-label", t().pause); } });
+  audio.addEventListener("pause", () => { highlightRow(); if (mp) { mp.play.textContent = ICON.play; mp.play.setAttribute("aria-label", t().play); } persist(); });
   audio.addEventListener("ended", () => { persist(); skip(1); });
   audio.addEventListener("timeupdate", () => {
     if (mp && audio.duration) {
