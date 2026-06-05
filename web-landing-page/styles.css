@@ -1756,6 +1756,12 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     font-size: 0.85rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
+    /* The .mp-inner gap is uniform, so speed otherwise sits as close to the time
+       readout as to the × close. Push it off the time, pull the × in beside it. */
+    margin-left: 0.4rem;
+}
+.mp-close {
+    margin-left: -0.35rem;
 }
 
 .mp-meta {
