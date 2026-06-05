@@ -214,6 +214,55 @@ body {
     color: var(--color-text-dark);
 }
 
+.hero-cta {
+    position: absolute;
+    top: calc(60px + 1.5rem); /* clear the fixed 60px top bar */
+    right: 3rem;
+    z-index: 11;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.6rem 1.4rem;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-dark);
+    background: transparent;
+    border: 1.5px solid var(--current-accent);
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.hero-cta:hover,
+.hero-cta:focus-visible {
+    background: var(--current-accent);
+    color: #1e1e1e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+    .hero-cta {
+        top: 1rem; /* no fixed top bar on mobile */
+        right: 1.5rem;
+    }
+}
+
+html[dir="rtl"] .hero-cta {
+    right: auto;
+    left: 3rem;
+}
+
+@media (max-width: 768px) {
+    html[dir="rtl"] .hero-cta {
+        left: 1.5rem;
+    }
+}
+
 .scroll-indicator {
     position: absolute;
     bottom: 2rem;

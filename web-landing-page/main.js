@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnContactMobile = document.getElementById('btn-contact-mobile');
     const btnAudio = document.getElementById('btn-audio');
     const btnAudioMobile = document.getElementById('btn-audio-mobile');
+    const btnAudioHero = document.getElementById('btn-audio-hero');
     const drawerBook = document.getElementById('drawer-book');
     const drawerComments = document.getElementById('drawer-comments');
     const drawerSupport = document.getElementById('drawer-support');
@@ -59,10 +60,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const i18n = {
-        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Support", contact: "Kontakt", audiobook: "Hörbuch", index: "Inhaltsverzeichnis", impressum: "Impressum", privacy: "Datenschutz" },
-        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Support", contact: "Contact", audiobook: "Audiobook", index: "Index", impressum: "Impressum", privacy: "Privacy" },
-        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Поддержка", contact: "Контакты", audiobook: "Аудиокнига", index: "Оглавление", impressum: "Импрессум", privacy: "Конфиденциальность" },
-        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "پشتیبانی", contact: "تماس", audiobook: "کتاب صوتی", index: "فهرست", impressum: "اطلاعات حقوقی", privacy: "حریم خصوصی" }
+        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Support", contact: "Kontakt", audiobook: "Hörbuch", listen: "► Hörbuch", index: "Inhaltsverzeichnis", impressum: "Impressum", privacy: "Datenschutz" },
+        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Support", contact: "Contact", audiobook: "Audiobook", listen: "► Audiobook", index: "Index", impressum: "Impressum", privacy: "Privacy" },
+        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Поддержка", contact: "Контакты", audiobook: "Аудиокнига", listen: "► Аудиокнига", index: "Оглавление", impressum: "Импрессум", privacy: "Конфиденциальность" },
+        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "پشتیبانی", contact: "تماس", audiobook: "کتاب صوتی", listen: "◄ کتاب صوتی", index: "فهرست", impressum: "اطلاعات حقوقی", privacy: "حریم خصوصی" }
     };
 
     function updateUI(lang) {
@@ -77,6 +78,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnSupport.textContent = t.support;
         btnContact.textContent = t.contact;
         if (btnAudio) btnAudio.textContent = t.audiobook;
+        if (btnAudioHero) btnAudioHero.textContent = t.listen;
 
         if (btnCommentsMobile) btnCommentsMobile.textContent = t.comments;
         if (btnSupportMobile) btnSupportMobile.textContent = t.support;
@@ -480,6 +482,7 @@ window.addEventListener('scroll', () => {
     btnSupport.addEventListener('click', openSupportDrawer);
     btnContact.addEventListener('click', openContactDrawer);
     if (btnAudio) btnAudio.addEventListener('click', openAudioDrawer);
+    if (btnAudioHero) btnAudioHero.addEventListener('click', openAudioDrawer);
 
     if (btnCommentsMobile) btnCommentsMobile.addEventListener('click', openCommentsDrawer);
     if (btnSupportMobile) btnSupportMobile.addEventListener('click', openSupportDrawer);

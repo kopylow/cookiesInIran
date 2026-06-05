@@ -32,6 +32,8 @@ Both pipelines read the same Markdown and diverge based on the same per-language
 
 **HTML pipeline** (`md_to_html`, `build.py:101`): wraps each `# Chapter` in `<section class="chapter" data-tense="...">`. The `data-tense` attribute drives the client-side UI state machine (cold/claustrophobic for `present`, warm/fluid for `past`) — see `kekse_im_iran_ux_blueprint.md`. The list of present-tense chapters is hardcoded as `present_indices` at `build.py:107` and must be kept in sync with `Zeitenanalyse.md`. Between chapters, "airlock" `<div>`s render `Pics/{2..25}.jpg` as full-bleed background images; chapter 0 has no preceding airlock.
 
+**SEO fallback** (`inject_seo_fallback`, `build.py`): the book text is fetched client-side, so the initial HTML is otherwise an empty shell — bad for indexing. After generating the DE fragment, the build mirrors it (airlock/discuss divs stripped) into the `<!-- SEO-FALLBACK-START … END -->` `<noscript>` block in `index.html`. **That block is auto-generated — never edit it by hand**, and keep the marker comments intact or the injection silently skips. Only DE is mirrored (the canonical/default language).
+
 **Frontend state** (`web-landing-page/main.js`): all client-side. Language switching re-fetches the appropriate `manuscript_{lang}.html`. RTL is toggled on `<html>` for Farsi. Theme is light/dark via `data-theme` on body, initialized from `prefers-color-scheme`. A scroll listener at `main.js:162` reads the current chapter's `data-tense` and writes it to `body[data-state]`, which CSS uses to morph the page mood.
 
 ## Comments system
