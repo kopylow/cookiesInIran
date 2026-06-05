@@ -383,6 +383,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (window.CommentsUI) window.CommentsUI.setLang(currentLang);
         if (window.AudioPlayer) window.AudioPlayer.setLang(currentLang);
         if (window.SupportUI) window.SupportUI.setLang(currentLang);
+        if (window.ContactUI) window.ContactUI.setLang(currentLang);
     });
 // Smart Top Bar Hide/Show on Scroll
 let lastScrollY = window.scrollY;
@@ -463,6 +464,7 @@ window.addEventListener('scroll', () => {
         drawerOverlay.classList.add('visible');
         pageWrapper.classList.add('drawer-open-fullscreen');
         document.body.classList.add('drawer-open-fullscreen');
+        if (window.ContactUI) window.ContactUI.open();
         const closeBtn = drawerContact.querySelector('.close-drawer');
         if (closeBtn) closeBtn.focus();
     }
@@ -612,6 +614,13 @@ window.addEventListener('scroll', () => {
     if (window.SupportUI) {
         window.SupportUI.init({
             drawerEl: drawerSupport,
+            getCurrentLang: () => currentLang,
+        });
+    }
+
+    if (window.ContactUI) {
+        window.ContactUI.init({
+            drawerEl: drawerContact,
             getCurrentLang: () => currentLang,
         });
     }

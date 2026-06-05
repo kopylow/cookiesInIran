@@ -51,6 +51,83 @@ const replyTemplates = {
   }),
 };
 
+const contactTemplates = {
+  de: ({ fromName, fromEmail, phone, message }) => ({
+    subject: `Kontaktanfrage von ${fromName}`,
+    text: [
+      "Neue Nachricht über das Kontaktformular auf cookiesiniran.com:",
+      "",
+      `Name:    ${fromName}`,
+      fromEmail ? `E-Mail:  ${fromEmail}` : null,
+      phone ? `Telefon: ${phone}` : null,
+      "",
+      "Nachricht:",
+      message,
+      "",
+      "— Kekse im Iran",
+    ].filter((l) => l !== null).join("\n"),
+  }),
+  en: ({ fromName, fromEmail, phone, message }) => ({
+    subject: `Contact request from ${fromName}`,
+    text: [
+      "New message via the contact form on cookiesiniran.com:",
+      "",
+      `Name:    ${fromName}`,
+      fromEmail ? `Email:   ${fromEmail}` : null,
+      phone ? `Phone:   ${phone}` : null,
+      "",
+      "Message:",
+      message,
+      "",
+      "— Cookies in Iran",
+    ].filter((l) => l !== null).join("\n"),
+  }),
+  ru: ({ fromName, fromEmail, phone, message }) => ({
+    subject: `Сообщение от ${fromName}`,
+    text: [
+      "Новое сообщение через форму обратной связи на cookiesiniran.com:",
+      "",
+      `Имя:      ${fromName}`,
+      fromEmail ? `E-Mail:   ${fromEmail}` : null,
+      phone ? `Телефон:  ${phone}` : null,
+      "",
+      "Сообщение:",
+      message,
+      "",
+      "— Cookies in Iran",
+    ].filter((l) => l !== null).join("\n"),
+  }),
+};
+
+export async function sendContactEmail(env, { to, fromName, fromEmail, phone, message, lang }) {
+  if (!env.RESEND_API_KEY) {
+    console.log(`[email-dev] contact to=${to} from=${fromName} email=${fromEmail || "-"} phone=${phone || "-"} msg="${(message || "").slice(0, 80)}"`);
+    return { dev: true };
+  }
+  const tpl = (contactTemplates[lang] || contactTemplates.en)({ fromName, fromEmail, phone, message });
+  const r = await fetch(RESEND_URL, {
+    method: "POST",
+    headers: {
+      "authorization": `Bearer ${env.RESEND_API_KEY}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      from: env.RESEND_FROM,
+      to,
+      subject: tpl.subject,
+      text: tpl.text,
+      // Reply goes straight to the visitor when they left an address; otherwise
+      // fall back to the site mailbox so a reply never bounces.
+      reply_to: fromEmail || env.RESEND_REPLY_TO,
+    }),
+  });
+  if (!r.ok) {
+    const body = await r.text();
+    throw new Error(`Resend (contact) ${r.status}: ${body}`);
+  }
+  return r.json();
+}
+
 export async function sendReplyNotification(env, { to, parentName, replyName, replyBody, lang, url, unsubscribeUrl }) {
   if (!env.RESEND_API_KEY) {
     console.log(`[email-dev] reply-notify to=${to} lang=${lang} from=${replyName} unsub=${unsubscribeUrl}`);

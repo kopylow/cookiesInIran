@@ -647,7 +647,8 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
    which are derived from the variable, in sync. Scoped to #drawer-support so
    the comments and audio drawers stay at the default width. */
 @media (min-width: 768px) {
-    #drawer-support {
+    #drawer-support,
+    #drawer-contact {
         --drawer-width: 460px;
     }
 }
@@ -1190,7 +1191,8 @@ body[data-theme="dark"] .comments-switcher {
     box-shadow: 0 0 0 3px rgba(var(--current-accent-rgb, 181, 101, 29), 0.18);
 }
 
-.comment-form {
+.comment-form,
+.contact-form {
     display: flex;
     flex-direction: column;
     gap: 0.55rem;
@@ -1201,8 +1203,10 @@ body[data-theme="dark"] .comments-switcher {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03),
                 0 6px 18px -10px rgba(0, 0, 0, 0.06);
 }
-body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
-.comment-form .hp {
+body[data-theme="dark"] .comment-form,
+body[data-theme="dark"] .contact-form { background: rgba(128, 128, 128, 0.06); }
+.comment-form .hp,
+.contact-form .hp {
     position: absolute;
     inset-inline-start: -9999px;
     width: 1px;
@@ -1290,6 +1294,7 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     flex-wrap: wrap;
 }
 .comment-form button[type="submit"],
+.contact-form button[type="submit"],
 .verify-submit {
     background: var(--current-accent);
     color: var(--current-bg);
@@ -1306,17 +1311,33 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
                 opacity 0.2s var(--site-easing);
 }
 .comment-form button[type="submit"]:hover:not(:disabled),
+.contact-form button[type="submit"]:hover:not(:disabled),
 .verify-submit:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: 0 3px 8px rgba(var(--current-accent-rgb, 181, 101, 29), 0.25);
 }
 .comment-form button[type="submit"]:active:not(:disabled),
+.contact-form button[type="submit"]:active:not(:disabled),
 .verify-submit:active:not(:disabled) {
     transform: translateY(0);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 .comment-form button[type="submit"]:disabled,
+.contact-form button[type="submit"]:disabled,
 .verify-submit:disabled { opacity: 0.5; cursor: wait; }
+
+/* Contact drawer */
+.contact {
+    max-width: 34rem;
+    margin: 0 auto;
+}
+.contact-intro {
+    margin: 0 0 1rem;
+    line-height: 1.6;
+    opacity: 0.85;
+    text-align: center;
+}
+.contact-form button[type="submit"] { align-self: center; }
 .verify-cancel {
     background: transparent;
     border: 1px solid rgba(128, 128, 128, 0.35);
