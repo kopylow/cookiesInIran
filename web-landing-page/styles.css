@@ -481,6 +481,12 @@ select {
 html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     transform: translateX(100vw);
 }
+/* While any drawer is open the page is translated off-screen; lock body scroll
+   so wheel/touch input can't move the (hidden) page behind the drawer. The
+   scroll position is retained, so closing the drawer lands you where you left. */
+body.drawer-open-fullscreen {
+    overflow: hidden;
+}
 
 #manuscript-container {
     width: 100%;
@@ -707,6 +713,9 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     padding: 1.5rem;
     padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
     overflow-y: auto;
+    /* Keep scrolling contained to this drawer: stop the leftover scroll from
+       chaining to the page body once we hit the top/bottom edge. */
+    overscroll-behavior: contain;
     flex-grow: 1;
 }
 
