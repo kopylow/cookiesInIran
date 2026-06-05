@@ -46,6 +46,13 @@ AUDIO_SRC = ROOT / "audio_src"
 # Farsi is intentionally excluded (matches ALLOWED_LANGS / no RTL player support).
 AUDIO_LANGS = ["de", "en", "ru"]
 
+# Optional author intro, played BEFORE chapter 0. Lives at audio_src/{lang}/intro.mp3,
+# deliberately OUTSIDE the ch-NN numbering so adding it never renumbers the real chapters
+# (no mass rename, no R2 churn). It is prepended to the chapter list with index -1; the
+# player keys everything off array position (NOT chapter.index — see audiobook.js:76), so the
+# injection is transparent there, and upload_audio.py turns index -1 into download track "00".
+INTRO_TITLE = "Intro"
+
 
 # --- Helpers ---------------------------------------------------------------
 
@@ -78,9 +85,25 @@ def probe_duration(path: Path) -> float | None:
 
 
 def collect_chapters(lang: str) -> list[dict]:
-    """One entry per chapter that has a matching audio master on disk."""
+    """One entry per chapter that has a matching audio master on disk.
+
+    If audio_src/{lang}/intro.mp3 exists, the author intro is prepended as a special
+    entry (index -1) sitting outside the ch-NN numbering, so the real chapters keep
+    their natural indices.
+    """
     titles = parse_chapter_titles(lang)
     chapters = []
+
+    intro = AUDIO_SRC / lang / "intro.mp3"
+    if intro.exists():
+        chapters.append({
+            "index": -1,
+            "title": INTRO_TITLE,
+            "file": f"{lang}/intro.mp3",
+            "bytes": intro.stat().st_size,
+            "duration": probe_duration(intro),
+        })
+
     for index, title in enumerate(titles):
         rel = f"{lang}/ch-{index:02d}.mp3"
         master = AUDIO_SRC / lang / f"ch-{index:02d}.mp3"
@@ -120,9 +143,11 @@ def main():
             "zip": find_zip(lang),
             "chapters": chapters,
         }
-        have = len(chapters)
+        has_intro = (AUDIO_SRC / lang / "intro.mp3").exists()
+        have = len(chapters) - (1 if has_intro else 0)
         total = len(parse_chapter_titles(lang))
-        print(f"  [{lang.upper()}] {have}/{total} chapters with audio")
+        intro_note = " +intro" if has_intro else ""
+        print(f"  [{lang.upper()}] {have}/{total} chapters with audio{intro_note}")
 
     (audio_out_dir / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

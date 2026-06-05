@@ -7,6 +7,13 @@
       "zip": null,
       "chapters": [
         {
+          "index": -1,
+          "title": "Intro",
+          "file": "de/intro.mp3",
+          "bytes": 870221,
+          "duration": 22.4
+        },
+        {
           "index": 0,
           "title": "Who you gonna call?",
           "file": "de/ch-00.mp3",
@@ -175,6 +182,13 @@
       "zip": null,
       "chapters": [
         {
+          "index": -1,
+          "title": "Intro",
+          "file": "en/intro.mp3",
+          "bytes": 871304,
+          "duration": 22.4
+        },
+        {
           "index": 0,
           "title": "Who you gonna call?",
           "file": "en/ch-00.mp3",
@@ -342,6 +356,13 @@
       "author": "Антон Копылов",
       "zip": null,
       "chapters": [
+        {
+          "index": -1,
+          "title": "Intro",
+          "file": "ru/intro.mp3",
+          "bytes": 923530,
+          "duration": 24.6
+        },
         {
           "index": 0,
           "title": "Who you gonna call?",
