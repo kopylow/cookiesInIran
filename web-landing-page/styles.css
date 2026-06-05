@@ -1832,8 +1832,15 @@ body.mini-player-open #drawer-audio .drawer-content {
     #bottom-bar.hidden ~ #mini-player {
         bottom: 0;
     }
-    .mp-prev, .mp-next {
-        display: none; /* keep the compact bar uncluttered on phones */
+    /* Show prev/next (chapter skip) on phones too. To fit five controls plus the
+       title on a narrow bar, tighten the row gap and per-button tap target a
+       touch; .mp-meta (flex:1, min-width:0) absorbs the difference by ellipsis. */
+    .mp-inner {
+        gap: 0.25rem;
+        padding: 0.5rem 0.6rem;
+    }
+    .mp-btn {
+        min-width: 32px;
     }
     body.mini-player-open #main-content {
         padding-bottom: 140px;
