@@ -12,16 +12,12 @@
   const POS_KEY_PREFIX = "audioPos_"; // audioPos_{lang} -> {pos, time}
   const SPEEDS = [1, 1.25, 1.5, 1.75, 2];
 
-  // Media-control glyphs with a trailing U+FE0E (text-presentation selector) so
-  // iOS/Android render the monochrome text form instead of swapping in a color
-  // emoji (▶️/⏸️). Same reasoning as the nav-bar Feather masks (styles.css:350).
-  const VS = "\uFE0E"; // U+FE0E text-presentation selector
-  const ICON = {
-    play: "▶" + VS,
-    pause: "⏸" + VS,
-    prev: "⏮" + VS,
-    next: "⏭" + VS,
-  };
+  // Media-control icons are painted by CSS as SVG masks over currentColor (see
+  // the .audio-play-btn / .mp-btn ::before rules in styles.css), NOT as font
+  // glyphs. The previous text-glyph + U+FE0E approach was unreliable on
+  // iOS/Android, which ignored the selector and swapped in color emoji. So these
+  // buttons carry NO text content; their visual state is driven purely by the
+  // `is-playing` class, which flips the play triangle to pause bars.
 
   const I18N = {
     de: {
@@ -144,7 +140,7 @@
     chapters.forEach((ch, pos) => {
       const row = el("div", { class: "audio-row", "data-pos": String(pos) });
 
-      const playBtn = el("button", { class: "audio-play-btn", type: "button", "aria-label": `${t().play}: ${ch.title}` }, ICON.play);
+      const playBtn = el("button", { class: "audio-play-btn", type: "button", "aria-label": `${t().play}: ${ch.title}` });
       playBtn.addEventListener("click", () => toggleChapter(pos));
 
       const main = el("div", { class: "audio-row-main" });
@@ -170,7 +166,6 @@
       const btn = row.querySelector(".audio-play-btn");
       if (btn) {
         const playing = isActive && !audio.paused;
-        btn.textContent = playing ? ICON.pause : ICON.play;
         btn.classList.toggle("is-playing", playing);
       }
     });
@@ -182,9 +177,9 @@
     miniEl.innerHTML = "";
     const inner = el("div", { class: "mp-inner" });
 
-    const prev = el("button", { class: "mp-btn mp-prev", type: "button", "aria-label": t().prev }, ICON.prev);
-    const play = el("button", { class: "mp-btn mp-play", type: "button", "aria-label": t().pause }, ICON.pause);
-    const next = el("button", { class: "mp-btn mp-next", type: "button", "aria-label": t().next }, ICON.next);
+    const prev = el("button", { class: "mp-btn mp-prev", type: "button", "aria-label": t().prev });
+    const play = el("button", { class: "mp-btn mp-play", type: "button", "aria-label": t().play });
+    const next = el("button", { class: "mp-btn mp-next", type: "button", "aria-label": t().next });
 
     const meta = el("div", { class: "mp-meta" });
     const title = el("div", { class: "mp-title" }, "");
@@ -308,8 +303,8 @@
   }
 
   // --- audio element events ---
-  audio.addEventListener("play", () => { highlightRow(); if (mp) { mp.play.textContent = ICON.pause; mp.play.setAttribute("aria-label", t().pause); } });
-  audio.addEventListener("pause", () => { highlightRow(); if (mp) { mp.play.textContent = ICON.play; mp.play.setAttribute("aria-label", t().play); } persist(); });
+  audio.addEventListener("play", () => { highlightRow(); if (mp) { mp.play.classList.add("is-playing"); mp.play.setAttribute("aria-label", t().pause); } });
+  audio.addEventListener("pause", () => { highlightRow(); if (mp) { mp.play.classList.remove("is-playing"); mp.play.setAttribute("aria-label", t().play); } persist(); });
   audio.addEventListener("ended", () => { persist(); skip(1); });
   audio.addEventListener("timeupdate", () => {
     if (mp && audio.duration) {
