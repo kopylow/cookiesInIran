@@ -504,17 +504,24 @@
     const form = state.rootEl.querySelector(".comment-form");
     const indicator = form.querySelector(".form-reply-indicator");
     const cancelBtn = form.querySelector(".form-cancel-reply");
+    const notifyField = form.querySelector(".form-field-checkbox");
+    const notifyInput = notifyField?.querySelector('input[name="notifyOnReply"]');
     if (commentId) {
       form.dataset.parentId = commentId;
       indicator.hidden = false;
       indicator.querySelector(".reply-target-name").textContent = displayName;
       cancelBtn.hidden = false;
+      // Replies can't be replied to, so the notify option has no effect here: grey it out.
+      if (notifyInput) { notifyInput.checked = false; notifyInput.disabled = true; }
+      notifyField?.classList.add("is-disabled");
       form.querySelector('textarea[name="body"]').focus();
       form.scrollIntoView({ behavior: "smooth", block: "nearest" });
     } else {
       delete form.dataset.parentId;
       indicator.hidden = true;
       cancelBtn.hidden = true;
+      if (notifyInput) notifyInput.disabled = false;
+      notifyField?.classList.remove("is-disabled");
     }
   }
 

@@ -1233,6 +1233,11 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     cursor: pointer;
 }
 .form-field-checkbox > span { font-weight: 400; flex: 1; min-width: 0; }
+.form-field-checkbox.is-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.form-field-checkbox.is-disabled input[type="checkbox"] { cursor: not-allowed; }
 .form-hint {
     opacity: 0.7;
     font-size: 0.82em;
