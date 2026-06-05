@@ -44,23 +44,41 @@
   Die Rechtsgrundlage für die Verarbeitung bildet Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;a DSGVO (Einwilligung durch das Absenden des Kommentars) sowie Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO (berechtigtes Interesse an der Spam-Abwehr).
 </p>
 
-<h2>4. Cloudflare Turnstile</h2>
+<h2>4. Kontaktformular</h2>
+<p>Bei der Nutzung des Kontaktformulars werden folgende Daten verarbeitet:</p>
+<ul>
+  <li><strong>Name:</strong> Pflichtangabe, max. 60 Zeichen.</li>
+  <li><strong>Nachricht:</strong> Pflichtangabe, max. 2000 Zeichen.</li>
+  <li><strong>E-Mail-Adresse:</strong> Freiwillige Angabe. Sie wird nur benötigt, wenn Sie eine Antwort wünschen, und dient in diesem Fall als Antwortadresse.</li>
+  <li><strong>Telefonnummer:</strong> Freiwillige Angabe, falls Sie eine telefonische Rückmeldung bevorzugen.</li>
+  <li><strong>Gehashte IP-Adresse:</strong> (SHA-256 mit rotierendem Salt) zur Spam- und Missbrauchsabwehr sowie zur Durchsetzung von Rate-Limits.</li>
+</ul>
+<p>
+  Ihre Nachricht wird nicht in einer Datenbank gespeichert, sondern ausschließlich per E-Mail über den Dienstleister <strong>Resend</strong> (siehe Abschnitt&nbsp;6) an den Verantwortlichen zugestellt. Haben Sie eine E-Mail-Adresse angegeben, wird diese als Antwortadresse (Reply-To) gesetzt. Rechtsgrundlage ist Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;a DSGVO (Einwilligung durch das Absenden der Nachricht) sowie Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO (berechtigtes Interesse an der Bearbeitung Ihrer Anfrage und an der Spam-Abwehr).
+</p>
+
+<h2>5. Cloudflare Turnstile</h2>
 <p>
   Zum Schutz vor automatisierten Eingaben (Bots) setzen wir
   <strong>Cloudflare Turnstile</strong> ein. Das Skript wird erst geladen, wenn
-  Sie in das Kommentarfeld klicken. Turnstile bewertet anhand von
+  Sie in das Kommentar- oder Kontaktformular klicken. Turnstile bewertet anhand von
   Browser-Signalen, ob es sich um einen menschlichen Nutzer handelt. Dabei werden keine Tracking-Cookies gesetzt.
 </p>
 
-<h2>5. E-Mail-Versand</h2>
+<h2>6. E-Mail-Versand</h2>
 <p>
-  Der Versand von Verifizierungs-Codes und Antwort-Benachrichtigungen erfolgt über den Dienstleister
-  <strong>Resend</strong> (Resend.com, Datenverarbeitung in der EU). Die E-Mail-Adressen werden
+  Der Versand von Verifizierungs-Codes, Antwort-Benachrichtigungen und Nachrichten aus dem Kontaktformular erfolgt über den Dienstleister
+  <strong>Resend</strong> (Resend.com, Datenverarbeitung in der EU). Im Rahmen der Kommentarfunktion gespeicherte E-Mail-Adressen werden
   vor der Speicherung gehasht (SHA-256 mit stabilem Salt) und zusätzlich
   AES-GCM-verschlüsselt in unserer Datenbank abgelegt.
 </p>
 
-<h2>6. Speicherdauer</h2>
+<h2>7. Spenden und Zahlungsmethoden</h2>
+<p>
+  Im Unterstützungs-Bereich verlinken wir auf externe Zahlungsdienste (u.&nbsp;a. PayPal, Revolut und Amazon) bzw. zeigen Kryptowährungs-Adressen an. Wenn Sie einen dieser Links anklicken oder eine Zahlung vornehmen, verlassen Sie diese Website; die Verarbeitung Ihrer Zahlungsdaten erfolgt dann ausschließlich durch den jeweiligen Anbieter nach dessen eigener Datenschutzerklärung. Wir selbst erheben, speichern oder verarbeiten keine Zahlungsdaten.
+</p>
+
+<h2>8. Speicherdauer</h2>
 <ul>
   <li>Schwebende Verifizierungen: 24&nbsp;Stunden.</li>
   <li>Aufgelöste Meldungen: 90&nbsp;Tage.</li>
@@ -68,7 +86,7 @@
   <li>Sperren (<code>bans</code>): Unbegrenzt (zur Missbrauchsabwehr).</li>
 </ul>
 
-<h2>7. Ihre Rechte (Betroffenenrechte)</h2>
+<h2>9. Ihre Rechte (Betroffenenrechte)</h2>
 <p>
   Sie haben jederzeit das Recht auf Auskunft, Berichtigung, Löschung,
   Einschränkung der Verarbeitung, Datenübertragbarkeit sowie das Recht auf Widerspruch
@@ -77,7 +95,7 @@
   erhalten. Zudem steht Ihnen das Recht zu, sich bei einer zuständigen Datenschutzaufsichtsbehörde zu beschweren.
 </p>
 
-<h2>8. Kontakt für Datenschutzanfragen</h2>
+<h2>10. Kontakt für Datenschutzanfragen</h2>
 <p>
   <a href="mailto:cookiesiniran@mailbox.org">cookiesiniran@mailbox.org</a>
 </p>

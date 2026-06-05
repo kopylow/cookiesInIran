@@ -44,22 +44,40 @@
   The legal basis for this processing is Art.&nbsp;6(1)(a) GDPR (consent provided by submitting the comment) and Art.&nbsp;6(1)(f) GDPR (legitimate interest in spam protection).
 </p>
 
-<h2>4. Cloudflare Turnstile</h2>
+<h2>4. Contact Form</h2>
+<p>When using the contact form, the following data is processed:</p>
+<ul>
+  <li><strong>Name:</strong> Mandatory, max. 60 characters.</li>
+  <li><strong>Message:</strong> Mandatory, max. 2000 characters.</li>
+  <li><strong>Email address:</strong> Voluntary. It is only needed if you would like a reply, in which case it serves as the reply address.</li>
+  <li><strong>Phone number:</strong> Voluntary, in case you prefer to be contacted by phone.</li>
+  <li><strong>Hashed IP address:</strong> (SHA-256 with a rotating salt) for spam and abuse prevention and for the enforcement of rate limits.</li>
+</ul>
+<p>
+  Your message is not stored in a database; it is delivered to the controller exclusively by email via the service provider <strong>Resend</strong> (see Section&nbsp;6). If you provided an email address, it is set as the reply address (Reply-To). The legal basis is Art.&nbsp;6(1)(a) GDPR (consent provided by submitting the message) and Art.&nbsp;6(1)(f) GDPR (legitimate interest in processing your inquiry and in spam protection).
+</p>
+
+<h2>5. Cloudflare Turnstile</h2>
 <p>
   To protect against automated entries (bots), we employ
   <strong>Cloudflare Turnstile</strong>. The script is only loaded when
-  you click into the comment field. Turnstile evaluates browser signals
+  you click into the comment or contact form. Turnstile evaluates browser signals
   to determine whether the user is human, without setting any tracking cookies.
 </p>
 
-<h2>5. Email Dispatch</h2>
+<h2>6. Email Dispatch</h2>
 <p>
-  The dispatch of verification codes and reply notifications is conducted via the service provider
-  <strong>Resend</strong> (Resend.com, EU region). Prior to storage in our database, email addresses are
-  hashed (SHA-256 with a stable salt) and additionally encrypted using AES-GCM.
+  The dispatch of verification codes, reply notifications, and contact-form messages is conducted via the service provider
+  <strong>Resend</strong> (Resend.com, EU region). Email addresses stored as part of the comment function are
+  hashed (SHA-256 with a stable salt) and additionally encrypted using AES-GCM prior to storage in our database.
 </p>
 
-<h2>6. Data Retention</h2>
+<h2>7. Donations and Payment Methods</h2>
+<p>
+  In the support area, we link to external payment services (including PayPal, Revolut, and Amazon) and display cryptocurrency addresses. When you click one of these links or make a payment, you leave this website; the processing of your payment data is then carried out exclusively by the respective provider under its own privacy policy. We ourselves do not collect, store, or process any payment data.
+</p>
+
+<h2>8. Data Retention</h2>
 <ul>
   <li>Pending verifications: 24 hours.</li>
   <li>Resolved reports: 90 days.</li>
@@ -67,7 +85,7 @@
   <li>Bans (<code>bans</code>): Indefinite (for the purpose of abuse prevention).</li>
 </ul>
 
-<h2>7. Data Subject Rights</h2>
+<h2>9. Data Subject Rights</h2>
 <p>
   You have the right to request access, rectification, erasure, restriction of
   processing, data portability, and the right to object
@@ -76,7 +94,7 @@
   remains intact. Furthermore, you have the right to lodge a complaint with the competent data protection supervisory authority.
 </p>
 
-<h2>8. Contact for Privacy Inquiries</h2>
+<h2>10. Contact for Privacy Inquiries</h2>
 <p>
   <a href="mailto:cookiesiniran@mailbox.org">cookiesiniran@mailbox.org</a>
 </p>
