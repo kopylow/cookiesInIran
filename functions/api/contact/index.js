@@ -9,6 +9,12 @@ const PHONE_MAX = 40;
 const PHONE_RE = /^[0-9+()\/\s.\-]+$/;
 const ALLOWED_LANGS = ["de", "en", "ru"];
 
+// Recipient. Sourced from CONTACT_TO when set, but the GitHub Pages deploy does
+// not sync wrangler.toml [vars] to the project, so we fall back to the literal
+// address (already committed in wrangler.toml) to keep the form working in prod
+// without a manual dashboard step.
+const CONTACT_TO_FALLBACK = "akopylow@gmail.com";
+
 // Lenient phone check: optional field, so we only guard length and a permissive
 // character set (digits + the usual separators). Returns the trimmed value, or
 // null when empty; `false` signals "present but invalid".
@@ -61,7 +67,7 @@ export async function onRequestPost({ request, env }) {
 
   try {
     await sendContactEmail(env, {
-      to: env.CONTACT_TO,
+      to: env.CONTACT_TO || CONTACT_TO_FALLBACK,
       fromName: name,
       fromEmail: email || "",
       phone: phone || "",
