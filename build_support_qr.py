@@ -28,17 +28,19 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(HERE, "web-landing-page", "support", "qr")
 
 # ---------------------------------------------------------------------------
-# EDIT THESE. Each value is exactly what the QR will encode.
-#   - Revolut / PayPal: the payment URL (so a phone camera opens the app/page).
-#   - Crypto: a payment URI (scheme:address) so wallet apps prefill the address.
-# Placeholders are obvious on purpose; replace before deploying.
+# EDIT THESE. Each value is exactly what the QR will encode (the payment URL, so
+# a phone camera opens the app/page). Placeholders are obvious on purpose.
+#
+# Crypto QRs are NOT generated here anymore: the support drawer uses hand-made
+# branded wallet exports (logo-in-center) at web-landing-page/support/qr/*.jpg,
+# verified with `zbarimg` to decode to the addresses in support.js. If a crypto
+# address changes, replace that .jpg (and the address in support.js) by hand;
+# do not re-add it here, or you'll resurrect a plain SVG that overwrites nothing
+# but adds a dead file back to the folder.
 # ---------------------------------------------------------------------------
 PAYMENTS = {
     "revolut": "https://revolut.me/kopylow",
     "paypal":  "https://paypal.me/kopylow",
-    "btc":     "bitcoin:bc1qlmzpu3neanphpwpl7m0edqevfy45340sutq37j",
-    "eth":     "ethereum:0x1C8A2d42a66DF41C3a0467D659f23d6f8b8A59b2",
-    "sol":     "solana:7gf3oeu38riHM2g8rTtuFYw6vUeEFDQbkVjTVVwDd8no",
 }
 
 
