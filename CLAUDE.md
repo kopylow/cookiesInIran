@@ -215,6 +215,34 @@ purge via API — that needs a scoped Cache-Purge API token.
   wired to the "Hörbuch/Audiobook" nav buttons, and `AudioPlayer.setLang()` called from the language
   toggle. Styles live in the "Audiobook" section of `styles.css`.
 
+## Support / donations drawer
+
+A donation page that lives entirely in the existing `#drawer-support` (the **Support** nav button
+already opens it). Like the audiobook, it is **static, no backend, no API, no CSP change** because
+every payment is a plain outbound `<a href>` link or a copyable address plus a self-hosted QR
+image; nothing is sent or stored.
+
+- **Frontend**: `web-landing-page/support.js` — plain script exposing `window.SupportUI` with
+  `.init({drawerEl, getCurrentLang})`, `.open()`, `.setLang(lang)`, mirroring `audiobook.js`.
+  `main.js` mounts it exactly like the audio player (init after DOM-ready, `open()` from
+  `openSupportDrawer()`, `setLang()` from the language toggle). Holds a de/en/ru `I18N` block and a
+  `PAYMENTS` config (Revolut link+IBAN, PayPal.me link, BTC/ETH/SOL addresses, per-market Amazon
+  links). Renders: why-support + the 5-5000 € ask + a "leave your contact in the payment reference"
+  line, the Spendenstand progress bar, Amazon buy buttons, and Revolut/PayPal/crypto methods with
+  copy-to-clipboard and **one-at-a-time QR toggles** (opening one QR collapses any other, so phones
+  never see two codes at once). Styles live in the "Support" section of `styles.css`.
+- **Donation total**: `web-landing-page/donations.json` (`{raised, goal, currency, updated}`) is the
+  single source of truth, edited every Monday and pushed (auto-deploys via the Pages Action). It has
+  a `/donations.json` `no-cache` entry in `_headers` so the update is visible immediately. If the
+  fetch fails the bar is skipped and the rest of the drawer still renders.
+- **QR codes**: `build_support_qr.py` (repo root) generates
+  `web-landing-page/support/qr/{revolut,paypal,btc,eth,sol}.svg` by shelling out to the `qrencode`
+  CLI (`pacman -S qrencode` / `apt install qrencode`; used instead of a Python lib because the
+  system Python has no pip). Crypto QRs encode `bitcoin:`/`ethereum:`/`solana:` URIs so wallets
+  prefill. **The payment values live in two places** — the `PAYMENTS` block in `build_support_qr.py`
+  AND in `support.js` — keep them in sync and re-run the script when an address/link changes.
+- **Not wired for Farsi** (same as comments): `getCurrentLang()` only yields de/en/ru.
+
 ## Content rules (enforced by convention, not tooling)
 
 - Edit only `locales/{lang}/manuscript.md`. Never edit generated `*.html` or `*.tex` files.

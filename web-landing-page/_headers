@@ -22,6 +22,11 @@
   Cache-Control: no-cache
 /audiobook.js
   Cache-Control: no-cache
+/support.js
+  Cache-Control: no-cache
+# Weekly-edited donation total; revalidate so Monday updates show immediately.
+/donations.json
+  Cache-Control: no-cache
 
 /admin*
   X-Robots-Tag: noindex, nofollow

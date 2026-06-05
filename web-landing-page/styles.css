@@ -1873,3 +1873,373 @@ body.mini-player-open #drawer-audio .drawer-content {
         padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px));
     }
 }
+
+/* --------------------------------------------------------------------------
+   12. Support / donations drawer
+   -------------------------------------------------------------------------- */
+.support {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+/* ---- Hero: the pitch (left) + a prominent donation meter (right) ---- */
+.support-hero {
+    display: grid;
+    gap: 1.5rem 2rem;
+    align-items: start;
+    margin-bottom: 2.5rem;
+}
+@media (min-width: 760px) {
+    .support-hero.has-meter {
+        grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr);
+    }
+}
+.support-hero-text {
+    max-width: 640px;
+}
+.support-title {
+    font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.1rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 0 0.85rem;
+    color: var(--current-text);
+}
+.support-lead {
+    margin: 0 0 1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+.support-ask {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--current-accent);
+}
+/* Contact request: a soft accent-bordered callout so it stands out from the ask. */
+.support-contact {
+    margin: 0;
+    padding: 0.75rem 0.9rem;
+    border-inline-start: 3px solid var(--current-accent);
+    background: rgba(var(--current-accent-rgb), 0.08);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Donation meter: a tinted card that anchors the hero on the right */
+.support-meter {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    border-radius: 14px;
+    border: 1px solid rgba(var(--current-accent-rgb), 0.25);
+    background: linear-gradient(160deg,
+        rgba(var(--current-accent-rgb), 0.14),
+        rgba(var(--current-accent-rgb), 0.04));
+}
+.support-meter-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+}
+.support-meter-amount {
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--current-accent);
+    font-variant-numeric: tabular-nums;
+}
+.support-meter .support-bar {
+    margin-top: 0.35rem;
+}
+.support-meter-goal {
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.8;
+}
+.support-meter-meta {
+    margin: 0.15rem 0 0;
+    font-size: 0.78rem;
+    opacity: 0.65;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.7rem;
+}
+
+/* Progress bar (shared) */
+.support-bar {
+    height: 12px;
+    border-radius: 999px;
+    background: rgba(128, 128, 128, 0.2);
+    overflow: hidden;
+}
+.support-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg,
+        var(--current-accent),
+        rgba(var(--current-accent-rgb), 0.65));
+    transition: width 0.6s var(--site-easing);
+}
+
+/* ---- Labelled groups + responsive card grid ---- */
+.support-group {
+    margin-bottom: 2.25rem;
+}
+.support-group-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    margin: 0 0 0.9rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+}
+.support-cards {
+    display: grid;
+    /* min(100%, 240px) keeps a single card from overflowing a <240px viewport. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 1rem;
+    /* Size each card to its own content: when one card's QR accordion opens, it
+       grows downward instead of stretching its row-mates into empty space. */
+    align-items: start;
+}
+
+/* Card */
+.support-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding: 1.1rem;
+    border-radius: 14px;
+    border: 1px solid rgba(128, 128, 128, 0.18);
+    background: var(--current-bg);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(0, 0, 0, 0.05);
+    transition: transform 0.18s var(--site-easing),
+                box-shadow 0.18s var(--site-easing),
+                border-color 0.18s var(--site-easing);
+}
+.support-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06), 0 12px 28px rgba(0, 0, 0, 0.09);
+    border-color: rgba(128, 128, 128, 0.3);
+}
+body[data-theme="dark"] .support-card {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Feature card: buying the book is the easiest help — full width, accented */
+.support-card--feature {
+    margin-bottom: 2.25rem;
+    border-color: rgba(var(--current-accent-rgb), 0.3);
+    background: linear-gradient(150deg,
+        rgba(var(--current-accent-rgb), 0.12),
+        rgba(var(--current-accent-rgb), 0.03));
+}
+body[data-theme="dark"] .support-card--feature {
+    background: linear-gradient(150deg,
+        rgba(var(--current-accent-rgb), 0.18),
+        rgba(var(--current-accent-rgb), 0.05));
+}
+.support-card--feature .support-card-title {
+    font-size: 1.2rem;
+}
+
+/* Card head: branded badge + titles */
+.support-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.support-card-titles {
+    min-width: 0;
+}
+.support-card-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.support-card-sub {
+    margin: 0.3rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    opacity: 0.78;
+}
+.support-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+/* Branded badge: a real text glyph on a brand-coloured plate (no emoji, so it
+   renders identically on every platform — see the audio play/pause history). */
+.support-badge {
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    background: var(--current-accent);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+.support-badge--book { background: var(--current-accent); color: var(--current-bg); }
+.support-badge--revolut { background: #0666eb; }
+.support-badge--paypal { background: #0070ba; }
+.support-badge--btc { background: #f7931a; }
+.support-badge--eth { background: #627eea; }
+.support-badge--sol { background: linear-gradient(135deg, #9945ff, #14f195); }
+
+/* Link buttons (Amazon, Revolut, PayPal, presets) */
+.support-btn-row,
+.support-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.support-btn {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--current-accent);
+    color: var(--current-accent);
+    background: transparent;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    transition: background-color 0.2s var(--site-easing),
+                color 0.2s var(--site-easing),
+                box-shadow 0.2s var(--site-easing),
+                transform 0.15s var(--site-easing);
+}
+.support-btn:hover {
+    transform: translateY(-1px);
+}
+.support-btn.primary {
+    background: var(--current-accent);
+    color: var(--current-bg);
+}
+.support-btn.primary:hover {
+    box-shadow: 0 3px 8px rgba(var(--current-accent-rgb), 0.25);
+}
+/* Pay buttons fill the card width so each method has one clear primary action. */
+.support-btn.full {
+    display: block;
+    width: 100%;
+}
+.support-btn.preset {
+    flex: 1 1 auto;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.85rem;
+}
+
+/* Copyable value rows (IBAN, crypto addresses) */
+.support-copy-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.support-copy-label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    flex: 0 0 auto;
+}
+.support-copy-val {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0.4rem 0.55rem;
+    background: rgba(128, 128, 128, 0.1);
+    border-radius: 6px;
+}
+.support-copy-btn {
+    flex: 0 0 auto;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s var(--site-easing);
+}
+.support-copy-btn:hover {
+    background: rgba(128, 128, 128, 0.12);
+}
+.support-copy-btn.copied {
+    color: var(--current-accent);
+    border-color: var(--current-accent);
+}
+
+/* QR toggle + collapsible panel (accordion: only one open at a time) */
+.support-qr-toggle {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s var(--site-easing);
+}
+.support-qr-toggle::before {
+    /* Tiny QR glyph so the toggle reads as a scan affordance at a glance. */
+    content: "▦";
+    font-size: 1rem;
+    line-height: 1;
+    opacity: 0.7;
+}
+.support-qr-toggle:hover {
+    background: rgba(128, 128, 128, 0.12);
+}
+.support-qr {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.35s var(--site-easing), opacity 0.35s var(--site-easing);
+}
+.support-qr.open {
+    max-height: 320px;
+    opacity: 1;
+    margin-top: 0.6rem;
+}
+.support-qr img {
+    display: block;
+    width: 200px;
+    max-width: 100%;
+    height: auto;
+    /* White padded plate keeps the code scannable in dark theme too. */
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Tighten the support drawer on small screens. */
+@media (max-width: 560px) {
+    .support-hero { margin-bottom: 1.75rem; }
+    .support-meter { padding: 1rem; }
+    .support-card { padding: 1rem; }
+    .support-group { margin-bottom: 1.75rem; }
+}

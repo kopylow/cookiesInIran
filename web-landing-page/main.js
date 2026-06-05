@@ -382,6 +382,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadManuscript(currentLang);
         if (window.CommentsUI) window.CommentsUI.setLang(currentLang);
         if (window.AudioPlayer) window.AudioPlayer.setLang(currentLang);
+        if (window.SupportUI) window.SupportUI.setLang(currentLang);
     });
 // Smart Top Bar Hide/Show on Scroll
 let lastScrollY = window.scrollY;
@@ -449,6 +450,7 @@ window.addEventListener('scroll', () => {
         drawerOverlay.classList.add('visible');
         pageWrapper.classList.add('drawer-open-fullscreen');
         document.body.classList.add('drawer-open-fullscreen');
+        if (window.SupportUI) window.SupportUI.open();
         const closeBtn = drawerSupport.querySelector('.close-drawer');
         if (closeBtn) closeBtn.focus();
     }
@@ -607,6 +609,13 @@ window.addEventListener('scroll', () => {
         });
     }
 
+    if (window.SupportUI) {
+        window.SupportUI.init({
+            drawerEl: drawerSupport,
+            getCurrentLang: () => currentLang,
+        });
+    }
+
     // Handle ?lang=de&comments=1&chapter=5 links (e.g. from reply notification emails).
     const urlParams = new URLSearchParams(window.location.search);
     const paramLang = urlParams.get("lang");
@@ -618,6 +627,7 @@ window.addEventListener('scroll', () => {
         if (sel) langToggle.value = paramLang;
         if (window.CommentsUI) window.CommentsUI.setLang(paramLang);
         if (window.AudioPlayer) window.AudioPlayer.setLang(paramLang);
+        if (window.SupportUI) window.SupportUI.setLang(paramLang);
     }
 
     await loadManuscript(currentLang, paramComments !== "1");
