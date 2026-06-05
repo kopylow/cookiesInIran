@@ -18,25 +18,31 @@
   // ---------------------------------------------------------------------------
   const PAYMENTS = {
     revolut: {
-      url: "https://revolut.me/REPLACE_ME",
+      url: "https://revolut.me/kopylow",
       // Recipient name: required by virtually every banking app, and matched by the
       // EU-mandatory Verification of Payee check, so it must equal the account holder.
-      holder: "REPLACE_ME_ACCOUNT_HOLDER",
-      iban: "DE00 0000 0000 0000 0000 00",
+      holder: "Anton Kopylow",
+      iban: "DE22 1001 0178 1371 5785 20",
       // BIC is optional for SEPA (IBAN-only since 2016); only non-SEPA/international
       // senders need it. Leave "" to hide the row.
-      bic: "REVOLT21",
+      bic: "REVODEB2",
       qr: "support/qr/revolut.svg",
     },
     paypal: {
-      url: "https://paypal.me/REPLACE_ME",
+      url: "https://paypal.me/kopylow",
       presets: [25, 50, 100],
       qr: "support/qr/paypal.svg",
     },
     crypto: [
-      { key: "btc", label: "Bitcoin", symbol: "₿", address: "REPLACE_ME_BTC_ADDRESS", qr: "support/qr/btc.svg" },
-      { key: "eth", label: "Ethereum", symbol: "Ξ", address: "REPLACE_ME_ETH_ADDRESS", qr: "support/qr/eth.svg" },
-      { key: "sol", label: "Solana", symbol: "◎", address: "REPLACE_ME_SOL_ADDRESS", qr: "support/qr/sol.svg" },
+      // BTC has two receive formats. Both are shown (labelled) in the modal; the
+      // QR encodes the Native SegWit one for the widest sender compatibility.
+      { key: "btc", label: "Bitcoin", symbol: "₿", qr: "support/qr/btc.svg",
+        addresses: [
+          { label: "Taproot", address: "bc1p59dgjxy6u8pgvmchdhnmeu4swsfc7nvvw393te56kczadtx63kfssy4xqe" },
+          { label: "Native SegWit", address: "bc1qlmzpu3neanphpwpl7m0edqevfy45340sutq37j" },
+        ] },
+      { key: "eth", label: "Ethereum", symbol: "Ξ", address: "0x1C8A2d42a66DF41C3a0467D659f23d6f8b8A59b2", qr: "support/qr/eth.svg" },
+      { key: "sol", label: "Solana", symbol: "◎", address: "7gf3oeu38riHM2g8rTtuFYw6vUeEFDQbkVjTVVwDd8no", qr: "support/qr/sol.svg" },
     ],
     amazon: {
       de: { print: "https://www.amazon.de/dp/REPLACE_ME" },
@@ -70,6 +76,19 @@
       '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m23.8764 18.0313-3.962 4.1393a.9201.9201 0 0 1-.306.2106.9407.9407 0 0 1-.367.0742H.4599a.4689.4689 0 0 1-.2522-.0733.4513.4513 0 0 1-.1696-.1962.4375.4375 0 0 1-.0314-.2545.4438.4438 0 0 1 .117-.2298l3.9649-4.1393a.92.92 0 0 1 .3052-.2102.9407.9407 0 0 1 .3658-.0746H23.54a.4692.4692 0 0 1 .2523.0734.4531.4531 0 0 1 .1697.196.438.438 0 0 1 .0313.2547.4442.4442 0 0 1-.1169.2297zm-3.962-8.3355a.9202.9202 0 0 0-.306-.2106.941.941 0 0 0-.367-.0742H.4599a.4687.4687 0 0 0-.2522.0734.4513.4513 0 0 0-.1696.1961.4376.4376 0 0 0-.0314.2546.444.444 0 0 0 .117.2297l3.9649 4.1394a.9204.9204 0 0 0 .3052.2102c.1154.049.24.0744.3658.0746H23.54a.469.469 0 0 0 .2523-.0734.453.453 0 0 0 .1697-.1961.4382.4382 0 0 0 .0313-.2546.4444.4444 0 0 0-.1169-.2297zM.46 6.7225h18.7815a.9411.9411 0 0 0 .367-.0742.9202.9202 0 0 0 .306-.2106l3.962-4.1394a.4442.4442 0 0 0 .117-.2297.4378.4378 0 0 0-.0314-.2546.453.453 0 0 0-.1697-.196.469.469 0 0 0-.2523-.0734H4.7596a.941.941 0 0 0-.3658.0745.9203.9203 0 0 0-.3052.2102L.1246 5.9687a.4438.4438 0 0 0-.1169.2295.4375.4375 0 0 0 .0312.2544.4512.4512 0 0 0 .1692.196.4689.4689 0 0 0 .2518.0739z"/></svg>',
   };
 
+  // Small payment-acceptance marks (not brand badges): shown after a method's
+  // title to signal what that method ultimately accepts. The Revolut hosted
+  // checkout (revolut.me) takes credit/debit card + Apple Pay with no Revolut
+  // account, so we surface those marks behind the "Revolut" label. Single-path,
+  // inherit `currentColor` like LOGOS. `applepay` is the official simple-icons
+  // mark; `card` is the standard Material credit-card glyph.
+  const MARKS = {
+    card:
+      '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>',
+    applepay:
+      '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.15 4.318a42.16 42.16 0 0 0-.454.003c-.15.005-.303.013-.452.04a1.44 1.44 0 0 0-1.06.772c-.07.138-.114.278-.14.43-.028.148-.037.3-.04.45A10.2 10.2 0 0 0 0 6.222v11.557c0 .07.002.138.003.207.004.15.013.303.04.452.027.15.072.291.142.429a1.436 1.436 0 0 0 .63.63c.138.07.278.115.43.142.148.027.3.036.45.04l.208.003h20.194l.207-.003c.15-.004.303-.013.452-.04.15-.027.291-.071.428-.141a1.432 1.432 0 0 0 .631-.631c.07-.138.115-.278.141-.43.027-.148.036-.3.04-.45.002-.07.003-.138.003-.208l.001-.246V6.221c0-.07-.002-.138-.004-.207a2.995 2.995 0 0 0-.04-.452 1.446 1.446 0 0 0-1.2-1.201 3.022 3.022 0 0 0-.452-.04 10.448 10.448 0 0 0-.453-.003zm0 .512h19.942c.066 0 .131.002.197.003.115.004.25.01.375.032.109.02.2.05.287.094a.927.927 0 0 1 .407.407.997.997 0 0 1 .094.288c.022.123.028.258.031.374.002.065.003.13.003.197v11.552c0 .065 0 .13-.003.196-.003.115-.009.25-.032.375a.927.927 0 0 1-.5.693 1.002 1.002 0 0 1-.286.094 2.598 2.598 0 0 1-.373.032l-.2.003H1.906c-.066 0-.133-.002-.196-.003a2.61 2.61 0 0 1-.375-.032c-.109-.02-.2-.05-.288-.094a.918.918 0 0 1-.406-.407 1.006 1.006 0 0 1-.094-.288 2.531 2.531 0 0 1-.032-.373 9.588 9.588 0 0 1-.002-.197V6.224c0-.065 0-.131.002-.197.004-.114.01-.248.032-.375.02-.108.05-.199.094-.287a.925.925 0 0 1 .407-.406 1.03 1.03 0 0 1 .287-.094c.125-.022.26-.029.375-.032.065-.002.131-.002.196-.003zm4.71 3.7c-.3.016-.668.199-.88.456-.191.22-.36.58-.316.918.338.03.675-.169.888-.418.205-.258.345-.603.308-.955zm2.207.42v5.493h.852v-1.877h1.18c1.078 0 1.835-.739 1.835-1.812 0-1.07-.742-1.805-1.808-1.805zm.852.719h.982c.739 0 1.161.396 1.161 1.089 0 .692-.422 1.092-1.164 1.092h-.979zm-3.154.3c-.45.01-.83.28-1.05.28-.235 0-.593-.264-.981-.257a1.446 1.446 0 0 0-1.23.747c-.527.908-.139 2.255.374 2.995.249.366.549.769.944.754.373-.014.52-.242.973-.242.454 0 .586.242.98.235.41-.007.667-.366.915-.733.286-.417.403-.82.41-.841-.007-.008-.79-.308-.797-1.209-.008-.754.615-1.113.644-1.135-.352-.52-.9-.578-1.09-.593a1.123 1.123 0 0 0-.092-.002zm8.204.397c-.99 0-1.606.533-1.652 1.256h.777c.072-.358.369-.586.845-.586.502 0 .803.266.803.711v.309l-1.097.064c-.951.054-1.488.484-1.488 1.184 0 .72.548 1.207 1.332 1.207.526 0 1.032-.281 1.264-.727h.019v.659h.788v-2.76c0-.803-.62-1.317-1.591-1.317zm1.94.072l1.446 4.009c0 .003-.073.24-.073.247-.125.41-.33.571-.711.571-.069 0-.206 0-.267-.015v.666c.06.011.267.019.335.019.83 0 1.226-.312 1.568-1.283l1.5-4.214h-.868l-1.012 3.259h-.015l-1.013-3.26zm-1.167 2.189v.316c0 .521-.45.917-1.024.917-.442 0-.731-.228-.731-.579 0-.342.278-.56.769-.593z"/></svg>',
+  };
+
   const LOCALE = { de: "de-DE", en: "en-US", ru: "ru-RU" };
 
   const I18N = {
@@ -85,10 +104,11 @@
       buyHeading: "Das Buch",
       buyNote: "Das PDF stelle ich euch kostenlos zur Verfügung: einfach herunterladen und lesen. Wer es lieber in der Hand hält, kann es bei Amazon als gedrucktes Buch bestellen. Daran verdiene ich allerdings nur wenig: wenn ihr mich wirklich unterstützen wollt, hilft mir eine Spende deutlich mehr.",
       buyPdf: "PDF kostenlos laden",
-      buyPrint: "Als gedrucktes Buch (Amazon)",
+      buyPrint: "Gedrucktes Buch (Amazon)",
+      printSoon: "Das gedruckte Buch sollte spätestens am Montag verfügbar sein.",
       directHeading: "Direkt unterstützen",
       cryptoHeading: "Krypto",
-      payWith: (n) => `Mit ${n} bezahlen`,
+      payWith: (n) => `Mit ${n} spenden`,
       holderLabel: "Empfänger",
       ibanLabel: "IBAN",
       bicLabel: "BIC",
@@ -97,6 +117,10 @@
       copy: "Kopieren",
       copied: "Kopiert!",
       closeLabel: "Schließen",
+      acceptsCard: "Auch mit Kreditkarte und Apple Pay (kein Revolut-Konto nötig)",
+      amountLabel: "Eigener Betrag in Euro",
+      amountPlaceholder: "Betrag (€)",
+      payCustom: "Spenden",
     },
     en: {
       heading: "Help me rescue my W124",
@@ -111,9 +135,10 @@
       buyNote: "The PDF is free: just download it and read. If you would rather hold it in your hands, you can order a printed copy on Amazon. I earn very little from that, though: if you really want to support me, a donation helps far more.",
       buyPdf: "Download PDF (free)",
       buyPrint: "Printed book (Amazon)",
+      printSoon: "The printed book should be available by Monday at the latest.",
       directHeading: "Support directly",
       cryptoHeading: "Crypto",
-      payWith: (n) => `Pay with ${n}`,
+      payWith: (n) => `Donate with ${n}`,
       holderLabel: "Recipient",
       ibanLabel: "IBAN",
       bicLabel: "BIC",
@@ -122,6 +147,10 @@
       copy: "Copy",
       copied: "Copied!",
       closeLabel: "Close",
+      acceptsCard: "Also with credit card and Apple Pay (no Revolut account needed)",
+      amountLabel: "Custom amount in euros",
+      amountPlaceholder: "Amount (€)",
+      payCustom: "Donate",
     },
     ru: {
       heading: "Помочь вызволить мой W124",
@@ -136,9 +165,10 @@
       buyNote: "PDF я выкладываю бесплатно: просто скачайте и читайте. Если хочется держать книгу в руках, её можно заказать в печатном виде на Amazon. На этом я зарабатываю совсем немного: если вы правда хотите меня поддержать, пожертвование помогает гораздо больше.",
       buyPdf: "Скачать PDF (бесплатно)",
       buyPrint: "Печатная книга (Amazon)",
+      printSoon: "Печатная книга должна появиться не позднее понедельника.",
       directHeading: "Поддержать напрямую",
       cryptoHeading: "Криптовалюта",
-      payWith: (n) => `Оплатить через ${n}`,
+      payWith: (n) => `Задонатить через ${n}`,
       holderLabel: "Получатель",
       ibanLabel: "IBAN",
       bicLabel: "BIC",
@@ -147,6 +177,10 @@
       copy: "Копировать",
       copied: "Скопировано!",
       closeLabel: "Закрыть",
+      acceptsCard: "Также картой и Apple Pay (счёт Revolut не нужен)",
+      amountLabel: "Своя сумма в евро",
+      amountPlaceholder: "Сумма (€)",
+      payCustom: "Задонатить",
     },
   };
 
@@ -255,6 +289,31 @@
     );
   }
 
+  // Free-entry amount field for PayPal.me: an input + a Pay button whose href is
+  // rebuilt as the user types (paypal.me/<user>/<amount>). With no/zero amount it
+  // falls back to the bare profile link so the button is never a dead end. Uses
+  // type=text + inputmode=decimal (not type=number) so a comma decimal — the norm
+  // in DE/RU — is preserved and normalised; non-positive input yields the profile
+  // link. PayPal.me caps the amount itself, so we only sanity-check it is > 0.
+  function amountField(baseUrl) {
+    const tr = t();
+    const row = el("div", { class: "support-amount" });
+    const input = el("input", {
+      type: "text", inputmode: "decimal", autocomplete: "off",
+      class: "support-amount-input", placeholder: tr.amountPlaceholder, "aria-label": tr.amountLabel,
+    });
+    const pay = el("a", { class: "support-btn primary", href: baseUrl, target: "_blank", rel: "noopener" }, tr.payCustom);
+    const sync = () => {
+      const v = parseFloat((input.value || "").trim().replace(",", "."));
+      pay.href = isFinite(v) && v > 0 ? `${baseUrl}/${v}` : baseUrl;
+    };
+    input.addEventListener("input", sync);
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") pay.click(); });
+    row.appendChild(input);
+    row.appendChild(pay);
+    return row;
+  }
+
   // A labelled group of cards (e.g. "Direct support", "Crypto"). Returns the
   // <section> with an empty .support-cards grid exposed as ._grid to fill.
   function group(labelText) {
@@ -285,12 +344,23 @@
 
   // A method card that is itself the trigger: badge + title + chevron, no numbers
   // shown. Clicking it calls buildBody(modalBody) to fill the detail modal.
-  function triggerCard(badgeGlyph, badgeMod, title, buildBody) {
+  // `marks` (optional): { glyphs: [svgString…], label } renders small
+  // payment-acceptance icons under the title (e.g. card + Apple Pay for Revolut).
+  function triggerCard(badgeGlyph, badgeMod, title, buildBody, marks) {
     const card = el("button", { class: "support-card support-card--trigger", type: "button" });
     const head = el("div", { class: "support-card-head" });
     if (badgeGlyph) head.appendChild(makeBadge(badgeGlyph, badgeMod));
     const titles = el("div", { class: "support-card-titles" });
     titles.appendChild(el("span", { class: "support-card-title" }, title));
+    if (marks && Array.isArray(marks.glyphs) && marks.glyphs.length) {
+      const row = el("span", { class: "support-card-marks", role: "img", "aria-label": marks.label || "" });
+      marks.glyphs.forEach((g) => {
+        const m = el("span", { class: "support-card-mark", "aria-hidden": "true" });
+        m.innerHTML = g;
+        row.appendChild(m);
+      });
+      titles.appendChild(row);
+    }
     head.appendChild(titles);
     card.appendChild(head);
     card.appendChild(el("span", { class: "support-card-chevron", "aria-hidden": "true" }, "›"));
@@ -389,7 +459,21 @@
         el("a", { class: "support-btn primary", href: pdfHref, download: "" }, tr.buyPdf)
       );
     }
-    if (az && az.print) buyRow.appendChild(linkButton(az.print, tr.buyPrint));
+    if (az && az.print) {
+      if (az.print.indexOf("REPLACE_ME") !== -1) {
+        // Print edition not live yet — open a "coming soon" modal instead of
+        // linking to a dead Amazon URL. Becomes a real link once az.print is set.
+        const soon = el("button", { class: "support-btn", type: "button" }, tr.buyPrint);
+        soon.addEventListener("click", () =>
+          openModal("\u2605", "book", tr.buyPrint, (body) => {
+            body.appendChild(el("p", { class: "support-modal-note" }, tr.printSoon));
+          })
+        );
+        buyRow.appendChild(soon);
+      } else {
+        buyRow.appendChild(linkButton(az.print, tr.buyPrint));
+      }
+    }
     feat._body.appendChild(buyRow);
     root.appendChild(feat);
 
@@ -404,14 +488,14 @@
       if (PAYMENTS.revolut.bic) body.appendChild(copyRow(tr.bicLabel, PAYMENTS.revolut.bic));
     }));
 
-    // Revolut: pay straight from the app via the revolut.me link + its QR.
+    // Revolut: pay straight from the app via the revolut.me link + its QR. The
+    // hosted checkout also takes card + Apple Pay (no account), shown as marks.
     direct._grid.appendChild(triggerCard(LOGOS.revolut, "revolut", "Revolut", (body) => {
       body.appendChild(linkButton(PAYMENTS.revolut.url, tr.payWith("Revolut"), "primary full"));
       body.appendChild(modalQr(PAYMENTS.revolut.qr, "Revolut QR"));
-    }));
+    }, { glyphs: [MARKS.card, MARKS.applepay], label: tr.acceptsCard }));
 
     direct._grid.appendChild(triggerCard(LOGOS.paypal, "paypal", "PayPal", (body) => {
-      body.appendChild(linkButton(PAYMENTS.paypal.url, tr.payWith("PayPal"), "primary full"));
       if (Array.isArray(PAYMENTS.paypal.presets) && PAYMENTS.paypal.presets.length) {
         const presets = el("div", { class: "support-presets" });
         PAYMENTS.paypal.presets.forEach((amt) => {
@@ -419,6 +503,8 @@
         });
         body.appendChild(presets);
       }
+      // Any-amount entry; the presets above are just shortcuts into the same link.
+      body.appendChild(amountField(PAYMENTS.paypal.url));
       body.appendChild(modalQr(PAYMENTS.paypal.qr, "PayPal QR"));
     }));
     root.appendChild(direct);
@@ -427,7 +513,12 @@
     const crypto = group(tr.cryptoHeading);
     PAYMENTS.crypto.forEach((c) => {
       crypto._grid.appendChild(triggerCard(LOGOS[c.key] || c.symbol, c.key, c.label, (body) => {
-        body.appendChild(copyRow(null, c.address, c.address));
+        if (Array.isArray(c.addresses)) {
+          // Multiple receive formats (e.g. BTC Taproot + Native SegWit), each labelled.
+          c.addresses.forEach((a) => body.appendChild(copyRow(a.label, a.address, a.address)));
+        } else {
+          body.appendChild(copyRow(null, c.address, c.address));
+        }
         body.appendChild(modalQr(c.qr, `${c.label} QR`));
       }));
     });

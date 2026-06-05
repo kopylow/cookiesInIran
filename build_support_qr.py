@@ -34,11 +34,11 @@ OUT_DIR = os.path.join(HERE, "web-landing-page", "support", "qr")
 # Placeholders are obvious on purpose; replace before deploying.
 # ---------------------------------------------------------------------------
 PAYMENTS = {
-    "revolut": "https://revolut.me/REPLACE_ME",
-    "paypal":  "https://paypal.me/REPLACE_ME",
-    "btc":     "bitcoin:REPLACE_ME_BTC_ADDRESS",
-    "eth":     "ethereum:REPLACE_ME_ETH_ADDRESS",
-    "sol":     "solana:REPLACE_ME_SOL_ADDRESS",
+    "revolut": "https://revolut.me/kopylow",
+    "paypal":  "https://paypal.me/kopylow",
+    "btc":     "bitcoin:bc1qlmzpu3neanphpwpl7m0edqevfy45340sutq37j",
+    "eth":     "ethereum:0x1C8A2d42a66DF41C3a0467D659f23d6f8b8A59b2",
+    "sol":     "solana:7gf3oeu38riHM2g8rTtuFYw6vUeEFDQbkVjTVVwDd8no",
 }
 
 

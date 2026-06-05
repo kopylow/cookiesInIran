@@ -2125,6 +2125,27 @@ body[data-theme="dark"] .support-card--feature {
     line-height: 1.45;
     opacity: 0.78;
 }
+/* Small payment-acceptance marks inline after a method title (card + Apple Pay
+   for Revolut). Sized to the title font (1em of the title's 1.05rem) and muted
+   so they read as a hint, not a second badge. */
+.support-card-marks {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-left: 0.45rem;
+    vertical-align: middle;
+    font-size: 1.4rem; /* ~1.33x the title's 1.05rem; fits beside "Revolut" without wrapping */
+}
+.support-card-mark {
+    display: inline-flex;
+    opacity: 0.65;
+}
+.support-card-mark svg {
+    height: 1em;
+    width: auto;
+    display: block;
+    fill: currentColor;
+}
 .support-card-body {
     display: flex;
     flex-direction: column;
@@ -2205,6 +2226,37 @@ body[data-theme="dark"] .support-card--feature {
     flex: 1 1 auto;
     padding: 0.4rem 0.7rem;
     font-size: 0.85rem;
+}
+
+/* Free-entry amount field (PayPal): the input grows, the Pay button hugs its
+   label. Themed with the accent so it matches the surrounding buttons. */
+.support-amount {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+.support-amount-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.55rem 0.8rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--current-accent);
+    background: transparent;
+    color: var(--current-text);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+.support-amount-input::placeholder {
+    color: var(--current-text);
+    opacity: 0.5;
+    font-weight: 400;
+}
+.support-amount-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--current-accent-rgb), 0.25);
+}
+.support-amount .support-btn {
+    flex: 0 0 auto;
 }
 
 /* Copyable value rows (IBAN, crypto addresses) */
@@ -2299,8 +2351,12 @@ body[data-theme="dark"] .support-card--feature {
     color: var(--current-text);
     border-radius: 14px;
     padding: 1.1rem 1.1rem 1.25rem;
-    max-width: 400px;
-    width: 100%;
+    /* Size to content so a full IBAN / address sits on one line when it fits,
+       capped at the viewport. fit-content resolves to the one-line (max-content)
+       width until it hits the cap, where the value wraps instead of overflowing. */
+    width: fit-content;
+    min-width: min(320px, calc(100vw - 2rem));
+    max-width: min(720px, calc(100vw - 2rem));
     max-height: calc(100vh - 2rem);
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -2351,6 +2407,12 @@ body[data-theme="dark"] .support-modal-box {
     overflow-wrap: anywhere;
     word-break: break-word;
 }
+/* Plain message inside a modal (e.g. the "print edition coming soon" note). */
+.support-modal-note {
+    margin: 0;
+    line-height: 1.55;
+    font-size: 0.95rem;
+}
 .support-modal-qr {
     margin-top: 0.3rem;
     display: flex;
@@ -2373,4 +2435,20 @@ body[data-theme="dark"] .support-modal-box {
     .support-meter { padding: 1rem; }
     .support-card { padding: 1rem; }
     .support-group { margin-bottom: 1.75rem; }
+
+    /* Book card: keep the free-PDF and printed-book (Amazon) links side by
+       side on phones instead of letting the row wrap them into a stack, so the
+       two options read as one paired choice. Equal-width columns (flex: 1 1 0)
+       with min-width: 0 let long labels wrap inside each button rather than
+       blowing out the row. */
+    .support-btn-row {
+        flex-wrap: nowrap;
+    }
+    .support-btn-row .support-btn {
+        flex: 1 1 0;
+        min-width: 0;
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
+        font-size: 0.82rem;
+    }
 }
