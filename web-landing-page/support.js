@@ -19,7 +19,13 @@
   const PAYMENTS = {
     revolut: {
       url: "https://revolut.me/REPLACE_ME",
+      // Recipient name: required by virtually every banking app, and matched by the
+      // EU-mandatory Verification of Payee check, so it must equal the account holder.
+      holder: "REPLACE_ME_ACCOUNT_HOLDER",
       iban: "DE00 0000 0000 0000 0000 00",
+      // BIC is optional for SEPA (IBAN-only since 2016); only non-SEPA/international
+      // senders need it. Leave "" to hide the row.
+      bic: "REVOLT21",
       qr: "support/qr/revolut.svg",
     },
     paypal: {
@@ -53,6 +59,9 @@
       '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.9133 6.9566C20.9133 3.1208 17.7898 0 13.9503 0H2.424v3.8605h10.9782c1.7376 0 3.177 1.3651 3.2087 3.043.016.84-.2994 1.633-.8878 2.2324-.5886.5998-1.375.9303-2.2144.9303H9.2322a.2756.2756 0 0 0-.2755.2752v3.431c0 .0585.018.1142.052.1612L16.2646 24h5.3114l-7.2727-10.094c3.6625-.1838 6.61-3.2612 6.61-6.9494zM6.8943 5.9229H2.424V24h4.4704z"/></svg>',
     paypal:
       '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.607 4.653H8.941L6.645 19.251H1.82L4.862 0h7.995c3.754 0 6.375 2.294 6.473 5.513-.648-.478-2.105-.86-3.722-.86m6.57 5.546c0 3.41-3.01 6.853-6.958 6.853h-2.493L11.595 24H6.74l1.845-11.538h3.592c4.208 0 7.346-3.634 7.153-6.949a5.24 5.24 0 0 1 2.848 4.686M9.653 5.546h6.408c.907 0 1.942.222 2.363.541-.195 2.741-2.655 5.483-6.441 5.483H8.714Z"/></svg>',
+    // Generic bank/"account balance" mark for the SEPA bank-transfer card.
+    bank:
+      '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 10h3v7H4v-7zm6.5 0h3v7h-3v-7zM2 19h19v3H2v-3zm15-9h3v7h-3v-7zm-5.5-9L2 6v2h19V6l-9.5-5z"/></svg>',
     btc:
       '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.548v-.002zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.705-.167-1.064-.25l.526-2.127-1.32-.33-.54 2.165c-.285-.067-.565-.132-.84-.2l-1.815-.45-.35 1.407s.975.225.955.236c.535.136.63.486.615.766l-1.477 5.92c-.075.166-.24.406-.614.314.015.02-.96-.24-.96-.24l-.66 1.51 1.71.426.93.242-.54 2.19 1.32.327.54-2.17c.36.1.705.19 1.05.273l-.51 2.154 1.32.33.545-2.19c2.24.427 3.93.257 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.193 1.5-.76 1.68-1.93h.01zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.72-2.9c.896.23 3.757.67 3.33 2.37zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.64c.744.18 3.137.524 2.75 2.084v.006z"/></svg>',
     eth:
@@ -80,16 +89,19 @@
       directHeading: "Direkt unterstützen",
       cryptoHeading: "Krypto",
       payWith: (n) => `Mit ${n} bezahlen`,
+      holderLabel: "Empfänger",
       ibanLabel: "IBAN",
+      bicLabel: "BIC",
       showQr: "QR anzeigen",
       hideQr: "QR ausblenden",
       copy: "Kopieren",
       copied: "Kopiert!",
+      closeLabel: "Schließen",
     },
     en: {
       heading: "Help me rescue my W124",
       intro: "As you can probably imagine, this whole story cost me a serious amount of money: court, lawyer, translators, bail, hotels and flights add up frighteningly fast. My loyal W124, my steel tank that carried me through so many countries, is still stuck in Iran to this day. This book is my attempt to turn the whole mess into something good after all. If the story moved you, every bit of support means the world to me.",
-      ask: "I would be grateful for any donation between 5 and 5000 euros, whatever feels right for you. 5000 is obviously a bold number, but if you happen to have no idea what to do with your money: I am bravely holding out my hand. And to keep things fair, I have agreed with Payam that he gets half, after all he is the one who got me out of there.",
+      ask: "I would be grateful for any donation between 5 and 5000 euros, whatever feels right for you. 5000 is quite a statement, of course, but in case you have just come into a rich inheritance or are simply in a generous mood: I am bravely holding out my hand. And don't worry, the money does not all vanish into my pockets. With Payam, the man who pulled me out of this whole mess, I have agreed that he gets half. Without him I would probably be typing these lines from an Iranian cell, and that would be considerably less comfortable for all of us. And if your pockets happen to be empty right now, that is no problem at all: if you are someone, or know someone who knows someone, who could give my story a bit more reach (press, podcast, social media or simply a person with a big megaphone), then that means at least as much to me as a donation.",
       contact: "Feel free to drop your contact (phone, email or Instagram) in the payment reference. I would genuinely love to thank you in person, even if a cookie is hard to send by mail.",
       standHeading: "Donations so far",
       standOf: (r, g) => `${r} of ${g}`,
@@ -102,16 +114,19 @@
       directHeading: "Support directly",
       cryptoHeading: "Crypto",
       payWith: (n) => `Pay with ${n}`,
+      holderLabel: "Recipient",
       ibanLabel: "IBAN",
+      bicLabel: "BIC",
       showQr: "Show QR",
       hideQr: "Hide QR",
       copy: "Copy",
       copied: "Copied!",
+      closeLabel: "Close",
     },
     ru: {
       heading: "Помочь вызволить мой W124",
       intro: "Как вы наверняка можете себе представить, вся эта история обошлась мне в круглую сумму: суд, адвокат, переводчики, залог, гостиницы и перелёты складываются пугающе быстро. Мой верный W124, мой стальной танк, что провёз меня через столько стран, до сих пор застрял в Иране. Эта книга: моя попытка превратить весь этот хаос во что-то хорошее. Если история вас тронула, для меня бесконечно много значит любая поддержка.",
-      ask: "Я буду рад любому пожертвованию от 5 до 5000 евро, насколько вам комфортно. 5000, конечно, серьёзная заявка, но если вы вдруг не знаете, куда деть деньги: я мужественно подставляю ладонь. И чтобы всё было по-честному, я договорился с Паямом, что половину он забирает себе, ведь именно он меня оттуда вытащил.",
+      ask: "Я буду рад любому донату от 5 до 5000 евро, насколько вам комфортно. 5000, конечно, серьёзная заявка, но если вы вдруг получили богатое наследство или просто в хорошем настроении: я мужественно подставляю ладонь. И не переживайте, деньги не оседают целиком у меня. С Паямом, человеком, который вытащил меня из всей этой передряги, мы договорились, что половину получает он. Без него я, наверное, печатал бы эти строки из иранской камеры, а это было бы заметно неудобнее для всех нас. А если карманы у вас сейчас пусты, это вовсе не проблема: если вы тот человек, или знаете кого-то, кто знает кого-то, кто мог бы дать моей истории чуть больше охвата (пресса, подкаст, соцсети или просто человек с большим мегафоном), для меня это значит как минимум столько же, сколько донат.",
       contact: "В назначении платежа вы можете оставить свой контакт (телефон, e-mail или Instagram). Мне правда хочется поблагодарить вас лично, хотя печенье по почте, увы, не отправишь.",
       standHeading: "Собрано на данный момент",
       standOf: (r, g) => `${r} из ${g}`,
@@ -124,11 +139,14 @@
       directHeading: "Поддержать напрямую",
       cryptoHeading: "Криптовалюта",
       payWith: (n) => `Оплатить через ${n}`,
+      holderLabel: "Получатель",
       ibanLabel: "IBAN",
+      bicLabel: "BIC",
       showQr: "Показать QR",
       hideQr: "Скрыть QR",
       copy: "Копировать",
       copied: "Скопировано!",
+      closeLabel: "Закрыть",
     },
   };
 
@@ -137,7 +155,6 @@
   let currentLang = "de";
   let getLang = () => currentLang;
   let donations = null;
-  let openQr = null; // the single currently-expanded .support-qr block (accordion)
 
   function t() {
     return I18N[currentLang] || I18N.en;
@@ -196,41 +213,38 @@
     });
   }
 
-  // A "QR anzeigen" toggle + a collapsed QR image. Accordion: opening one closes
-  // any other, so the screen never shows more than a single QR (phones get
-  // confused by multiple codes in view).
-  function qrToggle(src, alt) {
-    const wrap = el("div", { class: "support-qr-wrap" });
-    const btn = el("button", { class: "support-qr-toggle", type: "button", "aria-expanded": "false" }, t().showQr);
-    const panel = el("div", { class: "support-qr" });
-    const img = el("img", { src: src, alt: alt, loading: "lazy", width: "220", height: "220" });
-    panel.appendChild(img);
+  // A label/value/copy row (recipient, IBAN, BIC, crypto address). `display` is
+  // shown; `copyVal` is what lands on the clipboard (defaults to `display`) — the
+  // IBAN copies without spaces so it pastes as a valid account number.
+  function copyRow(label, display, copyVal) {
+    const row = el("div", { class: "support-copy-row" });
+    if (label) row.appendChild(el("span", { class: "support-copy-label" }, label));
+    row.appendChild(el("code", { class: "support-copy-val" }, display));
+    const btn = el("button", { class: "support-copy-btn", type: "button" }, t().copy);
+    attachCopy(btn, copyVal != null ? copyVal : display);
+    row.appendChild(btn);
+    return row;
+  }
 
-    function close() {
-      panel.classList.remove("open");
-      btn.setAttribute("aria-expanded", "false");
-      btn.textContent = t().showQr;
-      if (openQr === panel) openQr = null;
-    }
-    function open() {
-      if (openQr && openQr !== panel) {
-        // collapse the previously open QR
-        openQr._close && openQr._close();
-      }
-      panel.classList.add("open");
-      btn.setAttribute("aria-expanded", "true");
-      btn.textContent = t().hideQr;
-      openQr = panel;
-    }
-    panel._close = close;
-    btn.addEventListener("click", () => {
-      if (panel.classList.contains("open")) close();
-      else open();
-    });
-
-    wrap.appendChild(btn);
-    wrap.appendChild(panel);
+  // A QR shown directly (no accordion) — it lives inside a single-method modal,
+  // so there is never more than one code on screen and no toggle is needed.
+  function modalQr(src, alt) {
+    const wrap = el("div", { class: "support-modal-qr" });
+    wrap.appendChild(el("img", { src: src, alt: alt, loading: "lazy", width: "220", height: "220" }));
     return wrap;
+  }
+
+  // Branded badge plate, reused by the trigger cards, the book card, and the
+  // modal head. SVG marks render inline (inherit white fill); glyphs stay text.
+  function makeBadge(badgeGlyph, badgeMod) {
+    const badge = el("span", { class: "support-badge support-badge--" + badgeMod, "aria-hidden": "true" });
+    if (typeof badgeGlyph === "string" && badgeGlyph.charAt(0) === "<") {
+      badge.classList.add("support-badge--logo");
+      badge.innerHTML = badgeGlyph;
+    } else {
+      badge.textContent = badgeGlyph;
+    }
+    return badge;
   }
 
   function linkButton(href, label, extraClass) {
@@ -257,18 +271,7 @@
   function methodCard(badgeGlyph, badgeMod, title, subtitle) {
     const card = el("section", { class: "support-card" });
     const head = el("div", { class: "support-card-head" });
-    if (badgeGlyph) {
-      const badge = el("span", { class: "support-badge support-badge--" + badgeMod, "aria-hidden": "true" });
-      // SVG brand marks render inline (so they inherit the badge's white fill);
-      // plain glyphs (e.g. the book "★") stay as text content.
-      if (typeof badgeGlyph === "string" && badgeGlyph.charAt(0) === "<") {
-        badge.classList.add("support-badge--logo");
-        badge.innerHTML = badgeGlyph;
-      } else {
-        badge.textContent = badgeGlyph;
-      }
-      head.appendChild(badge);
-    }
+    if (badgeGlyph) head.appendChild(makeBadge(badgeGlyph, badgeMod));
     const titles = el("div", { class: "support-card-titles" });
     titles.appendChild(el("h4", { class: "support-card-title" }, title));
     if (subtitle) titles.appendChild(el("p", { class: "support-card-sub" }, subtitle));
@@ -280,9 +283,64 @@
     return card;
   }
 
+  // A method card that is itself the trigger: badge + title + chevron, no numbers
+  // shown. Clicking it calls buildBody(modalBody) to fill the detail modal.
+  function triggerCard(badgeGlyph, badgeMod, title, buildBody) {
+    const card = el("button", { class: "support-card support-card--trigger", type: "button" });
+    const head = el("div", { class: "support-card-head" });
+    if (badgeGlyph) head.appendChild(makeBadge(badgeGlyph, badgeMod));
+    const titles = el("div", { class: "support-card-titles" });
+    titles.appendChild(el("span", { class: "support-card-title" }, title));
+    head.appendChild(titles);
+    card.appendChild(head);
+    card.appendChild(el("span", { class: "support-card-chevron", "aria-hidden": "true" }, "›"));
+    card.addEventListener("click", () => openModal(badgeGlyph, badgeMod, title, buildBody));
+    return card;
+  }
+
+  // --- payment-detail modal --------------------------------------------------
+  // Methods no longer print IBANs / addresses inline; each card opens a focused
+  // modal carrying the copyable details + QR. One modal at a time; closes on the
+  // backdrop, the × button, or Escape, and restores focus to the trigger.
+  let modalEl = null;
+  let lastFocus = null;
+
+  function closeModal() {
+    if (!modalEl) return;
+    document.removeEventListener("keydown", onModalKey);
+    modalEl.remove();
+    modalEl = null;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function onModalKey(e) {
+    if (e.key === "Escape") closeModal();
+  }
+  function openModal(badgeGlyph, badgeMod, title, buildBody) {
+    closeModal();
+    lastFocus = document.activeElement;
+    const overlay = el("div", { class: "support-modal" });
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
+    const box = el("div", { class: "support-modal-box", role: "dialog", "aria-modal": "true", "aria-label": title });
+    const head = el("div", { class: "support-modal-head" });
+    if (badgeGlyph) head.appendChild(makeBadge(badgeGlyph, badgeMod));
+    head.appendChild(el("h3", { class: "support-modal-title" }, title));
+    const close = el("button", { class: "support-modal-close", type: "button", "aria-label": t().closeLabel }, "×");
+    close.addEventListener("click", closeModal);
+    head.appendChild(close);
+    box.appendChild(head);
+    const body = el("div", { class: "support-modal-body" });
+    buildBody(body);
+    box.appendChild(body);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    document.addEventListener("keydown", onModalKey);
+    close.focus();
+    modalEl = overlay;
+  }
+
   function render() {
     if (!contentEl) return;
-    openQr = null;
+    closeModal();
     contentEl.innerHTML = "";
     const tr = t();
 
@@ -318,56 +376,60 @@
     }
     root.appendChild(hero);
 
-    // --- FEATURE: buying the book is the easiest help (full-width, accented) ---
+    // --- FEATURE: the book — free PDF (primary) + optional printed copy ---
     const az = PAYMENTS.amazon[currentLang] || PAYMENTS.amazon.en;
+    const pdfHref = PAYMENTS.pdf[currentLang] || PAYMENTS.pdf.en;
     const feat = methodCard("★", "book", tr.buyHeading, tr.buyNote);
     feat.classList.add("support-card--feature");
     const buyRow = el("div", { class: "support-btn-row" });
-    if (az && az.print) buyRow.appendChild(linkButton(az.print, tr.buyPrint, "primary"));
-    if (az && az.kindle) buyRow.appendChild(linkButton(az.kindle, tr.buyKindle));
+    if (pdfHref) {
+      // Same-origin file, so the `download` attribute is honoured and the PDF
+      // saves under its localized name instead of opening inline.
+      buyRow.appendChild(
+        el("a", { class: "support-btn primary", href: pdfHref, download: "" }, tr.buyPdf)
+      );
+    }
+    if (az && az.print) buyRow.appendChild(linkButton(az.print, tr.buyPrint));
     feat._body.appendChild(buyRow);
     root.appendChild(feat);
 
-    // --- DIRECT SUPPORT: Revolut + PayPal as side-by-side cards ---
+    // --- DIRECT SUPPORT: Revolut + PayPal as trigger cards -> detail modal ---
     const direct = group(tr.directHeading);
 
-    const rev = methodCard(LOGOS.revolut, "revolut", "Revolut");
-    rev._body.appendChild(linkButton(PAYMENTS.revolut.url, tr.payWith("Revolut"), "primary full"));
-    const ibanRow = el("div", { class: "support-copy-row" });
-    ibanRow.appendChild(el("span", { class: "support-copy-label" }, tr.ibanLabel));
-    ibanRow.appendChild(el("code", { class: "support-copy-val" }, PAYMENTS.revolut.iban));
-    const ibanCopy = el("button", { class: "support-copy-btn", type: "button" }, tr.copy);
-    attachCopy(ibanCopy, PAYMENTS.revolut.iban.replace(/\s+/g, ""));
-    ibanRow.appendChild(ibanCopy);
-    rev._body.appendChild(ibanRow);
-    rev._body.appendChild(qrToggle(PAYMENTS.revolut.qr, "Revolut QR"));
-    direct._grid.appendChild(rev);
+    // IBAN: the SEPA details for the (Revolut) account, shown first. No QR — the
+    // only QR we generate encodes the Revolut-pay link, not a SEPA giro code.
+    direct._grid.appendChild(triggerCard(LOGOS.bank, "bank", "SEPA/IBAN", (body) => {
+      body.appendChild(copyRow(tr.holderLabel, PAYMENTS.revolut.holder));
+      body.appendChild(copyRow(tr.ibanLabel, PAYMENTS.revolut.iban, PAYMENTS.revolut.iban.replace(/\s+/g, "")));
+      if (PAYMENTS.revolut.bic) body.appendChild(copyRow(tr.bicLabel, PAYMENTS.revolut.bic));
+    }));
 
-    const pp = methodCard(LOGOS.paypal, "paypal", "PayPal");
-    pp._body.appendChild(linkButton(PAYMENTS.paypal.url, tr.payWith("PayPal"), "primary full"));
-    if (Array.isArray(PAYMENTS.paypal.presets) && PAYMENTS.paypal.presets.length) {
-      const presets = el("div", { class: "support-presets" });
-      PAYMENTS.paypal.presets.forEach((amt) => {
-        presets.appendChild(linkButton(`${PAYMENTS.paypal.url}/${amt}`, money(amt), "preset"));
-      });
-      pp._body.appendChild(presets);
-    }
-    pp._body.appendChild(qrToggle(PAYMENTS.paypal.qr, "PayPal QR"));
-    direct._grid.appendChild(pp);
+    // Revolut: pay straight from the app via the revolut.me link + its QR.
+    direct._grid.appendChild(triggerCard(LOGOS.revolut, "revolut", "Revolut", (body) => {
+      body.appendChild(linkButton(PAYMENTS.revolut.url, tr.payWith("Revolut"), "primary full"));
+      body.appendChild(modalQr(PAYMENTS.revolut.qr, "Revolut QR"));
+    }));
+
+    direct._grid.appendChild(triggerCard(LOGOS.paypal, "paypal", "PayPal", (body) => {
+      body.appendChild(linkButton(PAYMENTS.paypal.url, tr.payWith("PayPal"), "primary full"));
+      if (Array.isArray(PAYMENTS.paypal.presets) && PAYMENTS.paypal.presets.length) {
+        const presets = el("div", { class: "support-presets" });
+        PAYMENTS.paypal.presets.forEach((amt) => {
+          presets.appendChild(linkButton(`${PAYMENTS.paypal.url}/${amt}`, money(amt), "preset"));
+        });
+        body.appendChild(presets);
+      }
+      body.appendChild(modalQr(PAYMENTS.paypal.qr, "PayPal QR"));
+    }));
     root.appendChild(direct);
 
-    // --- CRYPTO: one card per coin, branded badge ---
+    // --- CRYPTO: one trigger card per coin -> detail modal ---
     const crypto = group(tr.cryptoHeading);
     PAYMENTS.crypto.forEach((c) => {
-      const card = methodCard(LOGOS[c.key] || c.symbol, c.key, c.label);
-      const row = el("div", { class: "support-copy-row" });
-      row.appendChild(el("code", { class: "support-copy-val support-addr" }, c.address));
-      const copy = el("button", { class: "support-copy-btn", type: "button" }, tr.copy);
-      attachCopy(copy, c.address);
-      row.appendChild(copy);
-      card._body.appendChild(row);
-      card._body.appendChild(qrToggle(c.qr, `${c.label} QR`));
-      crypto._grid.appendChild(card);
+      crypto._grid.appendChild(triggerCard(LOGOS[c.key] || c.symbol, c.key, c.label, (body) => {
+        body.appendChild(copyRow(null, c.address, c.address));
+        body.appendChild(modalQr(c.qr, `${c.label} QR`));
+      }));
     });
     root.appendChild(crypto);
 
