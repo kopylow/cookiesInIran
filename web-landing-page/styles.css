@@ -60,6 +60,7 @@ body {
     --current-line-height: var(--line-height-fluid);
     --current-text-align: justify;
     --site-easing: cubic-bezier(0.4, 0, 0.2, 1);
+    color-scheme: light;
 }
 
 body[data-theme="dark"] {
@@ -71,6 +72,7 @@ body[data-theme="dark"] {
     --current-max-width: var(--container-max-width-fluid);
     --current-line-height: var(--line-height-fluid);
     --current-text-align: justify;
+    color-scheme: dark;
 }
 
 .chapter {
@@ -452,7 +454,7 @@ button:hover, .nav-link:hover {
 }
 
 select {
-    background: transparent;
+    background-color: var(--current-bg);
     border: 1px solid var(--current-text);
     color: var(--current-text);
     padding: 0.25rem 0.5rem;
