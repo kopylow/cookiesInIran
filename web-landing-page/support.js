@@ -39,20 +39,36 @@
     },
   };
 
+  // Official brand marks (single-path, monochrome) from simple-icons, rendered
+  // inline so they inherit the badge's white `color` via fill="currentColor".
+  // Vector + no emoji = identical on every platform (see styles.css badge note).
+  const LOGOS = {
+    revolut:
+      '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.9133 6.9566C20.9133 3.1208 17.7898 0 13.9503 0H2.424v3.8605h10.9782c1.7376 0 3.177 1.3651 3.2087 3.043.016.84-.2994 1.633-.8878 2.2324-.5886.5998-1.375.9303-2.2144.9303H9.2322a.2756.2756 0 0 0-.2755.2752v3.431c0 .0585.018.1142.052.1612L16.2646 24h5.3114l-7.2727-10.094c3.6625-.1838 6.61-3.2612 6.61-6.9494zM6.8943 5.9229H2.424V24h4.4704z"/></svg>',
+    paypal:
+      '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.607 4.653H8.941L6.645 19.251H1.82L4.862 0h7.995c3.754 0 6.375 2.294 6.473 5.513-.648-.478-2.105-.86-3.722-.86m6.57 5.546c0 3.41-3.01 6.853-6.958 6.853h-2.493L11.595 24H6.74l1.845-11.538h3.592c4.208 0 7.346-3.634 7.153-6.949a5.24 5.24 0 0 1 2.848 4.686M9.653 5.546h6.408c.907 0 1.942.222 2.363.541-.195 2.741-2.655 5.483-6.441 5.483H8.714Z"/></svg>',
+    btc:
+      '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.548v-.002zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.705-.167-1.064-.25l.526-2.127-1.32-.33-.54 2.165c-.285-.067-.565-.132-.84-.2l-1.815-.45-.35 1.407s.975.225.955.236c.535.136.63.486.615.766l-1.477 5.92c-.075.166-.24.406-.614.314.015.02-.96-.24-.96-.24l-.66 1.51 1.71.426.93.242-.54 2.19 1.32.327.54-2.17c.36.1.705.19 1.05.273l-.51 2.154 1.32.33.545-2.19c2.24.427 3.93.257 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.193 1.5-.76 1.68-1.93h.01zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.72-2.9c.896.23 3.757.67 3.33 2.37zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.64c.744.18 3.137.524 2.75 2.084v.006z"/></svg>',
+    eth:
+      '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 17.97L4.58 13.62 11.943 24l7.37-10.38-7.372 4.35h.003zM12.056 0L4.69 12.223l7.365 4.354 7.365-4.35L12.056 0z"/></svg>',
+    sol:
+      '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m23.8764 18.0313-3.962 4.1393a.9201.9201 0 0 1-.306.2106.9407.9407 0 0 1-.367.0742H.4599a.4689.4689 0 0 1-.2522-.0733.4513.4513 0 0 1-.1696-.1962.4375.4375 0 0 1-.0314-.2545.4438.4438 0 0 1 .117-.2298l3.9649-4.1393a.92.92 0 0 1 .3052-.2102.9407.9407 0 0 1 .3658-.0746H23.54a.4692.4692 0 0 1 .2523.0734.4531.4531 0 0 1 .1697.196.438.438 0 0 1 .0313.2547.4442.4442 0 0 1-.1169.2297zm-3.962-8.3355a.9202.9202 0 0 0-.306-.2106.941.941 0 0 0-.367-.0742H.4599a.4687.4687 0 0 0-.2522.0734.4513.4513 0 0 0-.1696.1961.4376.4376 0 0 0-.0314.2546.444.444 0 0 0 .117.2297l3.9649 4.1394a.9204.9204 0 0 0 .3052.2102c.1154.049.24.0744.3658.0746H23.54a.469.469 0 0 0 .2523-.0734.453.453 0 0 0 .1697-.1961.4382.4382 0 0 0 .0313-.2546.4444.4444 0 0 0-.1169-.2297zM.46 6.7225h18.7815a.9411.9411 0 0 0 .367-.0742.9202.9202 0 0 0 .306-.2106l3.962-4.1394a.4442.4442 0 0 0 .117-.2297.4378.4378 0 0 0-.0314-.2546.453.453 0 0 0-.1697-.196.469.469 0 0 0-.2523-.0734H4.7596a.941.941 0 0 0-.3658.0745.9203.9203 0 0 0-.3052.2102L.1246 5.9687a.4438.4438 0 0 0-.1169.2295.4375.4375 0 0 0 .0312.2544.4512.4512 0 0 0 .1692.196.4689.4689 0 0 0 .2518.0739z"/></svg>',
+  };
+
   const LOCALE = { de: "de-DE", en: "en-US", ru: "ru-RU" };
 
   const I18N = {
     de: {
-      heading: "Dieses Projekt unterstützen",
-      intro: "Dieses Buch und die ganze Geschichte dahinter haben mich viel gekostet: Gericht, Anwalt, Übersetzer, Hotels und Flüge summieren sich schnell. Wenn dich die Geschichte berührt hat, freue ich mich sehr über jede Unterstützung.",
-      ask: "Ich bitte um eine Spende zwischen 5 und 5000 Euro, ganz so, wie es für dich passt.",
-      contact: "Hinterlasse im Verwendungszweck gerne deinen Kontakt (Telefon, E-Mail oder Instagram), damit ich mich persönlich bei dir bedanken kann.",
+      heading: "Die Rettung meines W124 unterstützen",
+      intro: "Wie ihr euch sicherlich vorstellen könnt, hat mich diese ganze Geschichte eine ganze Stange Geld gekostet: Gericht, Anwalt, Übersetzer, Kaution, Hotels und Flüge summieren sich erschreckend schnell. Mein W124, mein treuer Panzer aus Stahl, der mich durch so viele Länder getragen hat, steckt bis heute im Iran fest. Dieses Buch ist mein Versuch, aus dem ganzen Schlamassel doch noch etwas Gutes zu machen. Wenn euch die Geschichte berührt hat, bedeutet mir jede Unterstützung unglaublich viel.",
+      ask: "Ich freue mich über jede Spende zwischen 5 und 5000 Euro, ganz so, wie es für euch passt. 5000 sind natürlich eine Ansage, aber falls ihr gerade reich geerbt habt oder einfach gut drauf seid: Ich halte tapfer die Hand auf. Und keine Sorge, das Geld versickert nicht komplett bei mir. Mit Payam, dem Mann, der mich aus diesem ganzen Schlamassel gezogen hat, habe ich abgemacht, dass er die Hälfte bekommt. Ohne ihn würde ich diese Zeilen vermutlich aus einer iranischen Zelle tippen, und das wäre für uns alle deutlich unbequemer. Und falls eure Taschen gerade leer sind, ist das überhaupt kein Problem: Wenn ihr jemand seid, oder jemanden kennt, der jemanden kennt, der meiner Geschichte etwas mehr Reichweite geben könnte (Presse, Podcast, Social Media oder einfach ein Mensch mit großem Megafon), dann ist mir das mindestens genauso viel wert wie eine Spende.",
+      contact: "Schreibt mir gerne euren Kontakt in den Verwendungszweck (Telefon, E-Mail oder Instagram). Ich bedanke mich wirklich gern persönlich bei euch, auch wenn ein Keks per Post leider schwer zu verschicken ist.",
       standHeading: "Spendenstand",
       standOf: (r, g) => `${r} von ${g}`,
       standUpdated: (d) => `Stand: ${d}`,
       standNote: "Wird jeden Montag aktualisiert.",
       buyHeading: "Buch kaufen",
-      buyNote: "Das Buch zu kaufen ist die einfachste Art zu helfen: Du bekommst etwas und ich erhalte knapp 4 Euro pro Exemplar.",
+      buyNote: "Das Buch zu kaufen ist die einfachste Art zu helfen: Ihr bekommt die ganze Geschichte und könnt es bei Amazon auch als physische Ausgabe bestellen. Davon bekomme ich etwas weniger als 4 Euro pro Buch.",
       buyPrint: "Als Buch (Amazon)",
       buyKindle: "Als Kindle (Amazon)",
       directHeading: "Direkt unterstützen",
@@ -65,16 +81,16 @@
       copied: "Kopiert!",
     },
     en: {
-      heading: "Support this project",
-      intro: "This book and the whole story behind it cost me a lot: court, lawyer, translators, hotels and flights add up fast. If the story moved you, any support is hugely appreciated.",
-      ask: "I am asking for a donation between 5 and 5000 euros, whatever feels right for you.",
-      contact: "Feel free to leave your contact (phone, email or Instagram) in the payment reference, so I can thank you personally.",
+      heading: "Help me rescue my W124",
+      intro: "As you can probably imagine, this whole story cost me a serious amount of money: court, lawyer, translators, bail, hotels and flights add up frighteningly fast. My loyal W124, my steel tank that carried me through so many countries, is still stuck in Iran to this day. This book is my attempt to turn the whole mess into something good after all. If the story moved you, every bit of support means the world to me.",
+      ask: "I would be grateful for any donation between 5 and 5000 euros, whatever feels right for you. 5000 is obviously a bold number, but if you happen to have no idea what to do with your money: I am bravely holding out my hand. And to keep things fair, I have agreed with Payam that he gets half, after all he is the one who got me out of there.",
+      contact: "Feel free to drop your contact (phone, email or Instagram) in the payment reference. I would genuinely love to thank you in person, even if a cookie is hard to send by mail.",
       standHeading: "Donations so far",
       standOf: (r, g) => `${r} of ${g}`,
       standUpdated: (d) => `As of: ${d}`,
       standNote: "Updated every Monday.",
       buyHeading: "Buy the book",
-      buyNote: "Buying the book is the easiest way to help: you get something, and I earn almost 4 per copy.",
+      buyNote: "Buying the book is the easiest way to help: you get the whole story, and you can also order it as a physical edition on Amazon. I earn a little under 4 euros per copy.",
       buyPrint: "Paperback (Amazon)",
       buyKindle: "Kindle (Amazon)",
       directHeading: "Support directly",
@@ -87,16 +103,16 @@
       copied: "Copied!",
     },
     ru: {
-      heading: "Поддержать проект",
-      intro: "Эта книга и вся история за ней дорого мне обошлись: суд, адвокат, переводчики, гостиницы и перелёты быстро складываются в крупную сумму. Если история вас тронула, я буду благодарен любой поддержке.",
-      ask: "Прошу о пожертвовании от 5 до 5000 евро, насколько вам комфортно.",
-      contact: "В назначении платежа вы можете оставить свой контакт (телефон, e-mail или Instagram), чтобы я мог поблагодарить вас лично.",
+      heading: "Помочь вызволить мой W124",
+      intro: "Как вы наверняка можете себе представить, вся эта история обошлась мне в круглую сумму: суд, адвокат, переводчики, залог, гостиницы и перелёты складываются пугающе быстро. Мой верный W124, мой стальной танк, что провёз меня через столько стран, до сих пор застрял в Иране. Эта книга: моя попытка превратить весь этот хаос во что-то хорошее. Если история вас тронула, для меня бесконечно много значит любая поддержка.",
+      ask: "Я буду рад любому пожертвованию от 5 до 5000 евро, насколько вам комфортно. 5000, конечно, серьёзная заявка, но если вы вдруг не знаете, куда деть деньги: я мужественно подставляю ладонь. И чтобы всё было по-честному, я договорился с Паямом, что половину он забирает себе, ведь именно он меня оттуда вытащил.",
+      contact: "В назначении платежа вы можете оставить свой контакт (телефон, e-mail или Instagram). Мне правда хочется поблагодарить вас лично, хотя печенье по почте, увы, не отправишь.",
       standHeading: "Собрано на данный момент",
       standOf: (r, g) => `${r} из ${g}`,
       standUpdated: (d) => `По состоянию на: ${d}`,
       standNote: "Обновляется каждый понедельник.",
       buyHeading: "Купить книгу",
-      buyNote: "Купить книгу: самый простой способ помочь. Вы получаете книгу, а я зарабатываю почти 4 за экземпляр.",
+      buyNote: "Купить книгу: самый простой способ помочь. Вы получаете всю историю, а на Amazon можно заказать и печатное издание. С каждого экземпляра мне достаётся чуть меньше 4 евро.",
       buyPrint: "Печатная книга (Amazon)",
       buyKindle: "Kindle (Amazon)",
       directHeading: "Поддержать напрямую",
@@ -236,7 +252,16 @@
     const card = el("section", { class: "support-card" });
     const head = el("div", { class: "support-card-head" });
     if (badgeGlyph) {
-      head.appendChild(el("span", { class: "support-badge support-badge--" + badgeMod, "aria-hidden": "true" }, badgeGlyph));
+      const badge = el("span", { class: "support-badge support-badge--" + badgeMod, "aria-hidden": "true" });
+      // SVG brand marks render inline (so they inherit the badge's white fill);
+      // plain glyphs (e.g. the book "★") stay as text content.
+      if (typeof badgeGlyph === "string" && badgeGlyph.charAt(0) === "<") {
+        badge.classList.add("support-badge--logo");
+        badge.innerHTML = badgeGlyph;
+      } else {
+        badge.textContent = badgeGlyph;
+      }
+      head.appendChild(badge);
     }
     const titles = el("div", { class: "support-card-titles" });
     titles.appendChild(el("h4", { class: "support-card-title" }, title));
@@ -300,7 +325,7 @@
     // --- DIRECT SUPPORT: Revolut + PayPal as side-by-side cards ---
     const direct = group(tr.directHeading);
 
-    const rev = methodCard("R", "revolut", "Revolut");
+    const rev = methodCard(LOGOS.revolut, "revolut", "Revolut");
     rev._body.appendChild(linkButton(PAYMENTS.revolut.url, tr.payWith("Revolut"), "primary full"));
     const ibanRow = el("div", { class: "support-copy-row" });
     ibanRow.appendChild(el("span", { class: "support-copy-label" }, tr.ibanLabel));
@@ -312,7 +337,7 @@
     rev._body.appendChild(qrToggle(PAYMENTS.revolut.qr, "Revolut QR"));
     direct._grid.appendChild(rev);
 
-    const pp = methodCard("P", "paypal", "PayPal");
+    const pp = methodCard(LOGOS.paypal, "paypal", "PayPal");
     pp._body.appendChild(linkButton(PAYMENTS.paypal.url, tr.payWith("PayPal"), "primary full"));
     if (Array.isArray(PAYMENTS.paypal.presets) && PAYMENTS.paypal.presets.length) {
       const presets = el("div", { class: "support-presets" });
@@ -328,7 +353,7 @@
     // --- CRYPTO: one card per coin, branded badge ---
     const crypto = group(tr.cryptoHeading);
     PAYMENTS.crypto.forEach((c) => {
-      const card = methodCard(c.symbol, c.key, c.label);
+      const card = methodCard(LOGOS[c.key] || c.symbol, c.key, c.label);
       const row = el("div", { class: "support-copy-row" });
       row.appendChild(el("code", { class: "support-copy-val support-addr" }, c.address));
       const copy = el("button", { class: "support-copy-btn", type: "button" }, tr.copy);

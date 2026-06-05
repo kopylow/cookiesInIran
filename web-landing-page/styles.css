@@ -641,6 +641,17 @@ html[dir="rtl"] #page-wrapper.drawer-open-fullscreen {
     inset-inline-end: -100vw;
 }
 
+/* The support drawer carries longer, narrative copy. Give it more horizontal
+   room on desktop so the text does not get squeezed into a tall ribbon.
+   Overriding --drawer-width (not just width) keeps the hidden/open offsets,
+   which are derived from the variable, in sync. Scoped to #drawer-support so
+   the comments and audio drawers stay at the default width. */
+@media (min-width: 768px) {
+    #drawer-support {
+        --drawer-width: 460px;
+    }
+}
+
 .drawer.open {
     inset-inline-end: 0;
 }
@@ -1832,9 +1843,11 @@ body.mini-player-open #global-footer {
     margin-bottom: 72px;
 }
 
-/* The mini-player is fixed above the drawer, so the audio chapter list
-   needs room to scroll its last rows clear of it. */
-body.mini-player-open #drawer-audio .drawer-content {
+/* The mini-player is fixed above any open drawer, so all drawers need
+   room to scroll their last rows clear of it. */
+body.mini-player-open #drawer-audio .drawer-content,
+body.mini-player-open #drawer-support .drawer-content,
+body.mini-player-open #drawer-comments .drawer-content {
     padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
 }
 
@@ -1885,24 +1898,26 @@ body.mini-player-open #drawer-audio .drawer-content {
    12. Support / donations drawer
    -------------------------------------------------------------------------- */
 .support {
-    max-width: 960px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
 /* ---- Hero: the pitch (left) + a prominent donation meter (right) ---- */
+/* Single column: pitch on top, donation meter full-width below it. Earlier this
+   was a 2-col grid (text | meter), but with the longer narrative copy the text
+   column grew much taller than the short meter, leaving an awkward empty block
+   under the meter. Stacking removes that mismatch and lets the meter use the
+   full width. */
 .support-hero {
-    display: grid;
-    gap: 1.5rem 2rem;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
     margin-bottom: 2.5rem;
 }
-@media (min-width: 760px) {
-    .support-hero.has-meter {
-        grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr);
-    }
-}
+/* No separate cap here: the hero text fills the same width as the meter and the
+   cards below, so every block in the drawer shares one flush edge. */
 .support-hero-text {
-    max-width: 640px;
+    max-width: none;
 }
 .support-title {
     font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.1rem);
@@ -2107,6 +2122,13 @@ body[data-theme="dark"] .support-card--feature {
 .support-badge--btc { background: #f7931a; }
 .support-badge--eth { background: #627eea; }
 .support-badge--sol { background: linear-gradient(135deg, #9945ff, #14f195); }
+/* Inline brand-logo badges: SVG fills ~60% of the plate and inherits white. */
+.support-badge--logo svg {
+    width: 60%;
+    height: 60%;
+    display: block;
+    fill: currentColor;
+}
 
 /* Link buttons (Amazon, Revolut, PayPal, presets) */
 .support-btn-row,
