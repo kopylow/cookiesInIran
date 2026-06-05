@@ -1702,8 +1702,8 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     color: var(--current-text);
     font-size: 1.1rem;
     line-height: 1;
-    min-width: 36px;
-    min-height: 36px;
+    min-width: 32px;
+    min-height: 32px;
     cursor: pointer;
     transition: color 0.2s ease;
 }
@@ -1733,8 +1733,8 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     -webkit-mask-size: contain;
     mask-size: contain;
 }
-.mp-play::before { width: 22px; height: 22px; }
-.mp-prev::before, .mp-next::before { width: 20px; height: 20px; }
+.mp-play::before { width: 18px; height: 18px; }
+.mp-prev::before, .mp-next::before { width: 15px; height: 15px; }
 
 .mp-play::before {
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpolygon points='6 4 20 12 6 20 6 4'/%3E%3C/svg%3E");
@@ -1769,18 +1769,21 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 0.9rem;
+    font-size: 0.78rem;
     font-weight: 600;
 }
+/* Stack the time UNDER the seek bar (column) instead of beside it, so the bar
+   spans the full width and the row reads cleaner. */
 .mp-seekrow {
     display: flex;
-    align-items: center;
-    gap: 0.6rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.15rem;
 }
 .mp-time {
-    flex: 0 0 auto;
-    font-size: 0.75rem;
-    opacity: 0.65;
+    align-self: flex-end; /* anchor to the end of the progress it represents */
+    font-size: 0.7rem;
+    opacity: 0.6;
     font-variant-numeric: tabular-nums;
 }
 
@@ -1833,14 +1836,11 @@ body.mini-player-open #drawer-audio .drawer-content {
         bottom: 0;
     }
     /* Show prev/next (chapter skip) on phones too. To fit five controls plus the
-       title on a narrow bar, tighten the row gap and per-button tap target a
-       touch; .mp-meta (flex:1, min-width:0) absorbs the difference by ellipsis. */
+       title on a narrow bar, tighten the row gap; .mp-meta (flex:1, min-width:0)
+       absorbs the difference by ellipsis. */
     .mp-inner {
         gap: 0.25rem;
         padding: 0.5rem 0.6rem;
-    }
-    .mp-btn {
-        min-width: 32px;
     }
     body.mini-player-open #main-content {
         padding-bottom: 140px;
