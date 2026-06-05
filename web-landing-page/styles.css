@@ -1340,12 +1340,6 @@ body[data-theme="dark"] .contact-form { background: rgba(128, 128, 128, 0.06); }
     max-width: 34rem;
     margin: 0 auto;
 }
-.contact-intro {
-    margin: 0 0 1rem;
-    line-height: 1.6;
-    opacity: 0.85;
-    text-align: center;
-}
 .contact-form button[type="submit"] { align-self: center; }
 .verify-cancel {
     background: transparent;

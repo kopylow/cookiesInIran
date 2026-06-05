@@ -16,7 +16,6 @@
 
   const I18N = {
     de: {
-      intro: "Schreib mir gern eine Nachricht: Feedback zum Buch, eine Frage oder einfach ein Hallo. E-Mail und Telefon sind optional, aber wenn du eine Antwort möchtest, hinterlasse bitte zumindest eine E-Mail.",
       name: "Name",
       email: "E-Mail (optional)",
       phone: "Telefon (optional)",
@@ -34,7 +33,6 @@
       privacy: "Datenschutz",
     },
     en: {
-      intro: "Drop me a message: feedback on the book, a question, or simply a hello. Email and phone are optional, but if you would like a reply, please leave at least an email.",
       name: "Name",
       email: "Email (optional)",
       phone: "Phone (optional)",
@@ -52,7 +50,6 @@
       privacy: "Privacy",
     },
     ru: {
-      intro: "Напишите мне: отзыв о книге, вопрос или просто привет. E-mail и телефон необязательны, но если хотите ответ, оставьте, пожалуйста, хотя бы e-mail.",
       name: "Имя",
       email: "E-mail (необязательно)",
       phone: "Телефон (необязательно)",
@@ -178,7 +175,6 @@
     const tr = t();
 
     const wrap = el("div", { class: "contact" });
-    wrap.appendChild(el("p", { class: "contact-intro" }, tr.intro));
 
     const form = el("form", { class: "contact-form", novalidate: "" });
 
