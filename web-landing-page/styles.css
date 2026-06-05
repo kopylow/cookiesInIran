@@ -1777,6 +1777,7 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     white-space: nowrap;
     font-size: 0.78rem;
     font-weight: 600;
+    text-align: center; /* center the title over the full-width seek bar */
 }
 /* Stack the time UNDER the seek bar (column) instead of beside it, so the bar
    spans the full width and the row reads cleaner. */
@@ -1787,7 +1788,7 @@ body[data-theme="dark"] .comment-form { background: rgba(128, 128, 128, 0.06); }
     gap: 0.15rem;
 }
 .mp-time {
-    align-self: flex-end; /* anchor to the end of the progress it represents */
+    align-self: center; /* center the time under the seek bar, matching the title */
     font-size: 0.7rem;
     opacity: 0.6;
     font-variant-numeric: tabular-nums;
