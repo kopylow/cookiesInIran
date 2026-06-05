@@ -1887,9 +1887,11 @@ body.mini-player-open #drawer-comments .drawer-content {
     #drawer-audio .drawer-content {
         padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
     }
-    /* Once playback starts the mini-player sits at bottom:60px on mobile, so the
-       audio list needs more clearance than the bar alone. */
-    body.mini-player-open #drawer-audio .drawer-content {
+    /* Once playback starts the mini-player sits at bottom:60px on mobile, so
+       all drawers need more clearance than the bottom bar alone. */
+    body.mini-player-open #drawer-audio .drawer-content,
+    body.mini-player-open #drawer-support .drawer-content,
+    body.mini-player-open #drawer-comments .drawer-content {
         padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px));
     }
 }
