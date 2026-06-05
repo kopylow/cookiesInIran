@@ -2229,9 +2229,6 @@ body[data-theme="dark"] .support-card--feature {
 .support-badge--revolut { background: #0666eb; }
 .support-badge--bank { background: #4b5a6b; }
 .support-badge--paypal { background: #0070ba; }
-.support-badge--btc { background: #f7931a; }
-.support-badge--eth { background: #627eea; }
-.support-badge--sol { background: linear-gradient(135deg, #9945ff, #14f195); }
 /* Inline brand-logo badges: SVG fills ~60% of the plate and inherits white. */
 .support-badge--logo svg {
     width: 60%;
@@ -2319,7 +2316,7 @@ body[data-theme="dark"] .support-card--feature {
     flex: 0 0 auto;
 }
 
-/* Copyable value rows (IBAN, crypto addresses) */
+/* Copyable value rows (recipient, IBAN, BIC) */
 .support-copy-row {
     display: flex;
     align-items: center;
@@ -2457,7 +2454,7 @@ body[data-theme="dark"] .support-modal-box {
     flex-direction: column;
     gap: 0.7rem;
 }
-/* In the focused modal there is room to show IBANs / crypto addresses in full —
+/* In the focused modal there is room to show IBANs in full —
    override the inline ellipsis truncation so the whole value wraps and stays
    readable (and selectable) instead of being clipped. */
 .support-modal-body .support-copy-val {
