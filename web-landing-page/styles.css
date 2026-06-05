@@ -2199,6 +2199,10 @@ body[data-theme="dark"] .support-card--feature {
     color: var(--current-accent);
     background: transparent;
     text-decoration: none;
+    /* <button> does not inherit font-family by default, so a button.support-btn
+       would render in the UA font while a.support-btn uses the site font. Force
+       inheritance so both element types match. */
+    font-family: inherit;
     font-weight: 600;
     font-size: 0.9rem;
     text-align: center;
