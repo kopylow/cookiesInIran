@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnContact = document.getElementById('btn-contact');
     const btnContactMobile = document.getElementById('btn-contact-mobile');
     const btnSettingsMobile = document.getElementById('btn-settings-mobile');
+    const btnSettings = document.getElementById('btn-settings');
     const btnAudio = document.getElementById('btn-audio');
     const btnAudioMobile = document.getElementById('btn-audio-mobile');
     const btnAudioHero = document.getElementById('btn-audio-hero');
@@ -86,6 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (btnContactMobile) btnContactMobile.textContent = t.contact;
         if (btnAudioMobile) btnAudioMobile.textContent = t.audiobook;
         if (btnSettingsMobile) btnSettingsMobile.textContent = t.settings;
+        if (btnSettings) btnSettings.setAttribute('aria-label', t.settings);
 
         drawerComments.querySelector('.drawer-header h2').textContent = t.comments;
         drawerSupport.querySelector('.drawer-header h2').textContent = t.support;
@@ -391,20 +393,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Mobile settings popover (gear in the bottom bar). On desktop the same
     // controls live inline in the top bar and this class is simply unused.
+    // Both gears (mobile bottom-bar tab and desktop top-bar gear) carry the
+    // .settings-gear class and toggle the same popover via body.settings-open.
+    const settingsGears = document.querySelectorAll('.settings-gear');
+    function setGearsExpanded(open) {
+        settingsGears.forEach(g => g.setAttribute('aria-expanded', open ? 'true' : 'false'));
+    }
     function closeSettings() {
         document.body.classList.remove('settings-open');
-        if (btnSettingsMobile) btnSettingsMobile.setAttribute('aria-expanded', 'false');
+        setGearsExpanded(false);
     }
-    if (btnSettingsMobile) {
-        btnSettingsMobile.addEventListener('click', (e) => {
+    if (settingsGears.length) {
+        settingsGears.forEach(gear => gear.addEventListener('click', (e) => {
             e.stopPropagation();
             const open = document.body.classList.toggle('settings-open');
-            btnSettingsMobile.setAttribute('aria-expanded', open ? 'true' : 'false');
-        });
-        // Tap outside the popover (and not on the gear) closes it.
+            setGearsExpanded(open);
+        }));
+        // Tap outside the popover (and not on a gear) closes it.
         document.addEventListener('click', (e) => {
             if (!document.body.classList.contains('settings-open')) return;
-            if (e.target.closest('.top-bar-right') || e.target.closest('#btn-settings-mobile')) return;
+            if (e.target.closest('.top-bar-right') || e.target.closest('.settings-gear')) return;
             closeSettings();
         });
     }

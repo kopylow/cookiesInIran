@@ -320,6 +320,14 @@ html[dir="rtl"] .hero-cta {
     gap: calc(1.5rem / var(--zoom, 1));
 }
 
+/* Desktop settings gear: hidden by default so it never leaks onto mobile
+   (where #top-bar is display:contents); the desktop media query reveals it. */
+#btn-settings {
+    display: none;
+    font-size: calc(1.35rem / var(--zoom, 1));
+    line-height: 1;
+}
+
 /* Counter-scale the nav chrome: main.js sets --zoom = currentRoot / baseRoot
    when pinch-zoom changes the root font-size. Dividing these rem sizes by it
    cancels the zoom for the menu only, so just the manuscript text rescales.
@@ -511,6 +519,50 @@ html[dir="rtl"] .hero-cta {
 
     #main-content {
         padding-bottom: 80px; /* Space for bottom bar */
+    }
+}
+
+/* Desktop: the language + theme controls move behind a gear in the top bar,
+   mirroring the mobile settings popover. The top bar and its nav buttons stay;
+   only .top-bar-right is converted from an inline group into a dropdown card
+   anchored under the gear, toggled by the shared body.settings-open class. */
+@media (min-width: 769px) {
+    #btn-settings {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .top-bar-right {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px;
+        min-width: 180px;
+        background-color: var(--current-bg);
+        border: 1px solid rgba(128, 128, 128, 0.3);
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+        z-index: var(--z-index-topbar);
+        display: none;
+    }
+    body.settings-open .top-bar-right {
+        display: flex;
+    }
+
+    .top-bar-right select {
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+    }
+    .top-bar-right #theme-toggle {
+        width: 100%;
+        padding: 10px;
+        font-size: 1.8rem;
+        line-height: 1;
     }
 }
 
