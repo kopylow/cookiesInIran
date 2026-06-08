@@ -405,7 +405,6 @@ html[dir="rtl"] .hero-cta {
         flex: 0 0 auto;
         font-size: 0;
         gap: 0;
-        opacity: 0.75;
     }
     #bottom-bar #btn-settings-mobile::before {
         width: 18px;
