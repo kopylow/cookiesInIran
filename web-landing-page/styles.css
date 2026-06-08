@@ -328,7 +328,7 @@ html[dir="rtl"] .hero-cta {
     display: none;
 }
 #top-bar #btn-settings {
-    font-size: calc(1.8rem / var(--zoom, 1));
+    font-size: calc(1.35rem / var(--zoom, 1));
     line-height: 1;
 }
 
