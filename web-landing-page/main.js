@@ -61,10 +61,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const i18n = {
-        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Support", contact: "Kontakt", audiobook: "Hörbuch", listen: "► Hörbuch", index: "Inhaltsverzeichnis", impressum: "Impressum", privacy: "Datenschutz", settings: "Einstellungen" },
-        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Support", contact: "Contact", audiobook: "Audiobook", listen: "► Audiobook", index: "Index", impressum: "Impressum", privacy: "Privacy", settings: "Settings" },
-        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Поддержка", contact: "Контакты", audiobook: "Аудиокнига", listen: "► Аудиокнига", index: "Оглавление", impressum: "Импрессум", privacy: "Конфиденциальность", settings: "Настройки" },
-        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "پشتیبانی", contact: "تماس", audiobook: "کتاب صوتی", listen: "◄ کتاب صوتی", index: "فهرست", impressum: "اطلاعات حقوقی", privacy: "حریم خصوصی", settings: "تنظیمات" }
+        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Helfen", contact: "Kontakt", audiobook: "Hörbuch", listen: "► Hörbuch", index: "Inhaltsverzeichnis", impressum: "Impressum", privacy: "Datenschutz", settings: "Einstellungen" },
+        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Help", contact: "Contact", audiobook: "Audiobook", listen: "► Audiobook", index: "Index", impressum: "Impressum", privacy: "Privacy", settings: "Settings" },
+        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Помочь", contact: "Контакты", audiobook: "Аудиокнига", listen: "► Аудиокнига", index: "Оглавление", impressum: "Импрессум", privacy: "Конфиденциальность", settings: "Настройки" },
+        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "کمک", contact: "تماس", audiobook: "کتاب صوتی", listen: "◄ کتاب صوتی", index: "فهرست", impressum: "اطلاعات حقوقی", privacy: "حریم خصوصی", settings: "تنظیمات" }
     };
 
     function updateUI(lang) {
