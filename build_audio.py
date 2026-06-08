@@ -119,11 +119,18 @@ def collect_chapters(lang: str) -> list[dict]:
     return chapters
 
 
-def find_zip(lang: str) -> str | None:
-    """Optional 'download all' bundle: audio_src/{lang}/<Title>_Audiobook.zip."""
+def find_bundle(lang: str, ext: str) -> dict | None:
+    """Optional 'download all' bundle: audio_src/{lang}/<Title>_Audiobook.{ext}.
+
+    Returns {"file", "bytes"} so the player can show the download size, or None if
+    the bundle has not been generated yet (build_audio_bundles.py makes them). `ext`
+    is "zip" (per-chapter archive) or "mp3" (single concatenated file).
+    """
     slug = TITLE_MAP.get(lang, "Cookies in Iran").replace(" ", "_")
-    candidate = AUDIO_SRC / lang / f"{slug}_Audiobook.zip"
-    return f"{lang}/{candidate.name}" if candidate.exists() else None
+    candidate = AUDIO_SRC / lang / f"{slug}_Audiobook.{ext}"
+    if not candidate.exists():
+        return None
+    return {"file": f"{lang}/{candidate.name}", "bytes": candidate.stat().st_size}
 
 
 # --- Main ------------------------------------------------------------------
@@ -140,7 +147,8 @@ def main():
         manifest["langs"][lang] = {
             "title": TITLE_MAP.get(lang, "Cookies in Iran"),
             "author": AUTHOR_MAP.get(lang, "Anton Kopylow"),
-            "zip": find_zip(lang),
+            "zip": find_bundle(lang, "zip"),   # {file, bytes} | None — all chapters, archived
+            "full": find_bundle(lang, "mp3"),  # {file, bytes} | None — one concatenated file
             "chapters": chapters,
         }
         has_intro = (AUDIO_SRC / lang / "intro.mp3").exists()

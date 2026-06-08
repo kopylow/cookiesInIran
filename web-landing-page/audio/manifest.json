@@ -4,7 +4,14 @@
     "de": {
       "title": "Kekse im Iran",
       "author": "Anton Kopylow",
-      "zip": null,
+      "zip": {
+        "file": "de/Kekse_im_Iran_Audiobook.zip",
+        "bytes": 160340336
+      },
+      "full": {
+        "file": "de/Kekse_im_Iran_Audiobook.mp3",
+        "bytes": 152406341
+      },
       "chapters": [
         {
           "index": -1,
@@ -179,7 +186,14 @@
     "en": {
       "title": "Cookies in Iran",
       "author": "Anton Kopylow",
-      "zip": null,
+      "zip": {
+        "file": "en/Cookies_in_Iran_Audiobook.zip",
+        "bytes": 143790009
+      },
+      "full": {
+        "file": "en/Cookies_in_Iran_Audiobook.mp3",
+        "bytes": 135769895
+      },
       "chapters": [
         {
           "index": -1,
@@ -354,7 +368,14 @@
     "ru": {
       "title": "Печенье в Иране",
       "author": "Антон Копылов",
-      "zip": null,
+      "zip": {
+        "file": "ru/Печенье_в_Иране_Audiobook.zip",
+        "bytes": 159775379
+      },
+      "full": {
+        "file": "ru/Печенье_в_Иране_Audiobook.mp3",
+        "bytes": 151795077
+      },
       "chapters": [
         {
           "index": -1,

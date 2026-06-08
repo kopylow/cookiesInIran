@@ -66,6 +66,35 @@ def disposition_for(book: str, index: int, title: str):
     return name, header
 
 
+def bundle_disposition(book: str, ext: str):
+    """(download_filename, content_disposition) for a 'download all' bundle.
+
+    Same cross-origin filename logic as chapters (the player links straight at R2, a
+    different origin, so the HTML download attr is ignored — only this header counts),
+    but no track number: '<Book> Audiobook.<ext>'.
+    """
+    name = f"{safe_title(book)} Audiobook.{ext}"
+    ascii_name = ascii_fallback(name)
+    if not ascii_name.lower().endswith(f".{ext}"):
+        ascii_name += f".{ext}"
+    pct = quote(name, safe="")
+    return name, f"attachment; filename=\"{ascii_name}\"; filename*=UTF-8''{pct}"
+
+
+def put_object(key: str, local: Path, content_type: str, cd: str):
+    """One `wrangler r2 object put --remote`. Returns (ok, stderr)."""
+    cmd = [
+        "npx", "wrangler", "r2", "object", "put",
+        f"{BUCKET}/{key}",
+        "--file", str(local),
+        "--content-type", content_type,
+        "--content-disposition", cd,
+        "--remote",                       # MUST: without it, only local dev state is written
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    return res.returncode == 0, res.stderr.strip()[:300]
+
+
 def main() -> int:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     ok = fail = 0
@@ -78,21 +107,33 @@ def main() -> int:
                 print(f"  SKIP {key} (no local master)")
                 continue
             name, cd = disposition_for(book, ch["index"], ch["title"])
-            cmd = [
-                "npx", "wrangler", "r2", "object", "put",
-                f"{BUCKET}/{key}",
-                "--file", str(local),
-                "--content-type", "audio/mpeg",
-                "--content-disposition", cd,
-                "--remote",                       # MUST: without it, only local dev state is written
-            ]
-            res = subprocess.run(cmd, capture_output=True, text=True)
-            if res.returncode == 0:
+            success, err = put_object(key, local, "audio/mpeg", cd)
+            if success:
                 ok += 1
                 print(f"  ok   {key}  ->  {name}")
             else:
                 fail += 1
-                print(f"  FAIL {key}\n{res.stderr.strip()[:300]}")
+                print(f"  FAIL {key}\n{err}")
+
+        # 'Download all' bundles (optional; built by build_audio_bundles.py).
+        for ext, ctype in (("zip", "application/zip"), ("mp3", "audio/mpeg")):
+            entry = block.get("zip" if ext == "zip" else "full")
+            if not entry:
+                continue
+            key = entry["file"]                  # e.g. "en/Cookies_in_Iran_Audiobook.zip"
+            local = AUDIO_SRC / key
+            if not local.exists():
+                print(f"  SKIP {key} (no local bundle)")
+                continue
+            name, cd = bundle_disposition(book, ext)
+            success, err = put_object(key, local, ctype, cd)
+            if success:
+                ok += 1
+                print(f"  ok   {key}  ->  {name}")
+            else:
+                fail += 1
+                print(f"  FAIL {key}\n{err}")
+
     print(f"\nUploaded {ok}, failed {fail}.")
     return 1 if fail else 0
 

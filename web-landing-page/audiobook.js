@@ -22,7 +22,9 @@
   const I18N = {
     de: {
       comingSoon: "Das Hörbuch erscheint bald.",
-      downloadAll: "Alle Kapitel herunterladen (ZIP)",
+      downloadHeading: "Hörbuch herunterladen",
+      downloadZip: "Alle Kapitel (ZIP)",
+      downloadFull: "Eine Datei (MP3)",
       play: "Abspielen",
       pause: "Pause",
       download: "Herunterladen",
@@ -34,7 +36,9 @@
     },
     en: {
       comingSoon: "The audiobook is coming soon.",
-      downloadAll: "Download all chapters (ZIP)",
+      downloadHeading: "Download audiobook",
+      downloadZip: "All chapters (ZIP)",
+      downloadFull: "Single file (MP3)",
       play: "Play",
       pause: "Pause",
       download: "Download",
@@ -46,7 +50,9 @@
     },
     ru: {
       comingSoon: "Аудиокнига скоро появится.",
-      downloadAll: "Скачать все главы (ZIP)",
+      downloadHeading: "Скачать аудиокнигу",
+      downloadZip: "Все главы (ZIP)",
+      downloadFull: "Один файл (MP3)",
       play: "Слушать",
       pause: "Пауза",
       download: "Скачать",
@@ -100,6 +106,12 @@
     return (h ? h + ":" : "") + mm + ":" + String(s).padStart(2, "0");
   }
 
+  function fmtBytes(n) {
+    if (!n) return "";
+    const mb = n / 1048576;
+    return mb >= 1000 ? (mb / 1024).toFixed(1) + " GB" : Math.round(mb) + " MB";
+  }
+
   function el(tag, attrs, text) {
     const node = document.createElement(tag);
     if (attrs) {
@@ -110,6 +122,30 @@
     }
     if (text != null) node.textContent = text;
     return node;
+  }
+
+  // Download-all control: a native <details> disclosure (no click-outside handler
+  // needed, keyboard-accessible for free) listing whichever bundles the manifest
+  // has — ZIP of all chapters and/or the single concatenated MP3, each with its size.
+  // Returns null when neither bundle exists yet (button stays hidden).
+  function downloadMenu(block) {
+    const opts = [];
+    if (block.zip) opts.push({ entry: block.zip, label: t().downloadZip });
+    if (block.full) opts.push({ entry: block.full, label: t().downloadFull });
+    if (!opts.length) return null;
+
+    const details = el("details", { class: "audio-dl-menu" });
+    details.appendChild(el("summary", { class: "audio-dl-summary" }, t().downloadHeading));
+    const menu = el("div", { class: "audio-dl-options" });
+    opts.forEach((o) => {
+      const a = el("a", { class: "audio-dl-option", href: urlFor(o.entry), download: "" });
+      a.appendChild(el("span", { class: "audio-dl-option-label" }, o.label));
+      if (o.entry.bytes) a.appendChild(el("span", { class: "audio-dl-option-size" }, fmtBytes(o.entry.bytes)));
+      a.addEventListener("click", () => { details.open = false; }); // collapse after choosing
+      menu.appendChild(a);
+    });
+    details.appendChild(menu);
+    return details;
   }
 
   // --- chapter list (drawer) ---
@@ -129,12 +165,13 @@
 
     const block = manifest.langs[currentLang];
 
-    // Header actions: optional download-all
-    const actions = el("div", { class: "audio-actions" });
-    if (block.zip) {
-      actions.appendChild(el("a", { class: "audio-action-link", href: urlFor({ file: block.zip }), download: "" }, t().downloadAll));
+    // Header actions: optional download-all menu (ZIP and/or single MP3)
+    const menu = downloadMenu(block);
+    if (menu) {
+      const actions = el("div", { class: "audio-actions" });
+      actions.appendChild(menu);
+      contentEl.appendChild(actions);
     }
-    contentEl.appendChild(actions);
 
     const list = el("div", { class: "audio-list" });
     chapters.forEach((ch, pos) => {

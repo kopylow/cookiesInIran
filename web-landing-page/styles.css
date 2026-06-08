@@ -524,6 +524,14 @@ html[dir="rtl"] .hero-cta {
     #main-content {
         padding-bottom: 80px; /* Space for bottom bar */
     }
+
+    /* #global-footer is a sibling after </main>, so #main-content's padding
+       never protects it - the legal links land behind the fixed 60px bar.
+       Reserve space so the footer scrolls fully clear. (The mini-player-open
+       rule below overrides this with a larger value when audio is playing.) */
+    #global-footer {
+        margin-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    }
 }
 
 /* Desktop: the language + theme controls move behind a gear in the top bar,
@@ -1737,16 +1745,54 @@ body[data-theme="dark"] .contact-form { background: rgba(128, 128, 128, 0.06); }
     margin-bottom: 1.25rem;
 }
 
-.audio-action-link {
+/* Download-all disclosure: a <summary> button that expands to ZIP / single-MP3 links. */
+.audio-dl-menu {
+    align-self: flex-start;
+}
+.audio-dl-summary {
+    cursor: pointer;
+    list-style: none; /* hide default triangle; we add our own caret below */
     color: var(--current-accent);
-    text-decoration: none;
     font-weight: 600;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
-.audio-action-link:hover {
+.audio-dl-summary::-webkit-details-marker {
+    display: none;
+}
+.audio-dl-summary::after {
+    content: " \25BE"; /* caret down */
+    display: inline-block;
+    transition: transform 0.15s ease;
+}
+.audio-dl-menu[open] .audio-dl-summary::after {
+    transform: rotate(180deg);
+}
+.audio-dl-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    padding-left: 0.1rem;
+}
+.audio-dl-option {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    color: var(--current-accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+.audio-dl-option:hover .audio-dl-option-label {
     text-decoration: underline;
+}
+.audio-dl-option-size {
+    opacity: 0.6;
+    font-size: 0.8rem;
+}
+[dir="rtl"] .audio-dl-menu {
+    align-self: flex-end;
 }
 
 .audio-list {
@@ -2094,12 +2140,12 @@ body.mini-player-open #drawer-comments .drawer-content {
     body.mini-player-open #global-footer {
         margin-bottom: calc(140px + env(safe-area-inset-bottom, 0px));
     }
-    /* The bottom bar (60px, z-index 2500) stays visible above the audio drawer
-       (z-index 2000) while it's open - you tapped the bar to open it, and the
-       scroll-hide handler is disabled while a drawer is open. The base drawer
-       padding (~18px) leaves the last chapter row behind the bar, so it can't
-       be scrolled into view. Clear the bar even before playback starts. */
-    #drawer-audio .drawer-content {
+    /* The bottom bar (60px) stays visible above every drawer (z-index 2000)
+       while it's open - you tapped the bar to open it, and the scroll-hide
+       handler is disabled while a drawer is open. The base drawer padding
+       (~18px) leaves the last row behind the bar, so it can't be scrolled into
+       view. Clear the bar for all drawers, even before playback starts. */
+    .drawer .drawer-content {
         padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
     }
     /* Once playback starts the mini-player sits at bottom:60px on mobile, so

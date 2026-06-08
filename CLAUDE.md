@@ -144,17 +144,39 @@ parse as `build.py`) and, for each `audio_src/{lang}/ch-NN.mp3` master, records 
 truth for the on-site player:
 
 - `web-landing-page/audio/manifest.json` — chapter list (index, title, file, bytes, duration)
-  per language, plus `baseUrl`, optional `zip`. Consumed by `audiobook.js`.
+  per language, plus `baseUrl`, and optional `zip` / `full` "download all" bundles (each
+  `{file, bytes}` or `null`). Consumed by `audiobook.js`.
+
+The player's **Download menu** offers up to two bundles: `zip` (every chapter archived) and
+`full` (all chapters concatenated into one MP3). Both are produced by `build_audio_bundles.py`
+(see below); `build_audio.py` only records their path + byte size. Whichever is `null` is hidden
+in the menu.
 
 Run `python3 build_audio.py`. It degrades gracefully: with no masters it still writes an empty
 manifest, so it is safe to run before any recording exists. `requirements`:
 `ffprobe` (from ffmpeg) for durations.
 
+### Download bundles: `build_audio_bundles.py`
+
+Sibling that produces the two "download all" artifacts the player's Download menu links to,
+into `audio_src/{lang}/` (un-committed, ~150 MB each):
+
+- `<Title>_Audiobook.zip` — every chapter master archived with friendly per-track names
+  (`"{NN} - {Title}.mp3"`), `ZIP_STORED` (no deflate: MP3 is already compressed).
+- `<Title>_Audiobook.mp3` — all chapters (intro first) concatenated via ffmpeg's concat demuxer
+  with `-c copy -f mp3` (lossless, no re-encode; the forced `-f mp3` is load-bearing because the
+  atomic `.mp3.tmp` temp name isn't auto-detected by ffmpeg's muxer).
+
+Run `python3 build_audio_bundles.py` **before** `build_audio.py` (the manifest bakes each bundle's
+byte size). Needs `ffmpeg`. Safe with partial/missing masters (skips a language with none).
+
 ### Masters and R2
 
 - Narration masters live **outside the repo** under `audio_src/{lang}/ch-NN.mp3` (zero-padded,
-  index = chapter order) and optionally `audio_src/{lang}/<Title>_Audiobook.zip` for "download
-  all". They are ~1 GB total — never commit them (would bloat the ~62 MB repo).
+  index = chapter order). The "download all" bundles `audio_src/{lang}/<Title>_Audiobook.zip`
+  and `<Title>_Audiobook.mp3` are generated (not recorded) by `build_audio_bundles.py`. All of
+  these are ~1 GB+ total — never commit them (would bloat the ~62 MB repo); `audio_src/` is
+  git-ignored.
 - Audio is served from an R2 bucket on a custom domain: `https://audio.cookiesiniran.com/{lang}/ch-NN.mp3`.
   R2 gives free egress + native HTTP range (streaming/seek) + CDN caching. This subdomain is the
   only external origin in the CSP `media-src` (`web-landing-page/_headers`) — keep the two in sync.
@@ -182,16 +204,21 @@ invisible in the player (the player reads the manifest from Pages, never from R2
    ```
    The 8 MB PNGs are too heavy to embed raw (×23 chapters ×3 langs); the ~330 KB JPEG keeps files
    small. Streaming is unaffected — the `<audio>` element ignores embedded art on resource loads.
-2. **`python3 build_audio.py`** — regenerate `manifest.json`. Re-run this *after* embedding
-   art, because embedding changes every file's byte size and the manifest bakes `os.path.getsize` in.
-3. **`python3 upload_audio.py`** — uploads every master in the manifest to R2 with `--remote` and a
-   per-object `Content-Disposition: attachment; filename*=…` so downloads save as
-   `"{Book} - NN - {Title}.mp3"` instead of `ch-NN.mp3`. This is required because the player links
-   downloads straight at the R2 origin (`audio.cookiesiniran.com`), a *different* origin than the
-   page, so the HTML `download="…"` attribute is ignored — only the R2 header controls the name.
-   Non-ASCII titles (Cyrillic, umlauts) use RFC 5987 `filename*`. **`--remote` is load-bearing**:
-   without it the put only writes local dev state and public requests 404.
-4. **Publish the new manifest** — this is the step that actually surfaces new chapters in the
+2. **`python3 build_audio_bundles.py`** (optional, if offering "download all") — regenerate the
+   ZIP + single-MP3 bundles. Re-run *after* embedding art, before `build_audio.py`, so the
+   manifest's bundle byte sizes match.
+3. **`python3 build_audio.py`** — regenerate `manifest.json`. Re-run this *after* embedding
+   art (and bundles), because embedding changes every file's byte size and the manifest bakes
+   `os.path.getsize` in.
+4. **`python3 upload_audio.py`** — uploads every master **and bundle** in the manifest to R2 with
+   `--remote` and a per-object `Content-Disposition: attachment; filename*=…` so chapter downloads
+   save as `"{Book} - NN - {Title}.mp3"` (and bundles as `"{Book} Audiobook.{zip,mp3}"`) instead
+   of `ch-NN.mp3`. This is required because the player links downloads straight at the R2 origin
+   (`audio.cookiesiniran.com`), a *different* origin than the page, so the HTML `download="…"`
+   attribute is ignored — only the R2 header controls the name. Non-ASCII titles (Cyrillic,
+   umlauts) use RFC 5987 `filename*`. **`--remote` is load-bearing**: without it the put only
+   writes local dev state and public requests 404.
+5. **Publish the new manifest** — this is the step that actually surfaces new chapters in the
    player. `manifest.json` lives under `web-landing-page/`, so committing it and pushing to `main`
    auto-deploys it via the Pages GitHub Action (see "Production deployment"). To publish without a
    commit (e.g. a quick out-of-band manifest refresh), run the manual fallback:
