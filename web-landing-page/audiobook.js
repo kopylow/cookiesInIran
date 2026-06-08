@@ -108,8 +108,11 @@
 
   function fmtBytes(n) {
     if (!n) return "";
-    const mb = n / 1048576;
-    return mb >= 1000 ? (mb / 1024).toFixed(1) + " GB" : Math.round(mb) + " MB";
+    // Decimal units (MB = 1e6 bytes), matching what the OS / browser download
+    // dialog reports — NOT binary MiB, which would read ~5% smaller than the
+    // size the file shows once saved.
+    const mb = n / 1e6;
+    return mb >= 1000 ? (mb / 1000).toFixed(1) + " GB" : Math.round(mb) + " MB";
   }
 
   function el(tag, attrs, text) {
