@@ -398,16 +398,18 @@ html[dir="rtl"] .hero-cta {
 
     /* The gear is a secondary action: no caption (font-size:0 hides the text
        label while the fixed-px ::before icon stays), and narrower than the
-       flex:1 nav tabs so it reads as smaller/subordinate. */
-    #btn-settings-mobile {
+       flex:1 nav tabs so it reads as smaller/subordinate. The selectors carry
+       #bottom-bar so they out-specify the `#bottom-bar .nav-btn` base rules
+       (two IDs beat one ID + one class); a bare #btn-settings-mobile loses. */
+    #bottom-bar #btn-settings-mobile {
         flex: 0 0 auto;
         font-size: 0;
         gap: 0;
         opacity: 0.75;
     }
-    #btn-settings-mobile::before {
-        width: 20px;
-        height: 20px;
+    #bottom-bar #btn-settings-mobile::before {
+        width: 18px;
+        height: 18px;
     }
 
     /* Feather "settings" gear for the new bottom-bar tab, same mask pattern
