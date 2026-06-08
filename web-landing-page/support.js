@@ -34,9 +34,9 @@
       qr: "support/qr/paypal.svg",
     },
     amazon: {
-      de: { print: "https://www.amazon.de/dp/REPLACE_ME" },
-      en: { print: "https://www.amazon.com/dp/REPLACE_ME" },
-      ru: { print: "https://www.amazon.com/dp/REPLACE_ME" },
+      de: { print: "https://www.amazon.de/dp/B0H46T2233" },
+      en: { print: "https://www.amazon.de/dp/B0H46RX4FN" },
+      ru: { print: "https://www.amazon.de/dp/B0H46RX4FN" },
     },
     // Free PDF, served same-origin from web-landing-page/pdf/.
     pdf: {
