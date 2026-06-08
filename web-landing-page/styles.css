@@ -347,6 +347,20 @@ html[dir="rtl"] .hero-cta {
     .top-bar-center { display: flex; }
 }
 
+/* Mobile: #bottom-bar is the primary navigation (the nav buttons already
+   live there via .top-bar-center { display:none }). Strip the top bar down
+   to a minimal control strip carrying only the language + theme toggles, so
+   it no longer reads as a second menu. The book title is dropped and the
+   toggles are right-aligned. */
+@media (max-width: 768px) {
+    #top-bar {
+        justify-content: flex-end;
+    }
+    #top-bar .top-bar-left {
+        display: none;
+    }
+}
+
 #bottom-bar {
     display: none;
 }
