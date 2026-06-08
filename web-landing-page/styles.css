@@ -321,10 +321,14 @@ html[dir="rtl"] .hero-cta {
 }
 
 /* Desktop settings gear: hidden by default so it never leaks onto mobile
-   (where #top-bar is display:contents); the desktop media query reveals it. */
+   (where #top-bar is display:contents); the desktop media query reveals it.
+   The font-size selector carries #top-bar (two IDs) so it out-specifies the
+   `#top-bar button { font-size: .9rem }` base rule (one ID + one element). */
 #btn-settings {
     display: none;
-    font-size: calc(1.35rem / var(--zoom, 1));
+}
+#top-bar #btn-settings {
+    font-size: calc(1.8rem / var(--zoom, 1));
     line-height: 1;
 }
 
