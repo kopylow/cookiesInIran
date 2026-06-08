@@ -395,6 +395,13 @@ html[dir="rtl"] .hero-cta {
         font-size: 1rem;
         text-align: center;
     }
+    /* The theme toggle is a single glyph (◑); bump its font-size so it reads
+       as a larger, tappable control in the popover. Placed after the shared
+       rule above (equal specificity) so source order lets it win. */
+    .top-bar-right #theme-toggle {
+        font-size: 1.8rem;
+        line-height: 1;
+    }
 
     /* The gear is a secondary action: no caption (font-size:0 hides the text
        label while the fixed-px ::before icon stays), and narrower than the
