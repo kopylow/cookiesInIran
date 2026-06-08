@@ -396,6 +396,20 @@ html[dir="rtl"] .hero-cta {
         text-align: center;
     }
 
+    /* The gear is a secondary action: no caption (font-size:0 hides the text
+       label while the fixed-px ::before icon stays), and narrower than the
+       flex:1 nav tabs so it reads as smaller/subordinate. */
+    #btn-settings-mobile {
+        flex: 0 0 auto;
+        font-size: 0;
+        gap: 0;
+        opacity: 0.75;
+    }
+    #btn-settings-mobile::before {
+        width: 20px;
+        height: 20px;
+    }
+
     /* Feather "settings" gear for the new bottom-bar tab, same mask pattern
        as the other tabs. */
     #btn-settings-mobile::before {
