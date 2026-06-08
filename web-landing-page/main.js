@@ -385,39 +385,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (window.SupportUI) window.SupportUI.setLang(currentLang);
         if (window.ContactUI) window.ContactUI.setLang(currentLang);
     });
-// Smart Top Bar Hide/Show on Scroll
-let lastScrollY = window.scrollY;
-
-// Initial check: hide if at top
-if (window.scrollY < 50) {
-    topBar.classList.add('hidden');
-    if (bottomBar) bottomBar.classList.add('hidden');
-}
-
-window.addEventListener('scroll', () => {
-    // If a drawer is open, don't hide the top bar
-    if (pageWrapper.classList.contains('drawer-open-book') || 
-        pageWrapper.classList.contains('drawer-open-fullscreen')) {
-        return;
-    }
-
-    const currentScrollY = window.scrollY;
-
-    if (currentScrollY < 50) {
-        // Stay hidden at the very top (Hero section)
-        topBar.classList.add('hidden');
-        if (bottomBar) bottomBar.classList.add('hidden');
-    } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Hiding when scrolling down
-        topBar.classList.add('hidden');
-        if (bottomBar) bottomBar.classList.add('hidden');
-    } else {
-        // Showing when scrolling up
-        topBar.classList.remove('hidden');
-        if (bottomBar) bottomBar.classList.remove('hidden');
-    }
-    lastScrollY = currentScrollY;
-}, { passive: true });
+// Menu is always visible: never hide the top/bottom bars on scroll.
+topBar.classList.remove('hidden');
+if (bottomBar) bottomBar.classList.remove('hidden');
 
     function closeAllDrawers() {
         drawerComments.classList.remove('open');
