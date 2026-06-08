@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnSupportMobile = document.getElementById('btn-support-mobile');
     const btnContact = document.getElementById('btn-contact');
     const btnContactMobile = document.getElementById('btn-contact-mobile');
+    const btnSettingsMobile = document.getElementById('btn-settings-mobile');
     const btnAudio = document.getElementById('btn-audio');
     const btnAudioMobile = document.getElementById('btn-audio-mobile');
     const btnAudioHero = document.getElementById('btn-audio-hero');
@@ -60,10 +61,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const i18n = {
-        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Support", contact: "Kontakt", audiobook: "Hörbuch", listen: "► Hörbuch", index: "Inhaltsverzeichnis", impressum: "Impressum", privacy: "Datenschutz" },
-        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Support", contact: "Contact", audiobook: "Audiobook", listen: "► Audiobook", index: "Index", impressum: "Impressum", privacy: "Privacy" },
-        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Поддержка", contact: "Контакты", audiobook: "Аудиокнига", listen: "► Аудиокнига", index: "Оглавление", impressum: "Импрессум", privacy: "Конфиденциальность" },
-        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "پشتیبانی", contact: "تماس", audiobook: "کتاب صوتی", listen: "◄ کتاب صوتی", index: "فهرست", impressum: "اطلاعات حقوقی", privacy: "حریم خصوصی" }
+        de: { title: "Kekse im Iran", author: "Anton Kopylow", book: "Buch", comments: "Kommentare", support: "Support", contact: "Kontakt", audiobook: "Hörbuch", listen: "► Hörbuch", index: "Inhaltsverzeichnis", impressum: "Impressum", privacy: "Datenschutz", settings: "Einstellungen" },
+        en: { title: "Cookies in Iran", author: "Anton Kopylow", book: "Book", comments: "Comments", support: "Support", contact: "Contact", audiobook: "Audiobook", listen: "► Audiobook", index: "Index", impressum: "Impressum", privacy: "Privacy", settings: "Settings" },
+        ru: { title: "Печенье в Иране", author: "Антон Копылов", book: "Книга", comments: "Комментарии", support: "Поддержка", contact: "Контакты", audiobook: "Аудиокнига", listen: "► Аудиокнига", index: "Оглавление", impressum: "Импрессум", privacy: "Конфиденциальность", settings: "Настройки" },
+        fa: { title: "کلوچه‌ها در ایران", author: "آنتون کپیلوف", book: "کتاب", comments: "نظرات", support: "پشتیبانی", contact: "تماس", audiobook: "کتاب صوتی", listen: "◄ کتاب صوتی", index: "فهرست", impressum: "اطلاعات حقوقی", privacy: "حریم خصوصی", settings: "تنظیمات" }
     };
 
     function updateUI(lang) {
@@ -84,6 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (btnSupportMobile) btnSupportMobile.textContent = t.support;
         if (btnContactMobile) btnContactMobile.textContent = t.contact;
         if (btnAudioMobile) btnAudioMobile.textContent = t.audiobook;
+        if (btnSettingsMobile) btnSettingsMobile.textContent = t.settings;
 
         drawerComments.querySelector('.drawer-header h2').textContent = t.comments;
         drawerSupport.querySelector('.drawer-header h2').textContent = t.support;
@@ -384,7 +386,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (window.AudioPlayer) window.AudioPlayer.setLang(currentLang);
         if (window.SupportUI) window.SupportUI.setLang(currentLang);
         if (window.ContactUI) window.ContactUI.setLang(currentLang);
+        closeSettings();
     });
+
+    // Mobile settings popover (gear in the bottom bar). On desktop the same
+    // controls live inline in the top bar and this class is simply unused.
+    function closeSettings() {
+        document.body.classList.remove('settings-open');
+        if (btnSettingsMobile) btnSettingsMobile.setAttribute('aria-expanded', 'false');
+    }
+    if (btnSettingsMobile) {
+        btnSettingsMobile.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const open = document.body.classList.toggle('settings-open');
+            btnSettingsMobile.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        // Tap outside the popover (and not on the gear) closes it.
+        document.addEventListener('click', (e) => {
+            if (!document.body.classList.contains('settings-open')) return;
+            if (e.target.closest('.top-bar-right') || e.target.closest('#btn-settings-mobile')) return;
+            closeSettings();
+        });
+    }
 // Menu is always visible: never hide the top/bottom bars on scroll.
 topBar.classList.remove('hidden');
 if (bottomBar) bottomBar.classList.remove('hidden');
@@ -397,6 +420,7 @@ if (bottomBar) bottomBar.classList.remove('hidden');
         drawerOverlay.classList.remove('visible');
         pageWrapper.classList.remove('drawer-open-fullscreen');
         document.body.classList.remove('drawer-open-fullscreen');
+        closeSettings();
         if (drawerOpenerEl) { drawerOpenerEl.focus(); drawerOpenerEl = null; }
     }
 

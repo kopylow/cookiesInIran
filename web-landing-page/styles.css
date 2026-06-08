@@ -347,17 +347,60 @@ html[dir="rtl"] .hero-cta {
     .top-bar-center { display: flex; }
 }
 
-/* Mobile: #bottom-bar is the primary navigation (the nav buttons already
-   live there via .top-bar-center { display:none }). Strip the top bar down
-   to a minimal control strip carrying only the language + theme toggles, so
-   it no longer reads as a second menu. The book title is dropped and the
-   toggles are right-aligned. */
+/* Mobile: the top bar is removed entirely; #bottom-bar is the only
+   navigation. Its language + theme controls relocate into a gear-triggered
+   popover. display:contents drops the bar box (background/border/fixed
+   60px strip) while keeping .top-bar-right renderable as that popover, so
+   the controls keep their IDs and existing main.js handlers. */
 @media (max-width: 768px) {
     #top-bar {
-        justify-content: flex-end;
+        display: contents;
     }
-    #top-bar .top-bar-left {
+    .top-bar-left {
         display: none;
+    }
+
+    /* The settings popover: a small card floating just above the bottom bar,
+       hidden until the gear sets body.settings-open. */
+    .top-bar-right {
+        position: fixed;
+        right: 12px;
+        bottom: 72px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        margin: 0;
+        padding: 14px;
+        background-color: var(--current-bg);
+        border: 1px solid rgba(128, 128, 128, 0.3);
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+        z-index: var(--z-index-topbar);
+        display: none;
+    }
+    body.settings-open .top-bar-right {
+        display: flex;
+    }
+    /* On RTL reading mode keep the popover anchored to the same corner as
+       the gear (last bottom-bar tab), which sits on the left under dir=rtl. */
+    html[dir="rtl"] .top-bar-right {
+        right: auto;
+        left: 12px;
+    }
+
+    .top-bar-right select,
+    .top-bar-right #theme-toggle {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    /* Feather "settings" gear for the new bottom-bar tab, same mask pattern
+       as the other tabs. */
+    #btn-settings-mobile::before {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'/%3E%3C/svg%3E");
     }
 }
 
